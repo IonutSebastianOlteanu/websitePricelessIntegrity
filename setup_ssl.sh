@@ -12,8 +12,13 @@ sudo ln -sf /etc/nginx/sites-available/madamebeauty /etc/nginx/sites-enabled/
 # Secure copy: Deploy only required public web assets, ignoring scripts and configuration source files
 sudo mkdir -p /var/www/madamebeauty
 sudo cp index.html /var/www/madamebeauty/
+sudo cp services.json /var/www/madamebeauty/
 sudo cp services.js contact.js /var/www/madamebeauty/
 sudo cp salonIntro.jpeg /var/www/madamebeauty/ 2>/dev/null || true
+
+# Ensure the web server user owns the files and permissions are correct
+sudo chown -R www-data:www-data /var/www/madamebeauty
+sudo chmod -R 755 /var/www/madamebeauty
 
 # 3. Test Nginx and reload
 sudo nginx -t && sudo systemctl reload nginx

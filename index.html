@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MADAME BEAUTY | by PRICELESS Integrity</title>
+    <title>MADAM BEAUTY | by PRICELESS Integrity</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -207,14 +207,14 @@
 
     <!-- Intro Welcome Screen -->
     <div id="introScreen" class="intro-overlay">
-        <img src="salonIntro.jpeg" alt="Madame Beauty Welcome" class="intro-img">
+        <img src="salonIntro.jpeg" alt="Madam Beauty Welcome" class="intro-img">
         <div class="intro-content">
             <button onclick="closeIntro()">Enter Experience</button>
         </div>
     </div>
 
     <header>
-        <h2>MADAME BEAUTY by PRICELESS Integrity</h2>
+        <h2>Madam BEAUTY by PRICELESS Integrity</h2>
     </header>
 
     <section class="hero">
@@ -254,8 +254,15 @@
         </div>
     </div>
 
+    <!-- Owner Control Panel Section -->
+    <div id="adminPanelSection" class="container" style="display: none; background: var(--card-bg); padding: 30px; border-radius: 4px; border: 1px solid var(--primary-gold); margin-top: 40px;">
+        <h2 style="color: var(--primary-gold); text-align: center; margin-top: 0;">Owner Control Panel</h2>
+        <div id="adminPanelContent"></div>
+    </div>
+
     <footer style="text-align: center; padding: 40px; opacity: 0.75;">
         <div id="footerCopyright" style="margin-bottom: 20px; font-size: 0.85rem;"></div>
+        <button onclick="checkAdminAccess()" style="background: transparent; border: 1px solid #444; color: #888; font-size: 0.8rem; padding: 5px 15px; text-transform: none; letter-spacing: 0;">Owner Portal</button>
     </footer>
 
     <!-- Load modularized business logic files -->
@@ -266,8 +273,22 @@
             document.getElementById('introScreen').classList.add('hidden');
         }
 
+        function checkAdminAccess() {
+            const pass = prompt("Enter owner access password:");
+            if (pass === "priceless123") {
+                const panel = document.getElementById('adminPanelSection');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                if (panel.style.display === 'block') {
+                    renderAdminPanel();
+                    panel.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else if (pass !== null) {
+                alert("Incorrect password.");
+            }
+        }
+
         // Initialize and display the services dynamically
-        renderServices();
+        loadServicesData();
         renderOwnerDetails();
         renderFooter();
     </script>

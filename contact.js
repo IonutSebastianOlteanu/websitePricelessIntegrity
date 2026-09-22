@@ -1,7 +1,7 @@
 const OWNER_DATA = {
     description: "Madame Beauty is proudly managed by PRICELESS Integrity, dedicated to delivering a premium, elite beauty experience tailored completely to you.",
     phone: "+1 (347) 299-2782",
-    email: "contact@madamebeauty.com",
+    email: "madalina.iamandi@aol.com",
     address: "Bucharest, Romania",
     program: "Mon - Fri: 09:00 - 21:00 | Sat: 09:00 - 18:00 | Sun: Closed"
 };
@@ -30,6 +30,6 @@ function renderOwnerDetails() {
 function renderFooter() {
     const container = document.getElementById('footerCopyright');
     if (container) {
-        container.innerHTML = `Copyright &copy; ${new Date().getFullYear()} Madame Beauty. All rights reserved.`;
+        container.innerHTML = `Copyright &copy; ${new Date().getFullYear()} Madam Beauty. All rights reserved.`;
     }
 }

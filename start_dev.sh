@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the project directory
-PROJECT_DIR="/home/olteanuionutsebastian/.cache/cloud-code"
+PROJECT_DIR="/home/olteanuionutsebastian/websitePricelessIntegrity"
 PORT=8000
 
 # Navigate to the project directory

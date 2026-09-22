@@ -1,0 +1,32 @@
+[
+    {
+        "title": "Hair Styling",
+        "description": "Cuts, coloring, and styling for any occasion.",
+        "details": [
+            { "name": "Precision Cuts & Trims", "price": "$55 - $95" },
+            { "name": "Balayage & Highlights", "price": "$180 - $350" },
+            { "name": "Bridal & Event Styling", "price": "$120 - $250" },
+            { "name": "Deep Conditioning", "price": "$45 - $80" }
+        ]
+    },
+    {
+        "title": "Skincare",
+        "description": "Refreshing facials and professional treatments.",
+        "details": [
+            { "name": "HydraFacial Therapy", "price": "$150 - $220" },
+            { "name": "Organic Chemical Peels", "price": "$110 - $190" },
+            { "name": "Anti-Aging Collagen", "price": "$140 - $200" },
+            { "name": "Deep Pore Cleansing", "price": "$85 - $130" }
+        ]
+    },
+    {
+        "title": "Nail Art",
+        "description": "Manicures and pedicures with a creative touch.",
+        "details": [
+            { "name": "Gel Extensions", "price": "$75 - $120" },
+            { "name": "Luxury Spa Pedicure", "price": "$65 - $95" },
+            { "name": "Hand-painted Art", "price": "$20 - $60" },
+            { "name": "Repair & Strengthen", "price": "$15 - $40" }
+        ]
+    }
+]
