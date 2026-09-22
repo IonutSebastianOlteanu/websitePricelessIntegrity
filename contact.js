@@ -1,5 +1,5 @@
 const OWNER_DATA = {
-    description: "Madame Beauty is proudly managed by PRICELESS Integrity, dedicated to delivering a premium, elite beauty experience tailored completely to you.",
+    description: "Madam Beauty is proudly managed by PRICELESS Integrity, dedicated to delivering a premium, elite beauty experience tailored completely to you.",
     phone: "+1 (347) 299-2782",
     email: "madalina.iamandi@aol.com",
     address: "Bucharest, Romania",
