@@ -13,10 +13,10 @@ function renderOwnerDetails() {
         <h3>Salon & Owner Details</h3>
         <p style="color: #aaa; margin-bottom: 25px;">${OWNER_DATA.description}</p>
         <div class="contact-info-item">
-            <p><strong>Phone:</strong> ${OWNER_DATA.phone}</p>
+            <p><strong>Phone:</strong> <a href="tel:${OWNER_DATA.phone}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(255, 255, 255, 0.3)'">${OWNER_DATA.phone}</a></p>
         </div>
         <div class="contact-info-item">
-            <p><strong>Email:</strong> ${OWNER_DATA.email}</p>
+            <p><strong>Email:</strong> <a href="mailto:${OWNER_DATA.email}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(255, 255, 255, 0.3)'">${OWNER_DATA.email}</a></p>
         </div>
         <div class="contact-info-item">
             <p><strong>Address:</strong> ${OWNER_DATA.address}</p>

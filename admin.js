@@ -50,7 +50,7 @@ async function validateGitHubToken(token) {
 async function accessOwnerPortal() {
     let token = localStorage.getItem('gh_token');
     if (!token) {
-        token = prompt("Please enter your GitHub Personal Access Token (PAT):");
+        token = prompt("Please enter your admin password:");
         if (!token) return;
         token = token.trim();
     }
@@ -92,8 +92,20 @@ function updatePrice(categoryIndex, itemIndex, newPrice) {
     renderAdminPanel();
 }
 
-function addServiceItem(categoryIndex, name, price) {
-    SERVICES_DATA[categoryIndex].details.push({ name, price });
+function updateItemName(categoryIndex, itemIndex, newName) {
+    SERVICES_DATA[categoryIndex].details[itemIndex].name = newName;
+    renderServices();
+    renderAdminPanel();
+}
+
+function updateItemDescription(categoryIndex, itemIndex, newDescription) {
+    SERVICES_DATA[categoryIndex].details[itemIndex].description = newDescription;
+    renderServices();
+    renderAdminPanel();
+}
+
+function addServiceItem(categoryIndex, name, description, price) {
+    SERVICES_DATA[categoryIndex].details.push({ name, description, price });
     renderServices();
     renderAdminPanel();
 }
@@ -132,12 +144,15 @@ function handleCreateCategory() {
 
 function handleCreateItem(catIdx) {
     const nameEl = document.getElementById(`newItemName-${catIdx}`);
+    const descEl = document.getElementById(`newItemDesc-${catIdx}`);
     const priceEl = document.getElementById(`newItemPrice-${catIdx}`);
     const name = nameEl.value.trim();
+    const desc = descEl.value.trim();
     const price = priceEl.value.trim();
     if (name && price) {
-        addServiceItem(catIdx, name, price);
+        addServiceItem(catIdx, name, desc, price);
         nameEl.value = '';
+        descEl.value = '';
         priceEl.value = '';
     }
 }
@@ -281,20 +296,28 @@ function renderAdminPanel() {
 
         cat.details.forEach((item, itemIdx) => {
             html += `
-                <li style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #333;">
-                    <span style="flex-grow: 1;">${item.name}</span>
-                    <input type="text" value="${item.price}" onchange="updatePrice(${catIdx}, ${itemIdx}, this.value)" class="form-control" style="max-width: 150px; padding: 5px; font-size: 0.9rem; text-align: right;">
-                    <button onclick="deleteItem(${catIdx}, ${itemIdx})" style="background: #d9534f; border-color: #d9534f; color: white; padding: 5px 10px; font-size: 0.8rem;">X</button>
+                <li style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #333;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                        <input type="text" value="${item.name}" onchange="updateItemName(${catIdx}, ${itemIdx}, this.value)" class="form-control" style="padding: 5px; font-size: 0.9rem; font-weight: bold; background: transparent; border: none; border-bottom: 1px solid #444; flex-grow: 1;">
+                        <input type="text" value="${item.price}" onchange="updatePrice(${catIdx}, ${itemIdx}, this.value)" class="form-control" style="max-width: 120px; padding: 5px; font-size: 0.9rem; text-align: right;">
+                        <button onclick="deleteItem(${catIdx}, ${itemIdx})" style="background: #d9534f; border-color: #d9534f; color: white; padding: 5px 10px; font-size: 0.8rem;">X</button>
+                    </div>
+                    <input type="text" value="${item.description || ''}" onchange="updateItemDescription(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="Service description (optional)" style="padding: 5px; font-size: 0.85rem; color: #aaa;">
                 </li>
             `;
         });
 
         html += `
                     </ul>
-                    <div style="display: flex; gap: 10px; margin-top: 15px; background: #252525; padding: 10px; border-radius: 4px;">
-                        <input type="text" id="newItemName-${catIdx}" class="form-control" placeholder="New Item Name" style="padding: 6px;">
-                        <input type="text" id="newItemPrice-${catIdx}" class="form-control" placeholder="Price (e.g., $50)" style="padding: 6px; max-width: 150px;">
-                        <button onclick="handleCreateItem(${catIdx})" style="padding: 6px 15px; font-size: 0.85rem;">Add Item</button>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; background: #252525; padding: 12px; border-radius: 4px;">
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="newItemName-${catIdx}" class="form-control" placeholder="New Item Name" style="padding: 6px; flex-grow: 1;">
+                            <input type="text" id="newItemPrice-${catIdx}" class="form-control" placeholder="Price (e.g., $50)" style="padding: 6px; max-width: 150px;">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="newItemDesc-${catIdx}" class="form-control" placeholder="Item Description (optional)" style="padding: 6px; flex-grow: 1;">
+                            <button onclick="handleCreateItem(${catIdx})" style="padding: 6px 15px; font-size: 0.85rem; white-space: nowrap;">Add Item</button>
+                        </div>
                     </div>
                 </div>
             </div>

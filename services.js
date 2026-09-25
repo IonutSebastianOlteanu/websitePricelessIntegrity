@@ -70,7 +70,10 @@ function renderServices(searchTerm = "") {
 
     const filtered = SERVICES_DATA.filter(service => 
         service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.details.some(d => d.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        service.details.some(d => 
+            d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (d.description && d.description.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
     );
 
     if (filtered.length === 0) {
@@ -92,9 +95,12 @@ function renderServices(searchTerm = "") {
             <div class="service-details" style="display: ${displayStyle}; margin-top: 20px;">
                 <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #ccc;">
                     ${service.details.map(detail => `
-                        <li style="margin-bottom: 10px; display: flex; justify-content: space-between; border-bottom: 1px dotted #444; padding-bottom: 5px;">
-                            <span>${highlightText(detail.name, searchTerm)}</span>
-                            <span style="color: var(--primary-gold); font-weight: bold;">${detail.price}</span>
+                        <li style="margin-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; padding-left: 12px; border-left: 2px solid rgba(223, 183, 108, 0.2); transition: border-left-color 0.3s;" onmouseenter="this.style.borderLeftColor='var(--primary-gold)'" onmouseleave="this.style.borderLeftColor='rgba(223, 183, 108, 0.2)'">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 4px;">
+                                <span style="font-weight: 600; color: #fff; font-size: 0.95rem; letter-spacing: 0.5px;">${highlightText(detail.name, searchTerm)}</span>
+                                <span style="color: var(--primary-gold); font-weight: 600; font-size: 0.95rem; white-space: nowrap; letter-spacing: 0.5px;">${detail.price}</span>
+                            </div>
+                            ${detail.description ? `<p style="margin: 0; font-size: 0.8rem; color: #a5a5a5; text-align: left; line-height: 1.5; font-style: italic; font-weight: 300;">${highlightText(detail.description, searchTerm)}</p>` : ''}
                         </li>`).join('')}
                 </ul>
             </div>
