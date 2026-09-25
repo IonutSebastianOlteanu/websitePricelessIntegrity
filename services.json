@@ -76,16 +76,5 @@
                 "price": "$15 - $40"
             }
         ]
-    },
-    {
-        "title": "Test",
-        "description": "",
-        "details": [
-            {
-                "name": "Nails",
-                "description": "",
-                "price": "50$"
-            }
-        ]
     }
 ]
