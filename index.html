@@ -262,29 +262,16 @@
 
     <footer style="text-align: center; padding: 40px; opacity: 0.75;">
         <div id="footerCopyright" style="margin-bottom: 20px; font-size: 0.85rem;"></div>
-        <button onclick="checkAdminAccess()" style="background: transparent; border: 1px solid #444; color: #888; font-size: 0.8rem; padding: 5px 15px; text-transform: none; letter-spacing: 0;">Owner Portal</button>
+        <button onclick="accessOwnerPortal()" style="background: transparent; border: 1px solid #444; color: #888; font-size: 0.8rem; padding: 5px 15px; text-transform: none; letter-spacing: 0;">Owner Portal</button>
     </footer>
 
     <!-- Load modularized business logic files -->
     <script src="services.js"></script>
+    <script src="admin.js"></script>
     <script src="contact.js"></script>
     <script>
         function closeIntro() {
             document.getElementById('introScreen').classList.add('hidden');
-        }
-
-        function checkAdminAccess() {
-            const pass = prompt("Enter owner access password:");
-            if (pass === "priceless123") {
-                const panel = document.getElementById('adminPanelSection');
-                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-                if (panel.style.display === 'block') {
-                    renderAdminPanel();
-                    panel.scrollIntoView({ behavior: 'smooth' });
-                }
-            } else if (pass !== null) {
-                alert("Incorrect password.");
-            }
         }
 
         // Initialize and display the services dynamically

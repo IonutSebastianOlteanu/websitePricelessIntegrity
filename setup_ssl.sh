@@ -13,7 +13,7 @@ sudo ln -sf /etc/nginx/sites-available/madamebeauty /etc/nginx/sites-enabled/
 sudo mkdir -p /var/www/madamebeauty
 sudo cp index.html /var/www/madamebeauty/
 sudo cp services.json /var/www/madamebeauty/
-sudo cp services.js contact.js /var/www/madamebeauty/
+sudo cp services.js admin.js contact.js /var/www/madamebeauty/
 sudo cp salonIntro.jpeg /var/www/madamebeauty/ 2>/dev/null || true
 
 # Ensure the web server user owns the files and permissions are correct
