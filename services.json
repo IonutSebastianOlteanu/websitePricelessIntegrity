@@ -1,79 +1,22 @@
 [
     {
-        "title": "Hair Styling",
-        "description": "Cuts, coloring, and styling for any occasion.",
-        "details": [
-            {
-                "name": "Precision Cuts & Trims",
-                "description": "Customized haircuts, including cleansing, blow-dry, and styling tailored to your face shape.",
-                "price": "$55 - $95"
-            },
-            {
-                "name": "Balayage & Highlights",
-                "description": "Hand-painted, natural-looking highlights designed to add depth, dimension, and customized brilliance.",
-                "price": "$180 - $350"
-            },
-            {
-                "name": "Bridal & Event Styling",
-                "description": "Elegant updos, half-up styles, or glamorous waves designed to last through your entire celebration.",
-                "price": "$120 - $250"
-            },
-            {
-                "name": "Deep Conditioning",
-                "description": "Intense moisture and repair treatment to restore hair strength, shine, and manageability.",
-                "price": "$45 - $80"
-            }
-        ]
-    },
-    {
         "title": "Skincare",
         "description": "Refreshing facials and professional treatments.",
         "details": [
             {
-                "name": "HydraFacial Therapy",
-                "description": "Patented multi-step treatment that cleanses, exfoliates, extracts, and hydrates with nourishing serums.",
-                "price": "$150 - $220"
+                "name": "Bio Visage Detox & Remodeling facial treatment",
+                "description": "Bio Visage is an head part of a concept created for results beyond what is dreamed of. Exclusively professional concentrate of technology that normalizes skin functions without damaging or dehydrating the tissue. The synergy of specific currents and active botanical extracts restaures cellular activity, while skin functions are regulated,complexion becomes brighter doe to oxygenation, resulting in less dark circles and redness.  Bio Visage provides gentle lifting and restores the power of contractibility to each muscle fiber. The face is completely restructured, firmer and brighter.",
+                "price": "60 minutes  $550 "
             },
             {
-                "name": "Organic Chemical Peels",
-                "description": "Natural exfoliating acids to gently peel away dead skin cells, revealing smooth and radiant skin.",
-                "price": "$110 - $190"
+                "name": "Ionix Red Carpet Ready facial treatment",
+                "description": "Deep cellular rejuvenation and contouring ,an advanced, non-invasive skin treatment that combines  up to eight high-tech modalities such as    °  Diamond microdermabrasion,   ° Negative pressure/ lymphatic drenage,  ° Oxygen infusion & Ionized mist, ° Ultrasound therapy , °Microcurrent & RadioFrequency,  °LED light therapy   An expression of exceptional to lift, tone and brighten the skin with zero downtime.",
+                "price": "75 minutes  $750"
             },
             {
-                "name": "Anti-Aging Collagen",
-                "description": "Advanced collagen-boosting facial designed to firm, plump, and reduce the appearance of fine lines.",
-                "price": "$140 - $200"
-            },
-            {
-                "name": "Deep Pore Cleansing",
-                "description": "Thorough extraction and purification of pores to eliminate buildup, prevent acne, and balance oil.",
-                "price": "$85 - $130"
-            }
-        ]
-    },
-    {
-        "title": "Nail Art",
-        "description": "Manicures and pedicures with a creative touch.",
-        "details": [
-            {
-                "name": "Gel Extensions",
-                "description": "Durable and lightweight nail extensions sculpted with high-grade builder gel for length and strength.",
-                "price": "$75 - $120"
-            },
-            {
-                "name": "Luxury Spa Pedicure",
-                "description": "Relaxing foot soak, scrub, nail shaping, cuticle care, clay mask, hot stone massage, and polish.",
-                "price": "$65 - $95"
-            },
-            {
-                "name": "Hand-painted Art",
-                "description": "One-of-a-kind, custom hand-painted nail designs curated by our talented nail technicians.",
-                "price": "$20 - $60"
-            },
-            {
-                "name": "Repair & Strengthen",
-                "description": "Quick fix for broken or chipped nails using professional grade strengthening silk wraps.",
-                "price": "$15 - $40"
+                "name": "Regenerative Facial Treatment",
+                "description": "Regenerative  facial treatment utilizes lymphatic drenage massage, LED light in conjunction with topical infusion of collagen fibers, soluble collagen peptides and molecules along with regenerative products such as exosomes to provide an optimal environment for healing, tissue remodelling and regeneration.   Who can benefit from: Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions.",
+                "price": "60 minutes  $500"
             }
         ]
     }
