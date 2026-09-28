@@ -6,17 +6,23 @@
             {
                 "name": "Bio Visage Detox & Remodeling Mansard Facial Treatment",
                 "description": "Bio Visage is an head part of a concept created for results beyond what is dreamed of. Exclusively professional concentrate of technology that normalizes skin functions without damaging or dehydrating the tissue. The synergy of specific currents and active botanical extracts restaures cellular activity, while skin functions are regulated,complexion becomes brighter doe to oxygenation, resulting in less dark circles and redness.  Bio Visage provides gentle lifting and restores the power of contractibility to each muscle fiber. The face is completely restructured, firmer and brighter.",
-                "price": "60 minutes  $550 "
+                "duration": "60 minutes",
+                "price": "$550",
+                "variants": []
             },
             {
                 "name": "Ionix Red Carpet Ready Facial treatment",
                 "description": "Deep cellular rejuvenation and contouring ,an advanced, non-invasive skin treatment that combines  up to eight high-tech modalities such as diamond microdermabrasion, negative pressure/ lymphatic drenage, oxygen infusion & Ionized mist, ultrasound therapy , microcurrent & radiofrequency, LED light therapy   An expression of exceptional to lift, tone and brighten the skin with zero downtime.",
-                "price": "75 minutes  $750"
+                "duration": "75 minutes",
+                "price": "$750",
+                "variants": []
             },
             {
                 "name": "Regenerative Facial Treatment",
                 "description": "Regenerative  facial treatment utilizes lymphatic drenage massage, LED light in conjunction with topical infusion of collagen fibers, soluble collagen peptides and molecules along with regenerative products such as exosomes to provide an optimal environment for healing, tissue remodelling and regeneration.   Who can benefit from: Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions.",
-                "price": "60 minutes  $575"
+                "duration": "60 minutes",
+                "price": "$575",
+                "variants": []
             }
         ]
     }
