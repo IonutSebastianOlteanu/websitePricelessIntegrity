@@ -26,6 +26,13 @@ function toggleServiceDetails(event, cardElement) {
     }
 }
 
+function handleCardKeydown(event, cardElement) {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleServiceDetails(null, cardElement);
+    }
+}
+
 function debounce(func, delay) {
     let timeoutId;
     return (...args) => {
@@ -34,6 +41,25 @@ function debounce(func, delay) {
             func.apply(null, args);
         }, delay);
     };
+}
+
+function toggleDescription(event, button) {
+    event.stopPropagation();
+    const textContainer = button.previousElementSibling;
+    const isExpanded = button.getAttribute('data-expanded') === 'true';
+    if (isExpanded) {
+        textContainer.style.webkitLineClamp = '2';
+        textContainer.style.webkitMaskImage = 'linear-gradient(180deg, #000 60%, transparent 100%)';
+        textContainer.style.maskImage = 'linear-gradient(180deg, #000 60%, transparent 100%)';
+        button.innerText = 'Read more';
+        button.setAttribute('data-expanded', 'false');
+    } else {
+        textContainer.style.webkitLineClamp = 'unset';
+        textContainer.style.webkitMaskImage = 'none';
+        textContainer.style.maskImage = 'none';
+        button.innerText = 'Read less';
+        button.setAttribute('data-expanded', 'true');
+    }
 }
 
 function highlightText(text, term) {
@@ -110,7 +136,11 @@ function renderServices(searchTerm = "") {
     );
 
     if (filtered.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #888; padding: 20px;">No services found matching your search.</p>';
+        grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; color: #bbb; padding: 40px 20px;">
+                <p style="font-size: 1.05rem; margin-bottom: 12px;">No services found matching "<strong>${escapeHtml(searchTerm)}</strong>"</p>
+                <button onclick="clearSearch()" style="background: var(--primary-gold); color: #111; border: none; padding: 8px 18px; border-radius: 4px; font-weight: 600; cursor: pointer;">Clear Search</button>
+            </div>`;
         return;
     }
 
@@ -135,7 +165,7 @@ function renderServices(searchTerm = "") {
                 : '';
 
         return `
-        <div class="service-card" onclick="toggleServiceDetails(event, this)" style="${highlightStyle}">
+        <div class="service-card" onclick="toggleServiceDetails(event, this)" onkeydown="handleCardKeydown(event, this)" role="button" tabindex="0" aria-expanded="${isSearching}" style="${highlightStyle} cursor: pointer;">
             <h3 style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
                 ${highlightText(service.title, searchTerm)}
                 <span class="expand-indicator" style="color: var(--primary-gold); font-size: 1.2rem;">${indicatorText}</span>
@@ -151,10 +181,32 @@ function renderServices(searchTerm = "") {
 
                         return `
                         <li style="margin-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; padding-left: 12px; border-left: 2px solid rgba(223, 183, 108, 0.2); transition: border-left-color 0.3s;" onmouseenter="this.style.borderLeftColor='var(--primary-gold)'" onmouseleave="this.style.borderLeftColor='rgba(223, 183, 108, 0.2)'">
-                            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 4px;">
-                                <span style="font-weight: 600; color: #fff; font-size: 0.95rem; letter-spacing: 0.5px;">${highlightText(detail.name, searchTerm)}</span>
+                            <div style="font-weight: 600; color: #fff; font-size: 0.95rem; letter-spacing: 0.5px; text-align: left; margin-bottom: 6px;">
+                                ${highlightText(detail.name, searchTerm)}
+                            </div>
+                            ${detail.description ? (() => {
+                                const isLong = detail.description.length > 130;
+                                const containsSearchTerm = isSearching && detail.description.toLowerCase().includes(searchTerm.toLowerCase());
+                                const shouldClamp = isLong && !containsSearchTerm;
+                                const maskStyle = shouldClamp ? '-webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%); mask-image: linear-gradient(180deg, #000 60%, transparent 100%);' : '';
+                                return `
+                                <div style="margin-bottom: 10px; text-align: left;">
+                                    <p style="margin: 0; font-size: 0.8rem; color: #a5a5a5; line-height: 1.5; font-style: italic; font-weight: 300; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: ${shouldClamp ? '2' : 'unset'}; overflow: hidden;">
+                                    <p style="margin: 0; font-size: 0.8rem; color: #a5a5a5; line-height: 1.5; font-style: italic; font-weight: 300; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: ${shouldClamp ? '2' : 'unset'}; overflow: hidden; ${maskStyle}">
+                                        ${highlightText(detail.description, searchTerm)}
+                                    </p>
+                                    ${isLong ? `
+                                    <button type="button" onclick="toggleDescription(event, this)" data-expanded="${!shouldClamp}" style="background: none; border: none; color: var(--primary-gold); font-size: 0.75rem; padding: 2px 0; cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 600; margin-top: 2px;">${shouldClamp ? 'Read more' : 'Read less'}</button>
+                                    ` : ''}
+                                </div>`;
+                            })() : ''}
+                            ${(detail.duration || displayPrice) ? `
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; padding: 6px 0;">
+                                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                    ${hasVariants ? `<span style="background: rgba(223, 183, 108, 0.15); color: var(--primary-gold); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px;">Option 1</span>` : ''}
+                                    ${detail.duration ? `<span style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; color: #ccc;">${highlightText(detail.duration, searchTerm)}</span>` : ''}
+                                </div>
                                 <div style="text-align: right; display: flex; align-items: center; gap: 6px; justify-content: flex-end; flex-wrap: wrap;">
-                                    ${detail.duration ? `<span style="color: #888; font-size: 0.8rem; margin-right: 4px;">${highlightText(detail.duration, searchTerm)}</span>` : ''}
                                     ${isPromo ? `
                                         <span style="background: #ff4d4d; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Special Offer</span>
                                         <span style="color: #888; text-decoration: line-through; font-size: 0.8rem; margin-right: 4px;">${highlightText(detail.originalPrice, searchTerm)}</span>
@@ -162,15 +214,18 @@ function renderServices(searchTerm = "") {
                                     ${displayPrice ? `<span style="${isPromo ? 'color: #ff4d4d;' : 'color: var(--primary-gold);'} font-weight: 600; font-size: 0.95rem; white-space: nowrap; letter-spacing: 0.5px;">${highlightText(displayPrice, searchTerm)}</span>` : ''}
                                 </div>
                             </div>
+                            ` : ''}
                             ${hasVariants && detail.variants.length > 0 ? `
-                                ${detail.variants.map(v => {
+                                ${detail.variants.map((v, vIdx) => {
                                     const isVariantPromo = v.price && v.originalPrice;
                                     const displayVariantPrice = v.price || v.originalPrice || '';
                                     return `
-                                    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 10px; margin-bottom: 4px;">
-                                        <span style="font-weight: 600; color: #fff; font-size: 0.95rem; letter-spacing: 0.5px;"></span>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 4px; padding: 6px 0; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
+                                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                            <span style="background: rgba(223, 183, 108, 0.15); color: var(--primary-gold); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px;">Option ${vIdx + 2}</span>
+                                            ${v.duration ? `<span style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; color: #ccc;">${highlightText(v.duration, searchTerm)}</span>` : ''}
+                                        </div>
                                         <div style="text-align: right; display: flex; align-items: center; gap: 6px; justify-content: flex-end; flex-wrap: wrap;">
-                                            ${v.duration ? `<span style="color: #888; font-size: 0.8rem; margin-right: 4px;">${highlightText(v.duration, searchTerm)}</span>` : ''}
                                             ${isVariantPromo ? `
                                                 <span style="background: #ff4d4d; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Special Offer</span>
                                                 <span style="color: #888; text-decoration: line-through; font-size: 0.8rem; margin-right: 4px;">${highlightText(v.originalPrice, searchTerm)}</span>
@@ -180,7 +235,6 @@ function renderServices(searchTerm = "") {
                                     </div>`;
                                 }).join('')}
                             ` : ''}
-                            ${detail.description ? `<p style="margin: 0; font-size: 0.8rem; color: #a5a5a5; text-align: left; line-height: 1.5; font-style: italic; font-weight: 300;">${highlightText(detail.description, searchTerm)}</p>` : ''}
                         </li>`;
                     }).join('')}
                 </ul>
