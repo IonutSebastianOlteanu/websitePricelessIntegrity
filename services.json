@@ -46,6 +46,14 @@
                 "price": "",
                 "originalPrice": "$500",
                 "variants": []
+            },
+            {
+                "name": "BioRePeel",
+                "description": "An innovative, two-phase chemical peel featuring trichloroacetic acid (TCA) designed to rejuvenate the skin with minimal downtime.\nHelps clear active breakouts, reduce pore size, and smooth post-acne marks.\nGradually fades sun damage and evens out overall skin tone.",
+                "duration": "30 minutes",
+                "price": "",
+                "originalPrice": "$375",
+                "variants": []
             }
         ]
     }
