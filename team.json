@@ -1,0 +1,25 @@
+{
+    "about": {
+        "storyLabel": "Our Story",
+        "storyTitle": "Luxury beauty, thoughtfully tailored to you.",
+        "storyIntro": "PRICELESS Integrity brings together advanced aesthetic care, elevated service, and a calm, polished experience designed to help you feel confident in your skin.",
+        "storyExpanded1": "From skin rituals to signature treatments, every detail is curated to balance expertise, comfort, and lasting results.",
+        "storyExpanded2": "We believe beauty should feel elevated, personal, and restorative — a moment of care that leaves you feeling polished from the inside out.",
+        "teamLabel": "Our Team",
+        "teamDescription": "Skilled professionals devoted to delivering a refined and memorable experience."
+    },
+    "members": [
+        {
+            "name": "Amelia Ross",
+            "role": "Lead Aesthetician",
+            "bio": "Specializes in personalized skin rituals and advanced facial treatments.",
+            "image": ""
+        },
+        {
+            "name": "Jasmine Vale",
+            "role": "Beauty Director",
+            "bio": "Shapes the luxury experience with care, precision, and elevated style.",
+            "image": ""
+        }
+    ]
+}

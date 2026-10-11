@@ -1,6 +1,7 @@
 const GITHUB_REPO = 'IonutSebastianOlteanu/websitePricelessIntegrity';
 const GITHUB_BRANCH = 'main';
 const GITHUB_FILE_PATH = 'services.json';
+const TEAM_FILE_PATH = 'team.json';
 
 function getAuthHeaders(token) {
     const prefix = localStorage.getItem('gh_token_prefix') || 'token';
@@ -280,9 +281,9 @@ function handleCreateItem(catIdx) {
     }
 }
 
-async function getNextVersionNumber(token) {
+async function getNextVersionNumber(token, filePath) {
     try {
-        const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?path=${GITHUB_FILE_PATH}&sha=${GITHUB_BRANCH}&per_page=100`, {
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?path=${filePath}&sha=${GITHUB_BRANCH}&per_page=100`, {
             headers: getAuthHeaders(token)
         });
         if (response.ok) {
@@ -295,14 +296,58 @@ async function getNextVersionNumber(token) {
     return null;
 }
 
-async function syncToGitHub() {
+async function publishJsonToGitHub(filePath, data, label) {
     const token = localStorage.getItem('gh_token');
-
     if (!token) {
-        alert("Authentication token missing. Please refresh and log in again.");
-        return;
+        throw new Error('Authentication token missing. Please refresh and log in again.');
     }
 
+    const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=${GITHUB_BRANCH}`;
+    let sha = null;
+    const getResponse = await fetch(url, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (getResponse.ok) {
+        const fileData = await getResponse.json();
+        sha = fileData.sha;
+    } else if (getResponse.status !== 404) {
+        throw new Error(`Failed to fetch ${label} metadata: ${getResponse.statusText}`);
+    }
+
+    const content = JSON.stringify(data, null, 4);
+    const base64Content = btoa(encodeURIComponent(content).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode(parseInt(p1, 16));
+    }));
+
+    const versionNum = await getNextVersionNumber(token, filePath);
+    const commitMsg = versionNum ? `Update ${filePath} (v${versionNum})` : `Update ${filePath} - ${new Date().toISOString()}`;
+
+    const body = {
+        message: commitMsg,
+        content: base64Content,
+        branch: GITHUB_BRANCH
+    };
+    if (sha) {
+        body.sha = sha;
+    }
+
+    const putHeaders = getAuthHeaders(token);
+    putHeaders['Content-Type'] = 'application/json';
+
+    const putResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: putHeaders,
+        body: JSON.stringify(body)
+    });
+
+    if (!putResponse.ok) {
+        const errData = await putResponse.json();
+        throw new Error(errData.message || `Failed to commit ${label}.`);
+    }
+}
+
+async function syncToGitHub() {
     const statusIndicator = document.getElementById('githubSyncStatus');
     if (statusIndicator) statusIndicator.innerText = "Syncing with GitHub...";
 
@@ -316,58 +361,16 @@ async function syncToGitHub() {
     }
 
     try {
-        const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}?ref=${GITHUB_BRANCH}`;
-        
-        // 1. Retrieve the existing file SHA (required by GitHub API to update a file)
-        let sha = null;
-        const getResponse = await fetch(url, {
-            headers: getAuthHeaders(token)
-        });
+        await prepareTeamImagesForSync();
 
-        if (getResponse.ok) {
-            const fileData = await getResponse.json();
-            sha = fileData.sha;
-        } else if (getResponse.status !== 404) {
-            throw new Error(`Failed to fetch file metadata: ${getResponse.statusText}`);
-        }
+        await Promise.all([
+            publishJsonToGitHub(GITHUB_FILE_PATH, SERVICES_DATA, 'services'),
+            publishJsonToGitHub(TEAM_FILE_PATH, TEAM_DATA, 'team')
+        ]);
 
-        // 2. Prepare payload (Base64 encoded representation of services.json)
-        const content = JSON.stringify(SERVICES_DATA, null, 4);
-        // Safe UTF-8 Base64 encoding without deprecated unescape
-        const base64Content = btoa(encodeURIComponent(content).replace(/%([0-9A-F]{2})/g, (match, p1) => {
-            return String.fromCharCode(parseInt(p1, 16));
-        }));
-
-        const versionNum = await getNextVersionNumber(token);
-        const commitMsg = versionNum ? `Update services.json (v${versionNum})` : `Update services.json - ${new Date().toISOString()}`;
-
-        const body = {
-            message: commitMsg,
-            content: base64Content,
-            branch: GITHUB_BRANCH
-        };
-        if (sha) {
-            body.sha = sha;
-        }
-
-        // 3. Push file update back to GitHub
-        const putHeaders = getAuthHeaders(token);
-        putHeaders['Content-Type'] = 'application/json';
-
-        const putResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`, {
-            method: 'PUT',
-            headers: putHeaders,
-            body: JSON.stringify(body)
-        });
-
-        if (putResponse.ok) {
-            alert("Successfully published and updated services.json!\n\nYou have been logged out automatically for security.");
-            if (statusIndicator) statusIndicator.innerText = "Sync Successful!";
-            logoutAdmin(true);
-        } else {
-            const errData = await putResponse.json();
-            throw new Error(errData.message || "Failed to commit changes.");
-        }
+        alert("Successfully published your updates!\n\nYou have been logged out automatically for security.");
+        if (statusIndicator) statusIndicator.innerText = "Sync Successful!";
+        logoutAdmin(true);
     } catch (error) {
         console.error("GitHub Sync Error:", error);
         alert(`Error syncing with GitHub: ${error.message}`);
@@ -380,6 +383,234 @@ async function syncToGitHub() {
             publishBtn.style.cursor = 'pointer';
         }
     }
+}
+
+function updateTeamMemberName(index, value) {
+    const members = getTeamMembers();
+    if (!members[index]) return;
+    members[index].name = value;
+    renderTeamMembers();
+    renderAdminPanel();
+}
+
+function updateTeamMemberRole(index, value) {
+    const members = getTeamMembers();
+    if (!members[index]) return;
+    members[index].role = value;
+    renderTeamMembers();
+    renderAdminPanel();
+}
+
+function updateTeamMemberBio(index, value) {
+    const members = getTeamMembers();
+    if (!members[index]) return;
+    members[index].bio = value;
+    renderTeamMembers();
+    renderAdminPanel();
+}
+
+function updateTeamMemberImage(index, value) {
+    const members = getTeamMembers();
+    if (!members[index]) return;
+    members[index].image = value.trim();
+    renderTeamMembers();
+    renderAdminPanel();
+}
+
+function updateAboutField(field, value) {
+    if (!TEAM_DATA || typeof TEAM_DATA !== 'object' || Array.isArray(TEAM_DATA)) {
+        TEAM_DATA = {
+            about: { ...DEFAULT_ABOUT_CONTENT },
+            members: []
+        };
+    }
+    if (!TEAM_DATA.about) TEAM_DATA.about = { ...DEFAULT_ABOUT_CONTENT };
+    TEAM_DATA.about[field] = value;
+    renderAboutContent();
+    renderAdminPanel();
+}
+
+function addTeamMember(name, role, bio, image) {
+    const members = getTeamMembers();
+    members.push({ name, role, bio, image: image || '' });
+    renderTeamMembers();
+    renderAdminPanel();
+}
+
+function deleteTeamMember(index) {
+    const members = getTeamMembers();
+    const member = members[index];
+    if (!member) return;
+    if (confirm(`Are you sure you want to delete "${member.name || 'this team member'}"?`)) {
+        members.splice(index, 1);
+        renderTeamMembers();
+        renderAdminPanel();
+    }
+}
+
+function readFileAsDataUrl(file, callback) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => callback(reader.result);
+    reader.readAsDataURL(file);
+}
+
+function slugify(value) {
+    return String(value || 'member')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'member';
+}
+
+async function uploadDataUrlToGitHub(filePath, dataUrl, label) {
+    const token = localStorage.getItem('gh_token');
+    if (!token) {
+        throw new Error('Authentication token missing. Please refresh and log in again.');
+    }
+
+    const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=${GITHUB_BRANCH}`;
+    let sha = null;
+    const getResponse = await fetch(url, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (getResponse.ok) {
+        const fileData = await getResponse.json();
+        sha = fileData.sha;
+    } else if (getResponse.status !== 404) {
+        throw new Error(`Failed to fetch ${label} metadata: ${getResponse.statusText}`);
+    }
+
+    const matches = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/);
+    if (!matches) {
+        throw new Error(`Invalid image data for ${label}.`);
+    }
+
+    const content = matches[2];
+    const versionNum = await getNextVersionNumber(token, filePath);
+    const commitMsg = versionNum ? `Upload ${filePath} (v${versionNum})` : `Upload ${filePath} - ${new Date().toISOString()}`;
+
+    const body = {
+        message: commitMsg,
+        content,
+        branch: GITHUB_BRANCH
+    };
+    if (sha) {
+        body.sha = sha;
+    }
+
+    const putHeaders = getAuthHeaders(token);
+    putHeaders['Content-Type'] = 'application/json';
+
+    const putResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: putHeaders,
+        body: JSON.stringify(body)
+    });
+
+    if (!putResponse.ok) {
+        const errData = await putResponse.json();
+        throw new Error(errData.message || `Failed to upload ${label}.`);
+    }
+}
+
+async function prepareTeamImagesForSync() {
+    const members = getTeamMembers();
+    for (let index = 0; index < members.length; index += 1) {
+        const member = members[index];
+        const image = (member.image || '').trim();
+
+        if (!image || image.startsWith('http') || image.startsWith('images/') || image.startsWith('/')) {
+            continue;
+        }
+
+        if (!image.startsWith('data:')) {
+            continue;
+        }
+
+        const mimeMatch = image.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/);
+        const mimeType = mimeMatch ? mimeMatch[1] : 'image/png';
+        const extension = mimeType.includes('png') ? 'png'
+            : mimeType.includes('webp') ? 'webp'
+            : mimeType.includes('gif') ? 'gif'
+            : 'jpg';
+
+        const fileName = `${slugify(member.name || `member-${index}`)}-${Date.now()}-${index}.${extension}`;
+        const filePath = `images/team/${fileName}`;
+
+        await uploadDataUrlToGitHub(filePath, image, `${member.name || 'Team member'} photo`);
+        member.image = filePath;
+    }
+}
+
+function updateImagePreview(value, previewId) {
+    const preview = document.getElementById(previewId);
+    if (!preview) return;
+
+    const imageValue = (value || '').trim();
+    if (!imageValue) {
+        preview.innerHTML = '<span style="font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;">No photo</span>';
+        preview.style.borderStyle = 'dashed';
+        return;
+    }
+
+    preview.style.borderStyle = 'solid';
+    preview.innerHTML = `
+        <img src="${imageValue}" alt="Team member preview" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;\'>No photo</span>';">
+    `;
+}
+
+function handleTeamMemberImageUpload(input, targetIndex) {
+    const file = input && input.files && input.files[0];
+    if (!file) return;
+
+    readFileAsDataUrl(file, (dataUrl) => {
+        if (targetIndex === 'new') {
+            const imageField = document.getElementById('newTeamMemberImage');
+            if (imageField) imageField.value = dataUrl;
+            updateImagePreview(dataUrl, 'newTeamMemberPreview');
+            return;
+        }
+        updateTeamMemberImage(targetIndex, dataUrl);
+    });
+}
+
+function handleCreateTeamMember() {
+    const nameEl = document.getElementById('newTeamMemberName');
+    const roleEl = document.getElementById('newTeamMemberRole');
+    const bioEl = document.getElementById('newTeamMemberBio');
+    const imageEl = document.getElementById('newTeamMemberImage');
+
+    const name = (nameEl?.value || '').trim();
+    const role = (roleEl?.value || '').trim();
+    const bio = (bioEl?.value || '').trim();
+    const image = (imageEl?.value || '').trim();
+
+    if (!name) {
+        alert('Please enter a team member name.');
+        return;
+    }
+
+    addTeamMember(name, role || 'Team Member', bio || '', image);
+    if (nameEl) nameEl.value = '';
+    if (roleEl) roleEl.value = '';
+    if (bioEl) bioEl.value = '';
+    if (imageEl) imageEl.value = '';
+    const fileInput = document.getElementById('newTeamMemberImageFile');
+    if (fileInput) fileInput.value = '';
+}
+
+function moveTeamMember(index, direction) {
+    const members = getTeamMembers();
+    if (direction === 'up' && index > 0) {
+        [members[index - 1], members[index]] = [members[index], members[index - 1]];
+    }
+    if (direction === 'down' && index < members.length - 1) {
+        [members[index], members[index + 1]] = [members[index + 1], members[index]];
+    }
+    renderTeamMembers();
+    renderAdminPanel();
 }
 
 function renderAdminPanel() {
@@ -406,12 +637,48 @@ function renderAdminPanel() {
         }
     });
 
+    const aboutContent = TEAM_DATA && TEAM_DATA.about ? TEAM_DATA.about : DEFAULT_ABOUT_CONTENT;
+    const members = getTeamMembers();
+
     let html = `
         <div style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
             <span id="githubSyncStatus" style="font-size: 0.9rem; color: #dfb76c;"></span>
             <div style="display: flex; gap: 10px;">
                 <button id="publishBtn" onclick="syncToGitHub()" style="background: #007bff; border-color: #007bff;">🚀 Publish Changes</button>
                 <button onclick="logoutAdmin()" style="background: #555; border-color: #555;">🔒 Lock Panel</button>
+            </div>
+        </div>
+        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+            <h4 style="color: var(--primary-gold); margin-top: 0;">About Section Content</h4>
+            <div style="display: grid; gap: 12px;">
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story label</label>
+                    <input type="text" value="${aboutContent.storyLabel || ''}" oninput="updateAboutField('storyLabel', this.value)" class="form-control">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story title</label>
+                    <input type="text" value="${aboutContent.storyTitle || ''}" oninput="updateAboutField('storyTitle', this.value)" class="form-control">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story intro</label>
+                    <textarea rows="3" oninput="updateAboutField('storyIntro', this.value)" class="form-control">${aboutContent.storyIntro || ''}</textarea>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Expanded story paragraph 1</label>
+                    <textarea rows="2" oninput="updateAboutField('storyExpanded1', this.value)" class="form-control">${aboutContent.storyExpanded1 || ''}</textarea>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Expanded story paragraph 2</label>
+                    <textarea rows="2" oninput="updateAboutField('storyExpanded2', this.value)" class="form-control">${aboutContent.storyExpanded2 || ''}</textarea>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Team label</label>
+                    <input type="text" value="${aboutContent.teamLabel || ''}" oninput="updateAboutField('teamLabel', this.value)" class="form-control">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Team description</label>
+                    <textarea rows="2" oninput="updateAboutField('teamDescription', this.value)" class="form-control">${aboutContent.teamDescription || ''}</textarea>
+                </div>
             </div>
         </div>
         <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
@@ -422,7 +689,69 @@ function renderAdminPanel() {
                 <button onclick="handleCreateCategory()" style="width: fit-content; padding: 8px 20px;">Add Category</button>
             </div>
         </div>
-        <h3 style="color: var(--primary-gold); margin-bottom: 15px;">Manage Existing Services</h3>
+        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+            <h4 style="color: var(--primary-gold); margin-top: 0;">Add New Team Member</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+                <input type="text" id="newTeamMemberName" class="form-control" placeholder="Full name">
+                <input type="text" id="newTeamMemberRole" class="form-control" placeholder="Role">
+                <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 12px;">
+                    <input type="text" id="newTeamMemberImage" class="form-control" placeholder="Photo URL or data URL" oninput="updateImagePreview(this.value, 'newTeamMemberPreview')" style="flex: 1; min-width: 0;">
+                    <div id="newTeamMemberPreview" style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.7rem; text-align: center; flex-shrink: 0;">
+                        <span style="font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;">No photo</span>
+                    </div>
+                </div>
+                <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Upload photo</label>
+                    <input type="file" id="newTeamMemberImageFile" accept="image/*" onchange="handleTeamMemberImageUpload(this, 'new')" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                </div>
+                <input type="text" id="newTeamMemberBio" class="form-control" placeholder="Short bio" style="grid-column: 1 / -1;">
+                <button onclick="handleCreateTeamMember()" style="width: fit-content; padding: 8px 20px;">Add Team Member</button>
+            </div>
+        </div>
+        <h3 style="color: var(--primary-gold); margin-bottom: 15px;">Manage Team Members</h3>
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px;">
+    `;
+
+    members.forEach((member, index) => {
+        html += `
+            <div style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;">
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <button onclick="moveTeamMember(${index}, 'up')" ${index === 0 ? 'disabled style="background: #252525; color: #555; border: 1px solid #333; cursor: not-allowed; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"' : 'style="background: #333; border: 1px solid #555; color: white; cursor: pointer; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"'}>▲</button>
+                        <button onclick="moveTeamMember(${index}, 'down')" ${index === members.length - 1 ? 'disabled style="background: #252525; color: #555; border: 1px solid #333; cursor: not-allowed; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"' : 'style="background: #333; border: 1px solid #555; color: white; cursor: pointer; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"'}>▼</button>
+                    </div>
+                    <button onclick="deleteTeamMember(${index})" style="background: #d9534f; border-color: #d9534f; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;">Delete</button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Name</span>
+                        <input type="text" value="${member.name || ''}" onchange="updateTeamMemberName(${index}, this.value)" class="form-control" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                    </div>
+                    <div>
+                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Role</span>
+                        <input type="text" value="${member.role || ''}" onchange="updateTeamMemberRole(${index}, this.value)" class="form-control" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                    </div>
+                    <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px;">
+                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Photo URL</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <input type="text" value="${member.image || ''}" onchange="updateTeamMemberImage(${index}, this.value)" oninput="updateImagePreview(this.value, 'teamMemberPreview-${index}')" class="form-control" placeholder="https://... or data URL" style="flex: 1; min-width: 0; padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                            <div id="teamMemberPreview-${index}" style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                ${member.image ? `<img src="${member.image}" alt="${(member.name || 'Team member').replace(/"/g, '&quot;')}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;&quot;>No photo</span>'">` : '<span style="font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;">No photo</span>'}
+                            </div>
+                        </div>
+                        <label style="font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Upload new photo</label>
+                        <input type="file" accept="image/*" onchange="handleTeamMemberImageUpload(this, ${index})" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Bio</span>
+                        <input type="text" value="${member.bio || ''}" onchange="updateTeamMemberBio(${index}, this.value)" class="form-control" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div><h3 style="color: var(--primary-gold); margin-bottom: 15px;">Manage Existing Services</h3>
     `;
 
     SERVICES_DATA.forEach((cat, catIdx) => {

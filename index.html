@@ -147,6 +147,224 @@
             background-color: transparent;
             color: #dfb76c;
         }
+        .about-section {
+            max-width: 1000px;
+            margin: 60px auto 0;
+            padding: 0 20px;
+        }
+        .about-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .about-expand-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid rgba(223, 183, 108, 0.5);
+            color: var(--primary-gold);
+            font-size: 1.4rem;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .about-expand-btn:hover {
+            background: rgba(223, 183, 108, 0.08);
+            transform: rotate(90deg);
+        }
+        .about-section-inner {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 30px;
+            background: var(--card-bg);
+            border: 1px solid rgba(223, 183, 108, 0.18);
+            border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border-top: 3px solid var(--primary-gold);
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            padding: 0 30px;
+            transition: max-height 0.5s ease, opacity 0.25s ease, padding 0.3s ease, margin-top 0.25s ease;
+            pointer-events: none;
+        }
+        .about-section-inner.expanded {
+            max-height: 1200px;
+            opacity: 1;
+            padding: 30px;
+            pointer-events: auto;
+        }
+        .about-expanded-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s ease, opacity 0.25s ease, margin-top 0.25s ease;
+            margin-top: 0;
+        }
+        .about-section-inner.expanded .about-expanded-content {
+            max-height: 220px;
+            opacity: 1;
+            margin-top: 16px;
+        }
+        .section-kicker {
+            color: var(--primary-gold);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            margin: 0 0 12px;
+            font-weight: 700;
+        }
+        .about-copy h2 {
+            color: var(--light-text);
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        .about-copy p {
+            color: #d7d7d7;
+            margin-bottom: 14px;
+            font-size: 1rem;
+        }
+        .about-section-inner {
+            background: linear-gradient(180deg, rgba(22,22,22,0.98), rgba(18,18,18,0.96));
+            border: 1px solid rgba(223, 183, 108, 0.18);
+            border-top: 3px solid var(--primary-gold);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+        }
+        .about-points {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 14px;
+        }
+        .about-points div {
+            background: linear-gradient(135deg, rgba(223, 183, 108, 0.10), rgba(223, 183, 108, 0.04));
+            border: 1px solid rgba(223, 183, 108, 0.18);
+            color: var(--light-text);
+            padding: 16px 18px;
+            border-radius: 4px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            box-shadow: inset 0 0 0 1px rgba(223,183,108,0.04);
+        }
+        .team-section {
+            grid-column: 1 / -1;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(223, 183, 108, 0.15);
+        }
+        .team-header {
+            text-align: left;
+            margin-bottom: 18px;
+        }
+        .team-header h3 {
+            color: var(--primary-gold);
+            margin: 0 0 6px;
+            font-size: 1.1rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .team-header p {
+            color: #d7d7d7;
+            margin: 0;
+            max-width: 620px;
+            font-size: 0.9rem;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
+        }
+        .team-card {
+            position: relative;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border: 1px solid rgba(223, 183, 108, 0.18);
+            border-radius: 12px;
+            padding: 28px 20px 22px;
+            text-align: center;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        .team-card::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto auto 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
+        }
+        .team-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(223, 183, 108, 0.38);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.18);
+        }
+        .team-photo-wrap {
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(223,183,108,0.3), rgba(223,183,108,0.08));
+            border: 1px solid rgba(223,183,108,0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .team-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .team-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(223,183,108,0.3), rgba(223,183,108,0.08));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-gold);
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+        .team-card h4 {
+            margin: 0 0 8px;
+            color: var(--light-text);
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .team-role {
+            color: var(--primary-gold);
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            margin-bottom: 12px;
+        }
+        .team-card p {
+            margin: 0;
+            color: #d7d7d7;
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+        @media (max-width: 768px) {
+            .about-section-inner {
+                grid-template-columns: 1fr;
+            }
+        }
         /* Contact Section Styles */
         .contact-section {
             max-width: 1000px;
@@ -249,6 +467,37 @@
         </div>
     </div>
 
+    <section class="about-section">
+        <div class="about-header-row">
+            <h2 style="margin: 0; text-align: center;">About Us</h2>
+            <button class="about-expand-btn" type="button" aria-expanded="false" aria-controls="aboutExpandedContent" title="Expand About Us">+</button>
+        </div>
+        <div id="aboutSectionInner" class="about-section-inner">
+            <div class="about-copy">
+                <p class="section-kicker" id="aboutStoryLabel">Our Story</p>
+                <h2 id="aboutStoryTitle">Luxury beauty, thoughtfully tailored to you.</h2>
+                <p id="aboutStoryIntro">PRICELESS Integrity brings together advanced aesthetic care, elevated service, and a calm, polished experience designed to help you feel confident in your skin.</p>
+                <div id="aboutExpandedContent" class="about-expanded-content">
+                    <p id="aboutStoryExpanded1">From skin rituals to signature treatments, every detail is curated to balance expertise, comfort, and lasting results.</p>
+                    <p id="aboutStoryExpanded2">We believe beauty should feel elevated, personal, and restorative — a moment of care that leaves you feeling polished from the inside out.</p>
+                </div>
+            </div>
+            <div class="about-points">
+                <div>Personalized care</div>
+                <div>Luxury experience</div>
+                <div>Expert treatments</div>
+            </div>
+
+            <div class="team-section">
+                <div class="team-header">
+                    <p class="section-kicker" id="aboutTeamLabel">Our Team</p>
+                    <h3 id="aboutTeamDescription">Skilled professionals devoted to delivering a refined and memorable experience.</h3>
+                </div>
+                <div class="team-grid" id="teamGrid"></div>
+            </div>
+        </div>
+    </section>
+
     <div class="contact-section">
         <h2 style="text-align: center; margin-bottom: 30px;">Contact Us</h2>
         <div class="contact-grid">
@@ -282,6 +531,7 @@
 
     <!-- Load modularized business logic files -->
     <script src="services.js"></script>
+    <script src="team.js"></script>
     <script src="admin.js"></script>
     <script src="contact.js"></script>
     <script>
@@ -289,8 +539,19 @@
             document.getElementById('introScreen').classList.add('hidden');
         }
 
+        const aboutBtn = document.querySelector('.about-expand-btn');
+        const aboutSection = document.getElementById('aboutSectionInner');
+        if (aboutBtn && aboutSection) {
+            aboutBtn.addEventListener('click', function () {
+                const isExpanded = aboutSection.classList.toggle('expanded');
+                aboutBtn.textContent = isExpanded ? '−' : '+';
+                aboutBtn.setAttribute('aria-expanded', String(isExpanded));
+            });
+        }
+
         // Initialize and display the services dynamically
         loadServicesData();
+        loadTeamData();
         renderOwnerDetails();
         renderFooter();
     </script>
