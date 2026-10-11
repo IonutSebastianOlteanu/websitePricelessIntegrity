@@ -2,6 +2,7 @@ const GITHUB_REPO = 'IonutSebastianOlteanu/websitePricelessIntegrity';
 const GITHUB_BRANCH = 'main';
 const GITHUB_FILE_PATH = 'services.json';
 const TEAM_FILE_PATH = 'team.json';
+let RESOLVED_GITHUB_BRANCH = null;
 
 function getAuthHeaders(token) {
     const prefix = localStorage.getItem('gh_token_prefix') || 'token';
@@ -23,7 +24,6 @@ async function validateGitHubToken(token) {
 
         if (response.status === 401) {
             prefix = 'Bearer';
-            // Fallback to Bearer token format if 'token' prefix isn't accepted
             response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -33,8 +33,11 @@ async function validateGitHubToken(token) {
         }
 
         if (response.ok) {
+            const repoData = await response.json().catch(() => null);
+            const defaultBranch = repoData && repoData.default_branch ? repoData.default_branch : GITHUB_BRANCH;
+            RESOLVED_GITHUB_BRANCH = defaultBranch;
             localStorage.setItem('gh_token_prefix', prefix);
-            return { isValid: true, status: response.status, message: "OK" };
+            return { isValid: true, status: response.status, message: "OK", defaultBranch };
         } else {
             let errorMsg = response.statusText;
             try {
@@ -46,6 +49,25 @@ async function validateGitHubToken(token) {
     } catch (e) {
         return { isValid: false, status: 0, message: e.message || "Network Error" };
     }
+}
+
+async function resolveGitHubBranch(token) {
+    if (RESOLVED_GITHUB_BRANCH) {
+        return RESOLVED_GITHUB_BRANCH;
+    }
+
+    const repoResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (repoResponse.ok) {
+        const repoData = await repoResponse.json().catch(() => null);
+        const branchName = (repoData && repoData.default_branch) ? repoData.default_branch : GITHUB_BRANCH;
+        RESOLVED_GITHUB_BRANCH = branchName;
+        return branchName;
+    }
+
+    return GITHUB_BRANCH;
 }
 
 async function accessOwnerPortal() {
@@ -283,7 +305,8 @@ function handleCreateItem(catIdx) {
 
 async function getNextVersionNumber(token, filePath) {
     try {
-        const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?path=${filePath}&sha=${GITHUB_BRANCH}&per_page=100`, {
+        const branchName = await resolveGitHubBranch(token);
+        const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/commits?path=${filePath}&sha=${branchName}&per_page=100`, {
             headers: getAuthHeaders(token)
         });
         if (response.ok) {
@@ -296,13 +319,64 @@ async function getNextVersionNumber(token, filePath) {
     return null;
 }
 
+async function ensureGitHubDirectoryExists(token, directoryPath) {
+    if (!directoryPath || directoryPath === '.') {
+        return;
+    }
+
+    const branchName = await resolveGitHubBranch(token);
+    const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${directoryPath}?ref=${branchName}`, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (response.ok) {
+        return;
+    }
+
+    const parentDir = directoryPath.split('/').slice(0, -1).join('/');
+    if (parentDir) {
+        await ensureGitHubDirectoryExists(token, parentDir);
+    }
+
+    const placeholderName = directoryPath.split('/').pop() || 'folder';
+    const placeholderPath = `${directoryPath}/.gitkeep`;
+    const placeholderResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${placeholderPath}?ref=${branchName}`, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (placeholderResponse.ok) {
+        return;
+    }
+
+    const createBody = {
+        message: `Create ${placeholderPath}`,
+        content: btoa(''),
+        branch: branchName
+    };
+
+    const putHeaders = getAuthHeaders(token);
+    putHeaders['Content-Type'] = 'application/json';
+
+    const createResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${placeholderPath}`, {
+        method: 'PUT',
+        headers: putHeaders,
+        body: JSON.stringify(createBody)
+    });
+
+    if (!createResponse.ok) {
+        const createData = await createResponse.json().catch(() => ({}));
+        throw new Error(`Unable to create the ${placeholderName} folder in GitHub: ${createData.message || createResponse.statusText}`);
+    }
+}
+
 async function publishJsonToGitHub(filePath, data, label) {
     const token = localStorage.getItem('gh_token');
     if (!token) {
         throw new Error('Authentication token missing. Please refresh and log in again.');
     }
 
-    const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=${GITHUB_BRANCH}`;
+    const branchName = await resolveGitHubBranch(token);
+    const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=${branchName}`;
     let sha = null;
     const getResponse = await fetch(url, {
         headers: getAuthHeaders(token)
@@ -326,7 +400,7 @@ async function publishJsonToGitHub(filePath, data, label) {
     const body = {
         message: commitMsg,
         content: base64Content,
-        branch: GITHUB_BRANCH
+        branch: branchName
     };
     if (sha) {
         body.sha = sha;
@@ -342,8 +416,9 @@ async function publishJsonToGitHub(filePath, data, label) {
     });
 
     if (!putResponse.ok) {
-        const errData = await putResponse.json();
-        throw new Error(errData.message || `Failed to commit ${label}.`);
+        const errData = await putResponse.json().catch(() => ({}));
+        const errorMessage = errData.message || `Failed to commit ${label}.`;
+        throw new Error(errorMessage);
     }
 }
 
@@ -361,19 +436,32 @@ async function syncToGitHub() {
     }
 
     try {
-        await prepareTeamImagesForSync();
+        const token = localStorage.getItem('gh_token');
+        if (!token) {
+            throw new Error('Authentication token missing. Please log in again.');
+        }
 
-        await Promise.all([
-            publishJsonToGitHub(GITHUB_FILE_PATH, SERVICES_DATA, 'services'),
-            publishJsonToGitHub(TEAM_FILE_PATH, TEAM_DATA, 'team')
-        ]);
+        const branchName = await resolveGitHubBranch(token);
+        if (!branchName) {
+            throw new Error('GitHub branch could not be resolved for this repository.');
+        }
+
+        const imageFiles = await prepareTeamImagesForSync();
+        const fileChanges = [
+            { path: GITHUB_FILE_PATH, content: JSON.stringify(SERVICES_DATA, null, 4) },
+            { path: TEAM_FILE_PATH, content: JSON.stringify(TEAM_DATA, null, 4) },
+            ...imageFiles
+        ];
+
+        await createGitHubTreeCommit(token, fileChanges, `Update website content (${new Date().toISOString()})`);
 
         alert("Successfully published your updates!\n\nYou have been logged out automatically for security.");
         if (statusIndicator) statusIndicator.innerText = "Sync Successful!";
         logoutAdmin(true);
     } catch (error) {
         console.error("GitHub Sync Error:", error);
-        alert(`Error syncing with GitHub: ${error.message}`);
+        const details = error && error.message ? error.message : String(error);
+        alert(`Error syncing with GitHub: ${details}\n\nIf this is a new repo or branch, verify the token can write to this repository and that the repo default branch is 'main' or 'master'.`);
         if (statusIndicator) statusIndicator.innerText = "Sync failed.";
     } finally {
         if (publishBtn) {
@@ -463,23 +551,133 @@ function slugify(value) {
         .replace(/^-+|-+$/g, '') || 'member';
 }
 
+async function createGitHubTreeCommit(token, fileChanges, message) {
+    if (!fileChanges || !fileChanges.length) {
+        return null;
+    }
+
+    const branchName = await resolveGitHubBranch(token);
+    const refResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/ref/heads/${branchName}`, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (!refResponse.ok) {
+        throw new Error(`Unable to resolve the GitHub branch for this repository.`);
+    }
+
+    const refData = await refResponse.json();
+    const currentCommitSha = refData.object.sha;
+    const currentCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits/${currentCommitSha}`, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (!currentCommitResponse.ok) {
+        throw new Error(`Unable to inspect the latest GitHub commit.`);
+    }
+
+    const currentCommitData = await currentCommitResponse.json();
+    const treeEntries = [];
+
+    for (const file of fileChanges) {
+        const normalizedPath = String(file.path || '').replace(/^\/+/, '');
+        if (!normalizedPath) {
+            continue;
+        }
+
+        let blobContent = file.content;
+        let encoding = 'utf-8';
+
+        if (typeof blobContent === 'object' && blobContent !== null) {
+            blobContent = JSON.stringify(blobContent, null, 4);
+        }
+
+        const dataUrlMatch = String(blobContent || '').match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/);
+        if (dataUrlMatch) {
+            blobContent = dataUrlMatch[2];
+            encoding = 'base64';
+        }
+
+        const blobResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/blobs`, {
+            method: 'POST',
+            headers: getAuthHeaders(token),
+            body: JSON.stringify({
+                content: blobContent,
+                encoding
+            })
+        });
+
+        if (!blobResponse.ok) {
+            const blobError = await blobResponse.json().catch(() => ({}));
+            throw new Error(blobError.message || `Failed to stage ${normalizedPath}.`);
+        }
+
+        const blobData = await blobResponse.json();
+        treeEntries.push({
+            path: normalizedPath,
+            mode: '100644',
+            type: 'blob',
+            sha: blobData.sha
+        });
+    }
+
+    const treeResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/trees`, {
+        method: 'POST',
+        headers: getAuthHeaders(token),
+        body: JSON.stringify({
+            base_tree: currentCommitData.tree.sha,
+            tree: treeEntries
+        })
+    });
+
+    if (!treeResponse.ok) {
+        const treeError = await treeResponse.json().catch(() => ({}));
+        throw new Error(treeError.message || 'Failed to stage the GitHub changeset.');
+    }
+
+    const treeData = await treeResponse.json();
+    const newCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits`, {
+        method: 'POST',
+        headers: getAuthHeaders(token),
+        body: JSON.stringify({
+            message,
+            tree: treeData.sha,
+            parents: [currentCommitSha]
+        })
+    });
+
+    if (!newCommitResponse.ok) {
+        const commitError = await newCommitResponse.json().catch(() => ({}));
+        throw new Error(commitError.message || 'Failed to create the GitHub commit.');
+    }
+
+    const newCommitData = await newCommitResponse.json();
+    const refPatchResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/refs/heads/${branchName}`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(token),
+        body: JSON.stringify({
+            sha: newCommitData.sha,
+            force: false
+        })
+    });
+
+    if (!refPatchResponse.ok) {
+        const refError = await refPatchResponse.json().catch(() => ({}));
+        throw new Error(refError.message || 'Failed to finalize the GitHub commit.');
+    }
+
+    return newCommitData.sha;
+}
+
 async function uploadDataUrlToGitHub(filePath, dataUrl, label) {
     const token = localStorage.getItem('gh_token');
     if (!token) {
         throw new Error('Authentication token missing. Please refresh and log in again.');
     }
 
-    const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}?ref=${GITHUB_BRANCH}`;
-    let sha = null;
-    const getResponse = await fetch(url, {
-        headers: getAuthHeaders(token)
-    });
-
-    if (getResponse.ok) {
-        const fileData = await getResponse.json();
-        sha = fileData.sha;
-    } else if (getResponse.status !== 404) {
-        throw new Error(`Failed to fetch ${label} metadata: ${getResponse.statusText}`);
+    const branchName = await resolveGitHubBranch(token);
+    const folderPath = filePath.split('/').slice(0, -1).join('/');
+    if (folderPath) {
+        await ensureGitHubDirectoryExists(token, folderPath);
     }
 
     const matches = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/);
@@ -491,32 +689,102 @@ async function uploadDataUrlToGitHub(filePath, dataUrl, label) {
     const versionNum = await getNextVersionNumber(token, filePath);
     const commitMsg = versionNum ? `Upload ${filePath} (v${versionNum})` : `Upload ${filePath} - ${new Date().toISOString()}`;
 
-    const body = {
-        message: commitMsg,
-        content,
-        branch: GITHUB_BRANCH
+    const treeEntry = {
+        path: filePath,
+        mode: '100644',
+        type: 'blob',
+        content: content,
+        encoding: 'base64'
     };
-    if (sha) {
-        body.sha = sha;
-    }
 
-    const putHeaders = getAuthHeaders(token);
-    putHeaders['Content-Type'] = 'application/json';
-
-    const putResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${filePath}`, {
-        method: 'PUT',
-        headers: putHeaders,
-        body: JSON.stringify(body)
+    const blobResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/blobs`, {
+        method: 'POST',
+        headers: getAuthHeaders(token),
+        body: JSON.stringify({
+            content,
+            encoding: 'base64'
+        })
     });
 
-    if (!putResponse.ok) {
-        const errData = await putResponse.json();
+    if (!blobResponse.ok) {
+        const errData = await blobResponse.json().catch(() => ({}));
         throw new Error(errData.message || `Failed to upload ${label}.`);
+    }
+
+    const blobData = await blobResponse.json();
+    const refResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/ref/heads/${branchName}`, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (!refResponse.ok) {
+        throw new Error(`Unable to resolve the GitHub branch for ${label}.`);
+    }
+
+    const refData = await refResponse.json();
+    const currentCommitSha = refData.object.sha;
+    const commitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits/${currentCommitSha}`, {
+        headers: getAuthHeaders(token)
+    });
+
+    if (!commitResponse.ok) {
+        throw new Error(`Unable to inspect the latest GitHub commit for ${label}.`);
+    }
+
+    const commitData = await commitResponse.json();
+    const treeResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/trees`, {
+        method: 'POST',
+        headers: getAuthHeaders(token),
+        body: JSON.stringify({
+            base_tree: commitData.tree.sha,
+            tree: [{
+                path: filePath,
+                mode: '100644',
+                type: 'blob',
+                sha: blobData.sha
+            }]
+        })
+    });
+
+    if (!treeResponse.ok) {
+        const treeData = await treeResponse.json().catch(() => ({}));
+        throw new Error(treeData.message || `Failed to stage ${label}.`);
+    }
+
+    const treeData = await treeResponse.json();
+    const newCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits`, {
+        method: 'POST',
+        headers: getAuthHeaders(token),
+        body: JSON.stringify({
+            message: commitMsg,
+            tree: treeData.sha,
+            parents: [currentCommitSha]
+        })
+    });
+
+    if (!newCommitResponse.ok) {
+        const commitData = await newCommitResponse.json().catch(() => ({}));
+        throw new Error(commitData.message || `Failed to commit ${label}.`);
+    }
+
+    const newCommitData = await newCommitResponse.json();
+    const patchRefResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/refs/heads/${branchName}`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(token),
+        body: JSON.stringify({
+            sha: newCommitData.sha,
+            force: false
+        })
+    });
+
+    if (!patchRefResponse.ok) {
+        const patchData = await patchRefResponse.json().catch(() => ({}));
+        throw new Error(patchData.message || `Failed to finalize ${label} upload.`);
     }
 }
 
 async function prepareTeamImagesForSync() {
     const members = getTeamMembers();
+    const uploads = [];
     for (let index = 0; index < members.length; index += 1) {
         const member = members[index];
         const image = (member.image || '').trim();
@@ -539,9 +807,10 @@ async function prepareTeamImagesForSync() {
         const fileName = `${slugify(member.name || `member-${index}`)}-${Date.now()}-${index}.${extension}`;
         const filePath = `images/team/${fileName}`;
 
-        await uploadDataUrlToGitHub(filePath, image, `${member.name || 'Team member'} photo`);
         member.image = filePath;
+        uploads.push({ path: filePath, content: image });
     }
+    return uploads;
 }
 
 function updateImagePreview(value, previewId) {
