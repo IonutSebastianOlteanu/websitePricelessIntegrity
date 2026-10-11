@@ -191,6 +191,7 @@
             max-width: 1000px;
             margin: 60px auto 0;
             padding: 0 20px;
+            scroll-margin-top: 90px;
         }
         .about-header-row {
             display: flex;
@@ -236,7 +237,7 @@
             pointer-events: none;
         }
         .about-section-inner.expanded {
-            max-height: 1200px;
+            max-height: 2200px;
             opacity: 1;
             padding: 30px;
             pointer-events: auto;
@@ -403,6 +404,9 @@
         @media (max-width: 768px) {
             .about-section-inner {
                 grid-template-columns: 1fr;
+            }
+            .about-section-inner.expanded {
+                max-height: 3200px;
             }
         }
         /* Contact Section Styles */
@@ -590,6 +594,10 @@
                 const isExpanded = aboutSection.classList.toggle('expanded');
                 aboutBtn.textContent = isExpanded ? '−' : '+';
                 aboutBtn.setAttribute('aria-expanded', String(isExpanded));
+
+                if (isExpanded) {
+                    aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
             });
         }
 
