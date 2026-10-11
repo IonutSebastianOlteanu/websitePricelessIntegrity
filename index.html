@@ -20,84 +20,185 @@
             line-height: 1.6;
         }
         header {
-            background: #111111;
-            padding: 1rem 5%;
-            text-align: center;
+            background: #000000;
+            padding: 0 5%;
             color: var(--primary-gold);
             border-bottom: 1px solid rgba(223, 183, 108, 0.15);
         }
         .top-nav {
-            max-width: 1000px;
+            max-width: 1200px;
+            min-height: 104px;
             margin: 0 auto;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 0;
-            flex-wrap: wrap;
-        }
-        .top-nav a {
+            justify-content: flex-end;
             position: relative;
-            color: rgba(245,245,245,0.82);
+        }
+        .brand-mark {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        .menu-toggle {
+            position: relative;
+            z-index: 1;
+            display: inline-grid;
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            min-height: 48px;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 1px solid rgba(223, 183, 108, 0.4);
+            border-radius: 50%;
+            background: transparent;
+            color: var(--primary-gold);
+            cursor: pointer;
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .menu-toggle:hover {
+            border-color: var(--primary-gold);
+            background: rgba(223, 183, 108, 0.08);
+            color: var(--primary-gold);
+        }
+        .menu-toggle:focus-visible {
+            outline: 2px solid var(--primary-gold);
+            outline-offset: 3px;
+        }
+        .top-nav.is-open .menu-toggle {
+            border-color: var(--primary-gold);
+            background: rgba(223, 183, 108, 0.08);
+            color: var(--primary-gold);
+        }
+        .menu-toggle .fa-bars,
+        .menu-toggle .fa-xmark {
+            color: var(--primary-gold);
+            font-size: 1.1rem;
+        }
+        .nav-links {
+            position: absolute;
+            z-index: 20;
+            top: calc(100% - 1px);
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            width: 210px;
+            max-width: 100%;
+            min-height: 0;
+            max-height: 0;
+            padding: 0;
+            overflow: hidden;
+            background: var(--card-bg);
+            border: 0 solid rgba(223, 183, 108, 0.3);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-8px);
+            transform-origin: top right;
+            border-radius: 3px;
+            transition: max-height 0.18s ease, padding 0.18s ease, border-width 0.18s ease, opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
+        }
+        .top-nav.is-open .nav-links {
+            max-height: 200px;
+            padding: 8px 0;
+            border-width: 1px;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
+            transition: max-height 0.18s ease, padding 0.18s ease, border-width 0.18s ease, opacity 0.18s ease, transform 0.18s ease, visibility 0s;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .nav-links,
+            .top-nav.is-open .nav-links {
+                transition: none;
+                transform: none;
+            }
+        }
+        .nav-links a {
+            position: relative;
+            color: var(--primary-gold);
             text-decoration: none;
             font-size: 0.74rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            padding: 8px 18px;
+            padding: 12px 18px;
             transition: color 0.2s ease, opacity 0.2s ease;
         }
-        .top-nav a + a {
-            border-left: 1px solid rgba(223, 183, 108, 0.18);
-        }
-        .top-nav a::after {
+        .nav-links a::after {
             content: "";
             position: absolute;
             left: 18px;
             right: 18px;
-            bottom: 4px;
+            bottom: 7px;
             height: 1px;
             background: var(--primary-gold);
             transform: scaleX(0);
-            transform-origin: center;
+            transform-origin: left;
             transition: transform 0.2s ease;
         }
-        .top-nav a:hover {
+        .nav-links a:hover {
+            background: rgba(223, 183, 108, 0.08);
             color: var(--primary-gold);
         }
-        .top-nav a:hover::after {
+        .nav-links a:hover::after {
             transform: scaleX(1);
         }
         .hero {
-            padding: 60px 20px;
+            min-height: 420px;
+            padding: 48px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
             text-align: center;
-            background: none;
-            filter: none;
-            background-size: auto;
+            background-image: url("backgroundSecondPage_2.jpg");
+            background-size: cover;
             background-position: center;
-        }
-        /* 📱 Mobile styles (add these at the end) */
-        @media (max-width: 600px) {
-            .hero {
-                background-size: auto;
-                background-position: center;
-                padding: 20px 15px; 
-             }
+            background-repeat: no-repeat;
+            box-sizing: border-box;
         }
         .hero h1 {
+            max-width: 860px;
+            margin: 0;
             font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--primary-gold);
+            color: #3b211b;
             font-weight: 600;
-            letter-spacing: 0.01em;
             line-height: 1.25;
             font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
             font-style: italic;
             text-transform: none;
-            text-shadow: 0 0 18px rgba(223, 183, 108, 0.10);
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.45);
         }
         .hero p {
-            font-size: 1.5rem;
-            margin-top: 0;
-            margin-bottom: 2rem;
+            max-width: 620px;
+            margin: 0;
+            color: #3b211b;
+            font-size: 1.25rem;
+            line-height: 1.5;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.45);
+        }
+        @media (max-width: 600px) {
+            .hero {
+                min-height: 300px;
+                padding: 36px 20px;
+            }
+            .hero h1 {
+                max-width: 300px;
+                font-size: 1.5rem;
+            }
+            .hero p {
+                max-width: 300px;
+                font-size: 1rem;
+            }
         }
         .container h2 {
             color: var(--primary-gold);
@@ -493,14 +594,21 @@
 
     <header>
         <nav class="top-nav" aria-label="Main navigation">
-            <a href="#services">Our Services</a>
-            <a href="#about">About Us</a>
-            <a href="#contact">Contact Us</a>
+            <img class="brand-mark" src="salonIntro.jpeg" alt="Madam Beauty by PRICELESS Integrity">
+            <button class="menu-toggle" type="button" aria-label="Open navigation" title="Open navigation" aria-expanded="false" aria-controls="mainNavLinks">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <div class="nav-links" id="mainNavLinks">
+                <a href="#services">Our Services</a>
+                <a href="#about">About Us</a>
+                <a href="#contact">Contact Us</a>
+            </div>
         </nav>
     </header>
 
     <section class="hero">
-        <h1>Expert beauty services tailored just for you!</h1>
+        <h1>Beauty With Intention. Care With Integrity.</h1>
+        <p>Experience facials and advanced skincare, designed around your individual needs.</p>
     </section>
 
     <div id="services" class="container">
@@ -586,6 +694,34 @@
         function closeIntro() {
             document.getElementById('introScreen').classList.add('hidden');
         }
+
+        const mainNav = document.querySelector('.top-nav');
+        const menuToggle = document.querySelector('.menu-toggle');
+        const closeMenu = function () {
+            mainNav.classList.remove('is-open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            menuToggle.setAttribute('aria-label', 'Open navigation');
+            menuToggle.title = 'Open navigation';
+            menuToggle.innerHTML = '<i class="fa-solid fa-bars" aria-hidden="true"></i>';
+        };
+        menuToggle.addEventListener('click', function () {
+            const isOpen = mainNav.classList.toggle('is-open');
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
+            menuToggle.setAttribute('aria-label', isOpen ? 'Close navigation' : 'Open navigation');
+            menuToggle.title = isOpen ? 'Close navigation' : 'Open navigation';
+            menuToggle.innerHTML = isOpen
+                ? '<i class="fa-solid fa-xmark" aria-hidden="true"></i>'
+                : '<i class="fa-solid fa-bars" aria-hidden="true"></i>';
+        });
+        mainNav.querySelectorAll('.nav-links a').forEach(function (link) {
+            link.addEventListener('click', closeMenu);
+        });
+        document.addEventListener('click', function (event) {
+            if (!event.composedPath().includes(mainNav)) closeMenu();
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') closeMenu();
+        });
 
         const aboutBtn = document.querySelector('.about-expand-btn');
         const aboutSection = document.getElementById('aboutSectionInner');
