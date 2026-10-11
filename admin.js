@@ -557,115 +557,131 @@ async function createGitHubTreeCommit(token, fileChanges, message) {
     }
 
     const branchName = await resolveGitHubBranch(token);
-    const refResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/ref/heads/${branchName}`, {
-        headers: getAuthHeaders(token)
-    });
+    let lastKnownCommitSha = null;
 
-    if (!refResponse.ok) {
-        throw new Error(`Unable to resolve the GitHub branch for this repository.`);
-    }
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+        const refResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/ref/heads/${branchName}`, {
+            headers: getAuthHeaders(token)
+        });
 
-    const refData = await refResponse.json();
-    const currentCommitSha = refData.object.sha;
-    const currentCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits/${currentCommitSha}`, {
-        headers: getAuthHeaders(token)
-    });
-
-    if (!currentCommitResponse.ok) {
-        throw new Error(`Unable to inspect the latest GitHub commit.`);
-    }
-
-    const currentCommitData = await currentCommitResponse.json();
-    const treeEntries = [];
-
-    for (const file of fileChanges) {
-        const normalizedPath = String(file.path || '').replace(/^\/+/, '');
-        if (!normalizedPath) {
-            continue;
+        if (!refResponse.ok) {
+            throw new Error(`Unable to resolve the GitHub branch for this repository.`);
         }
 
-        let blobContent = file.content;
-        let encoding = 'utf-8';
+        const refData = await refResponse.json();
+        const currentCommitSha = refData.object.sha;
+        lastKnownCommitSha = currentCommitSha;
 
-        if (typeof blobContent === 'object' && blobContent !== null) {
-            blobContent = JSON.stringify(blobContent, null, 4);
+        const currentCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits/${currentCommitSha}`, {
+            headers: getAuthHeaders(token)
+        });
+
+        if (!currentCommitResponse.ok) {
+            throw new Error(`Unable to inspect the latest GitHub commit.`);
         }
 
-        const dataUrlMatch = String(blobContent || '').match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/);
-        if (dataUrlMatch) {
-            blobContent = dataUrlMatch[2];
-            encoding = 'base64';
+        const currentCommitData = await currentCommitResponse.json();
+        const treeEntries = [];
+
+        for (const file of fileChanges) {
+            const normalizedPath = String(file.path || '').replace(/^\/+/, '');
+            if (!normalizedPath) {
+                continue;
+            }
+
+            let blobContent = file.content;
+            let encoding = 'utf-8';
+
+            if (typeof blobContent === 'object' && blobContent !== null) {
+                blobContent = JSON.stringify(blobContent, null, 4);
+            }
+
+            const dataUrlMatch = String(blobContent || '').match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.*)$/);
+            if (dataUrlMatch) {
+                blobContent = dataUrlMatch[2];
+                encoding = 'base64';
+            }
+
+            const blobResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/blobs`, {
+                method: 'POST',
+                headers: getAuthHeaders(token),
+                body: JSON.stringify({
+                    content: blobContent,
+                    encoding
+                })
+            });
+
+            if (!blobResponse.ok) {
+                const blobError = await blobResponse.json().catch(() => ({}));
+                throw new Error(blobError.message || `Failed to stage ${normalizedPath}.`);
+            }
+
+            const blobData = await blobResponse.json();
+            treeEntries.push({
+                path: normalizedPath,
+                mode: '100644',
+                type: 'blob',
+                sha: blobData.sha
+            });
         }
 
-        const blobResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/blobs`, {
+        const treeResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/trees`, {
             method: 'POST',
             headers: getAuthHeaders(token),
             body: JSON.stringify({
-                content: blobContent,
-                encoding
+                base_tree: currentCommitData.tree.sha,
+                tree: treeEntries
             })
         });
 
-        if (!blobResponse.ok) {
-            const blobError = await blobResponse.json().catch(() => ({}));
-            throw new Error(blobError.message || `Failed to stage ${normalizedPath}.`);
+        if (!treeResponse.ok) {
+            const treeError = await treeResponse.json().catch(() => ({}));
+            throw new Error(treeError.message || 'Failed to stage the GitHub changeset.');
         }
 
-        const blobData = await blobResponse.json();
-        treeEntries.push({
-            path: normalizedPath,
-            mode: '100644',
-            type: 'blob',
-            sha: blobData.sha
+        const treeData = await treeResponse.json();
+        const newCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits`, {
+            method: 'POST',
+            headers: getAuthHeaders(token),
+            body: JSON.stringify({
+                message,
+                tree: treeData.sha,
+                parents: [currentCommitSha]
+            })
         });
+
+        if (!newCommitResponse.ok) {
+            const commitError = await newCommitResponse.json().catch(() => ({}));
+            throw new Error(commitError.message || 'Failed to create the GitHub commit.');
+        }
+
+        const newCommitData = await newCommitResponse.json();
+        const refPatchResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/refs/heads/${branchName}`, {
+            method: 'PATCH',
+            headers: getAuthHeaders(token),
+            body: JSON.stringify({
+                sha: newCommitData.sha,
+                force: false
+            })
+        });
+
+        if (refPatchResponse.ok) {
+            return newCommitData.sha;
+        }
+
+        const refErrorData = await refPatchResponse.json().catch(() => ({}));
+        const refErrorMessage = refErrorData.message || 'Failed to finalize the GitHub commit.';
+
+        if (!refErrorMessage.includes('expected') && !refErrorMessage.includes('is at')) {
+            throw new Error(refErrorMessage);
+        }
+
+        if (attempt === 2) {
+            throw new Error(refErrorMessage);
+        }
     }
 
-    const treeResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/trees`, {
-        method: 'POST',
-        headers: getAuthHeaders(token),
-        body: JSON.stringify({
-            base_tree: currentCommitData.tree.sha,
-            tree: treeEntries
-        })
-    });
-
-    if (!treeResponse.ok) {
-        const treeError = await treeResponse.json().catch(() => ({}));
-        throw new Error(treeError.message || 'Failed to stage the GitHub changeset.');
-    }
-
-    const treeData = await treeResponse.json();
-    const newCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/commits`, {
-        method: 'POST',
-        headers: getAuthHeaders(token),
-        body: JSON.stringify({
-            message,
-            tree: treeData.sha,
-            parents: [currentCommitSha]
-        })
-    });
-
-    if (!newCommitResponse.ok) {
-        const commitError = await newCommitResponse.json().catch(() => ({}));
-        throw new Error(commitError.message || 'Failed to create the GitHub commit.');
-    }
-
-    const newCommitData = await newCommitResponse.json();
-    const refPatchResponse = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/git/refs/heads/${branchName}`, {
-        method: 'PATCH',
-        headers: getAuthHeaders(token),
-        body: JSON.stringify({
-            sha: newCommitData.sha,
-            force: false
-        })
-    });
-
-    if (!refPatchResponse.ok) {
-        const refError = await refPatchResponse.json().catch(() => ({}));
-        throw new Error(refError.message || 'Failed to finalize the GitHub commit.');
-    }
-
-    return newCommitData.sha;
+    return lastKnownCommitSha;
 }
 
 async function uploadDataUrlToGitHub(filePath, dataUrl, label) {
