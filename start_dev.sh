@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the project directory
-PROJECT_DIR="/home/olteanuionutsebastian/websitePricelessIntegrity"
+PROJECT_DIR=./ #current directory, adjust as needed
 PORT=8000
 
 # Navigate to the project directory
