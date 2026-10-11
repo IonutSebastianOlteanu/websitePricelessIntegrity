@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "python -m http.server 8000",
+    "build": "node -e \"const fs=require('fs'); const path=require('path'); const out='dist'; fs.rmSync(out,{recursive:true,force:true}); fs.mkdirSync(out,{recursive:true}); const ignore=new Set(['.git','.venv','node_modules','dist']); for (const entry of fs.readdirSync('.')) { if (ignore.has(entry)) continue; const full=path.join('.',entry); const stat=fs.statSync(full); if (stat.isDirectory()) { fs.cpSync(full, path.join(out, entry), { recursive: true }); } else { fs.copyFileSync(full, path.join(out, entry)); } }\"",
     "validate": "node validate-site.js",
-    "check": "npm run validate"
+    "check": "npm run validate",
+    "deploy": "npm run build && npx wrangler deploy"
   }
 }
