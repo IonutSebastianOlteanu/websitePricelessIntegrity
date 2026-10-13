@@ -899,6 +899,7 @@ function moveTeamMember(index, direction) {
 }
 
 function renderAdminPanel() {
+    loadOwnerData();
     const container = document.getElementById('adminPanelContent');
     if (!container) return;
 
@@ -963,6 +964,31 @@ function renderAdminPanel() {
                 <div>
                     <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Team description</label>
                     <textarea rows="2" oninput="updateAboutField('teamDescription', this.value)" class="form-control">${aboutContent.teamDescription || ''}</textarea>
+                </div>
+            </div>
+        </div>
+        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+            <h4 style="color: var(--primary-gold); margin-top: 0;">Contact Us Section</h4>
+            <div style="display: grid; gap: 12px;">
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Description</label>
+                    <textarea rows="3" oninput="updateOwnerField('description', this.value)" class="form-control">${OWNER_DATA.description || ''}</textarea>
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Phone</label>
+                    <input type="text" value="${OWNER_DATA.phone || ''}" oninput="updateOwnerField('phone', this.value)" class="form-control">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
+                    <input type="text" value="${OWNER_DATA.email || ''}" oninput="updateOwnerField('email', this.value)" class="form-control">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Address</label>
+                    <input type="text" value="${OWNER_DATA.address || ''}" oninput="updateOwnerField('address', this.value)" class="form-control">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Hours / Program</label>
+                    <input type="text" value="${OWNER_DATA.program || ''}" oninput="updateOwnerField('program', this.value)" class="form-control">
                 </div>
             </div>
         </div>

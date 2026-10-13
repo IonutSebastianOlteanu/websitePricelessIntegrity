@@ -1,4 +1,5 @@
-const OWNER_DATA = {
+const OWNER_DATA_STORAGE_KEY = 'owner_contact_data';
+const DEFAULT_OWNER_DATA = {
     description: "Madam Beauty is proudly managed by PRICELESS Integrity, dedicated to delivering a premium, elite beauty experience tailored completely to you.",
     phone: "+1 (347) 299-2782",
     email: "contact@priceless-integrity.com",
@@ -6,23 +7,46 @@ const OWNER_DATA = {
     program: "Mon - Fri: 09:00 - 21:00 | Sat: 09:00 - 18:00 | Sun: Closed"
 };
 
+let OWNER_DATA = { ...DEFAULT_OWNER_DATA };
+
+function loadOwnerData() {
+    try {
+        const stored = JSON.parse(localStorage.getItem(OWNER_DATA_STORAGE_KEY) || '{}');
+        OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...stored };
+    } catch (error) {
+        OWNER_DATA = { ...DEFAULT_OWNER_DATA };
+    }
+    return OWNER_DATA;
+}
+
+function saveOwnerData() {
+    localStorage.setItem(OWNER_DATA_STORAGE_KEY, JSON.stringify(OWNER_DATA));
+}
+
+function updateOwnerField(field, value) {
+    OWNER_DATA[field] = value;
+    saveOwnerData();
+    renderOwnerDetails();
+}
+
 function renderOwnerDetails() {
+    const currentOwnerData = loadOwnerData();
     const card = document.getElementById('ownerCard');
     if (!card) return;
     card.innerHTML = `
         <h3>Salon & Owner Details</h3>
-        <p style="color: #aaa; margin-bottom: 25px;">${OWNER_DATA.description}</p>
+        <p style="color: #aaa; margin-bottom: 25px;">${currentOwnerData.description}</p>
         <div class="contact-info-item">
-            <p><strong>Phone:</strong> <a href="tel:${OWNER_DATA.phone}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(255, 255, 255, 0.3)'">${OWNER_DATA.phone}</a></p>
+            <p><strong>Phone:</strong> <a href="tel:${currentOwnerData.phone}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(255, 255, 255, 0.3)'">${currentOwnerData.phone}</a></p>
         </div>
         <div class="contact-info-item">
-            <p><strong>Email:</strong> <a href="mailto:${OWNER_DATA.email}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(255, 255, 255, 0.3)'">${OWNER_DATA.email}</a></p>
+            <p><strong>Email:</strong> <a href="mailto:${currentOwnerData.email}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(255, 255, 255, 0.3)'">${currentOwnerData.email}</a></p>
         </div>
         <div class="contact-info-item">
-            <p><strong>Address:</strong> ${OWNER_DATA.address}</p>
+            <p><strong>Address:</strong> ${currentOwnerData.address}</p>
         </div>
         <div class="contact-info-item" style="margin-top: 15px;">
-            <p><strong>Program:</strong> ${OWNER_DATA.program}</p>
+            <p><strong>Program:</strong> ${currentOwnerData.program}</p>
         </div>
     `;
 }
