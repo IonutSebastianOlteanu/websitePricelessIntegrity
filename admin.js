@@ -450,6 +450,7 @@ async function syncToGitHub() {
         const fileChanges = [
             { path: GITHUB_FILE_PATH, content: JSON.stringify(SERVICES_DATA, null, 4) },
             { path: TEAM_FILE_PATH, content: JSON.stringify(TEAM_DATA, null, 4) },
+            { path: 'contact.json', content: JSON.stringify(OWNER_DATA, null, 4) },
             ...imageFiles
         ];
 

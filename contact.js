@@ -1,4 +1,5 @@
 const OWNER_DATA_STORAGE_KEY = 'owner_contact_data';
+const CONTACT_FILE_PATH = 'contact.json';
 const DEFAULT_OWNER_DATA = {
     description: "Madam Beauty is proudly managed by PRICELESS Integrity, dedicated to delivering a premium, elite beauty experience tailored completely to you.",
     phone: "+1 (347) 299-2782",
@@ -9,7 +10,19 @@ const DEFAULT_OWNER_DATA = {
 
 let OWNER_DATA = { ...DEFAULT_OWNER_DATA };
 
-function loadOwnerData() {
+async function loadOwnerData() {
+    try {
+        const response = await fetch(CONTACT_FILE_PATH);
+        if (response.ok) {
+            const fileData = await response.json();
+            OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...fileData };
+            localStorage.setItem(OWNER_DATA_STORAGE_KEY, JSON.stringify(OWNER_DATA));
+            return OWNER_DATA;
+        }
+    } catch (error) {
+        console.error('Error loading contact data:', error);
+    }
+
     try {
         const stored = JSON.parse(localStorage.getItem(OWNER_DATA_STORAGE_KEY) || '{}');
         OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...stored };
@@ -29,8 +42,8 @@ function updateOwnerField(field, value) {
     renderOwnerDetails();
 }
 
-function renderOwnerDetails() {
-    const currentOwnerData = loadOwnerData();
+async function renderOwnerDetails() {
+    const currentOwnerData = await loadOwnerData();
     const card = document.getElementById('ownerCard');
     if (!card) return;
     card.innerHTML = `
