@@ -2,6 +2,7 @@ const GITHUB_REPO = 'IonutSebastianOlteanu/websitePricelessIntegrity';
 const GITHUB_BRANCH = 'main';
 const GITHUB_FILE_PATH = 'services.json';
 const TEAM_FILE_PATH = 'team.json';
+const CONTACT_FILE_PATH = 'contact.json';
 let RESOLVED_GITHUB_BRANCH = null;
 
 function getAuthHeaders(token) {
@@ -450,7 +451,7 @@ async function syncToGitHub() {
         const fileChanges = [
             { path: GITHUB_FILE_PATH, content: JSON.stringify(SERVICES_DATA, null, 4) },
             { path: TEAM_FILE_PATH, content: JSON.stringify(TEAM_DATA, null, 4) },
-            { path: 'contact.json', content: JSON.stringify(OWNER_DATA, null, 4) },
+            { path: CONTACT_FILE_PATH, content: JSON.stringify(OWNER_DATA, null, 4) },
             ...imageFiles
         ];
 
