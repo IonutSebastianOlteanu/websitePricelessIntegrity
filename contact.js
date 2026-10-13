@@ -12,6 +12,16 @@ let OWNER_DATA = { ...DEFAULT_OWNER_DATA };
 
 async function loadOwnerData() {
     try {
+        const stored = JSON.parse(localStorage.getItem(OWNER_DATA_STORAGE_KEY) || 'null');
+        if (stored && typeof stored === 'object') {
+            OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...stored };
+            return OWNER_DATA;
+        }
+    } catch (error) {
+        console.warn('Invalid owner contact data in localStorage; falling back to file data.', error);
+    }
+
+    try {
         const response = await fetch(CONTACT_FILE_PATH);
         if (response.ok) {
             const fileData = await response.json();
@@ -23,12 +33,7 @@ async function loadOwnerData() {
         console.error('Error loading contact data:', error);
     }
 
-    try {
-        const stored = JSON.parse(localStorage.getItem(OWNER_DATA_STORAGE_KEY) || '{}');
-        OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...stored };
-    } catch (error) {
-        OWNER_DATA = { ...DEFAULT_OWNER_DATA };
-    }
+    OWNER_DATA = { ...DEFAULT_OWNER_DATA };
     return OWNER_DATA;
 }
 
