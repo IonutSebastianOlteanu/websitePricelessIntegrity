@@ -12,25 +12,24 @@ let OWNER_DATA = { ...DEFAULT_OWNER_DATA };
 
 async function loadOwnerData() {
     try {
+        const response = await fetch(OWNER_CONTACT_FILE_PATH, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const fileData = await response.json();
+        OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...fileData };
+        localStorage.setItem(OWNER_DATA_STORAGE_KEY, JSON.stringify(OWNER_DATA));
+        return OWNER_DATA;
+    } catch (error) {
+        console.error('Error loading contact data:', error);
+    }
+
+    try {
         const stored = JSON.parse(localStorage.getItem(OWNER_DATA_STORAGE_KEY) || 'null');
         if (stored && typeof stored === 'object') {
             OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...stored };
             return OWNER_DATA;
         }
     } catch (error) {
-        console.warn('Invalid owner contact data in localStorage; falling back to file data.', error);
-    }
-
-    try {
-        const response = await fetch(OWNER_CONTACT_FILE_PATH);
-        if (response.ok) {
-            const fileData = await response.json();
-            OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...fileData };
-            localStorage.setItem(OWNER_DATA_STORAGE_KEY, JSON.stringify(OWNER_DATA));
-            return OWNER_DATA;
-        }
-    } catch (error) {
-        console.error('Error loading contact data:', error);
+        console.warn('Invalid owner contact data in localStorage.', error);
     }
 
     OWNER_DATA = { ...DEFAULT_OWNER_DATA };
@@ -44,11 +43,11 @@ function saveOwnerData() {
 function updateOwnerField(field, value) {
     OWNER_DATA[field] = value;
     saveOwnerData();
-    renderOwnerDetails();
+    renderOwnerDetails(OWNER_DATA);
 }
 
-async function renderOwnerDetails() {
-    const currentOwnerData = await loadOwnerData();
+async function renderOwnerDetails(ownerData) {
+    const currentOwnerData = ownerData || await loadOwnerData();
     const card = document.getElementById('ownerCard');
     if (!card) return;
     card.innerHTML = `

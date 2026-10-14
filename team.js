@@ -74,7 +74,7 @@ function renderAboutContent() {
 
 async function loadTeamData() {
     try {
-        const response = await fetch('team.json');
+        const response = await fetch('team.json', { cache: 'no-store' });
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }

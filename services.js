@@ -2,7 +2,10 @@ let SERVICES_DATA = [];
 
 async function loadServicesData() {
     try {
-        const response = await fetch('services.json');
+        const response = await fetch('services.json', { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
         SERVICES_DATA = await response.json();
         renderServices();
     } catch (error) {

@@ -114,7 +114,7 @@ async function accessOwnerPortal(providedToken = '') {
     const result = await validateGitHubToken(token);
     if (result.isValid) {
         localStorage.setItem('gh_token', token);
-        await loadOwnerData();
+        await Promise.all([loadServicesData(), loadTeamData(), loadOwnerData()]);
         renderAdminPanel();
         const panel = document.getElementById('adminPanelSection');
         panel.style.display = 'block';
