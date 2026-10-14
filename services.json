@@ -23,7 +23,7 @@
                 "duration": "75 minutes",
                 "price": "",
                 "variants": [],
-                "originalPrice": "$750"
+                "originalPrice": "$800"
             },
             {
                 "name": "Regenerative Facial Treatment",
@@ -32,6 +32,36 @@
                 "price": "",
                 "variants": [],
                 "originalPrice": "$575"
+            }
+        ]
+    },
+    {
+        "title": "Chemical Peel",
+        "description": "",
+        "details": [
+            {
+                "name": "VI Peel",
+                "description": "Medium-depth chemical treatment designed to improve skin tone, texture, and clarity while stimulating collagen production.Safe and effective for all skin types and tones, including darker complexions.\nGenerally well-tolerated , visible peeling typically begins around day two or three and resolves within a week.",
+                "duration": "30 minutes",
+                "price": "",
+                "originalPrice": "$ 800",
+                "variants": []
+            },
+            {
+                "name": "PRX",
+                "description": "Non-invasive,  biorevitalizing skin therapy, stimulate deep collagen and elastin production without causing surface-level flaking or downtime.\nBenefits: firms and tightens, smooths skin texture, and evens skin tone.",
+                "duration": "30 minutes",
+                "price": "",
+                "originalPrice": "$ 700",
+                "variants": []
+            },
+            {
+                "name": "BioRePeel",
+                "description": "Helps clear active breakouts, reduce pore size, and smooth post-acne marks.\nGradually fades sun damage and evens out overall skin tone.\nAn innovative, two-phase chemical peel featuring trichloroacetic acid (TCA) designed to rejuvenate the skin with minimal downtime.",
+                "duration": "30 minutes",
+                "price": "",
+                "originalPrice": "$ 350",
+                "variants": []
             }
         ]
     }
