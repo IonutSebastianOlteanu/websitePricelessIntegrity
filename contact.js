@@ -1,5 +1,5 @@
 const OWNER_DATA_STORAGE_KEY = 'owner_contact_data';
-const CONTACT_FILE_PATH = 'contact.json';
+const OWNER_CONTACT_FILE_PATH = 'contact.json';
 const DEFAULT_OWNER_DATA = {
     description: "Madam Beauty is proudly managed by PRICELESS Integrity, dedicated to delivering a premium, elite beauty experience tailored completely to you.",
     phone: "+1 (347) 299-2782",
@@ -22,7 +22,7 @@ async function loadOwnerData() {
     }
 
     try {
-        const response = await fetch(CONTACT_FILE_PATH);
+        const response = await fetch(OWNER_CONTACT_FILE_PATH);
         if (response.ok) {
             const fileData = await response.json();
             OWNER_DATA = { ...DEFAULT_OWNER_DATA, ...fileData };

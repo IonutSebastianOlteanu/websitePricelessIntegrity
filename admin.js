@@ -71,17 +71,50 @@ async function resolveGitHubBranch(token) {
     return GITHUB_BRANCH;
 }
 
-async function accessOwnerPortal() {
-    let token = localStorage.getItem('gh_token');
-    if (!token) {
-        token = prompt("Please enter your admin password:");
-        if (!token) return;
-        token = token.trim();
+function showOwnerLogin(message = '') {
+    const panel = document.getElementById('adminPanelSection');
+    const container = document.getElementById('adminPanelContent');
+    if (!panel || !container) return;
+
+    container.innerHTML = `
+        <form id="ownerLoginForm" style="max-width: 420px; margin: 0 auto; display: grid; gap: 12px;">
+            <label for="ownerGitHubToken">Enter password provided by administrator</label>
+            <input id="ownerGitHubToken" type="password" autocomplete="current-password" required class="form-control">
+            <p id="ownerLoginMessage" role="alert" style="margin: 0; color: #f0a6a6;"></p>
+            <button type="submit">Unlock owner portal</button>
+        </form>
+    `;
+    const messageElement = document.getElementById('ownerLoginMessage');
+    if (messageElement) messageElement.textContent = message;
+    document.getElementById('ownerLoginForm').addEventListener('submit', event => {
+        event.preventDefault();
+        accessOwnerPortal(document.getElementById('ownerGitHubToken').value);
+    });
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function accessOwnerPortal(providedToken = '') {
+    const panel = document.getElementById('adminPanelSection');
+    const loginForm = document.getElementById('ownerLoginForm');
+    if (!providedToken && panel && panel.style.display !== 'none' && loginForm) {
+        const passwordInput = document.getElementById('ownerGitHubToken');
+        if (passwordInput) passwordInput.value = '';
+        panel.style.display = 'none';
+        return;
     }
+
+    let token = localStorage.getItem('gh_token') || providedToken.trim();
+    if (!token) {
+        showOwnerLogin();
+        return;
+    }
+    token = token.trim();
 
     const result = await validateGitHubToken(token);
     if (result.isValid) {
         localStorage.setItem('gh_token', token);
+        await loadOwnerData();
         renderAdminPanel();
         const panel = document.getElementById('adminPanelSection');
         panel.style.display = 'block';
@@ -96,7 +129,7 @@ async function accessOwnerPortal() {
         } else {
             errorHint = `\n\nDetails: ${result.message} (Status Code: ${result.status})`;
         }
-        alert("Invalid or unauthorized GitHub token. Access Denied." + errorHint);
+        showOwnerLogin(`Access denied.${errorHint}`);
     }
 }
 
@@ -901,7 +934,6 @@ function moveTeamMember(index, direction) {
 }
 
 function renderAdminPanel() {
-    loadOwnerData();
     const container = document.getElementById('adminPanelContent');
     if (!container) return;
 
