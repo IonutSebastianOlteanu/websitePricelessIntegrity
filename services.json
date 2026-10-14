@@ -34,27 +34,5 @@
                 "originalPrice": "$575"
             }
         ]
-    },
-    {
-        "title": "Chemicall Peels",
-        "description": "",
-        "details": [
-            {
-                "name": "VI Peel",
-                "description": "Medium-depth chemical treatment designed to improve skin tone, texture and clarity while stimulating collagen production.Safe and effective for all skin types and tones, including darker complexions. Generally well-tolerated , visible peeling typically begins around day two or three and resolves within a week.",
-                "duration": "30 minutes",
-                "price": "",
-                "originalPrice": "$500",
-                "variants": []
-            },
-            {
-                "name": "BioRePeel",
-                "description": "An innovative, two-phase chemical peel featuring trichloroacetic acid (TCA) designed to rejuvenate the skin with minimal downtime. Helps clear active breakouts, reduce pore size, and smooth post-acne marks. Gradually fades sun damage and evens out overall skin tone.",
-                "duration": "30 minutes",
-                "price": "",
-                "originalPrice": "$375",
-                "variants": []
-            }
-        ]
     }
 ]
