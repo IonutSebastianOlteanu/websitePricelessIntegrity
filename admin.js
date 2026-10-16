@@ -244,6 +244,12 @@ function updateItemName(categoryIndex, itemIndex, newName) {
     renderAdminPanel();
 }
 
+function updateCategoryTitle(categoryIndex, newTitle) {
+    SERVICES_DATA[categoryIndex].title = newTitle;
+    renderServices();
+    renderAdminPanel();
+}
+
 function updateItemDescription(categoryIndex, itemIndex, newDescription) {
     SERVICES_DATA[categoryIndex].details[itemIndex].description = newDescription;
     renderServices();
@@ -988,10 +994,6 @@ function renderAdminPanel() {
                     <textarea rows="2" oninput="updateAboutField('storyExpanded1', this.value)" class="form-control">${aboutContent.storyExpanded1 || ''}</textarea>
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Expanded story paragraph 2</label>
-                    <textarea rows="2" oninput="updateAboutField('storyExpanded2', this.value)" class="form-control">${aboutContent.storyExpanded2 || ''}</textarea>
-                </div>
-                <div>
                     <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Team label</label>
                     <input type="text" value="${aboutContent.teamLabel || ''}" oninput="updateAboutField('teamLabel', this.value)" class="form-control">
                 </div>
@@ -1103,7 +1105,7 @@ function renderAdminPanel() {
         html += `
             <div style="background: #1b1b1b; padding: 20px; border-radius: 4px; margin-bottom: 20px; border-left: 3px solid var(--primary-gold);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <h4 style="margin: 0; color: #fff;">${cat.title}</h4>
+                    <input type="text" aria-label="Category name" value="${cat.title}" onchange="updateCategoryTitle(${catIdx}, this.value)" class="form-control" style="max-width: 360px; padding: 8px; font-size: 1rem; font-weight: bold; color: #fff;">
                     <button onclick="deleteCategory(${catIdx})" style="background: #d9534f; border-color: #d9534f; color: white; padding: 5px 10px; font-size: 0.8rem;">Delete Category</button>
                 </div>
                 <p style="font-size: 0.9rem; color: #888; margin-bottom: 15px;">${cat.description}</p>

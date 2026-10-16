@@ -3,7 +3,6 @@ const DEFAULT_ABOUT_CONTENT = {
     storyTitle: 'Luxury beauty, thoughtfully tailored to you.',
     storyIntro: 'PRICELESS Integrity brings together advanced aesthetic care, elevated service, and a calm, polished experience designed to help you feel confident in your skin.',
     storyExpanded1: 'From skin rituals to signature treatments, every detail is curated to balance expertise, comfort, and lasting results.',
-    storyExpanded2: 'We believe beauty should feel elevated, personal, and restorative — a moment of care that leaves you feeling polished from the inside out.',
     teamLabel: 'Our Team',
     teamDescription: 'Skilled professionals devoted to delivering a refined and memorable experience.'
 };
@@ -59,7 +58,6 @@ function renderAboutContent() {
     const storyTitle = document.getElementById('aboutStoryTitle');
     const storyIntro = document.getElementById('aboutStoryIntro');
     const storyExpanded1 = document.getElementById('aboutStoryExpanded1');
-    const storyExpanded2 = document.getElementById('aboutStoryExpanded2');
     const teamLabel = document.getElementById('aboutTeamLabel');
     const teamDescription = document.getElementById('aboutTeamDescription');
 
@@ -67,7 +65,6 @@ function renderAboutContent() {
     if (storyTitle) storyTitle.textContent = about.storyTitle || DEFAULT_ABOUT_CONTENT.storyTitle;
     if (storyIntro) storyIntro.textContent = about.storyIntro || DEFAULT_ABOUT_CONTENT.storyIntro;
     if (storyExpanded1) storyExpanded1.textContent = about.storyExpanded1 || DEFAULT_ABOUT_CONTENT.storyExpanded1;
-    if (storyExpanded2) storyExpanded2.textContent = about.storyExpanded2 || DEFAULT_ABOUT_CONTENT.storyExpanded2;
     if (teamLabel) teamLabel.textContent = about.teamLabel || 'Our Team';
     if (teamDescription) teamDescription.textContent = about.teamDescription || DEFAULT_ABOUT_CONTENT.teamDescription;
 }
