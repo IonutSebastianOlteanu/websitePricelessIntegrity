@@ -7,6 +7,57 @@ let RESOLVED_GITHUB_BRANCH = null;
 let BOOKING_REQUESTS = null;
 let BOOKING_REQUESTS_ERROR = '';
 let BOOKING_REQUESTS_PROMISE = null;
+let ADMIN_ACTIVE_TAB = 'bookings';
+let ADMIN_SAVED_SNAPSHOT = null;
+
+// Unpublished-change tracking: compare current content with what was loaded or last published
+function getAdminSnapshot() {
+    return JSON.stringify([SERVICES_DATA, TEAM_DATA, OWNER_DATA]);
+}
+
+function hasUnpublishedChanges() {
+    return ADMIN_SAVED_SNAPSHOT !== null && getAdminSnapshot() !== ADMIN_SAVED_SNAPSHOT;
+}
+
+function updateUnsavedIndicator() {
+    const indicator = document.getElementById('adminUnsavedStatus');
+    const publishBtn = document.getElementById('publishBtn');
+    if (!indicator) return;
+    const dirty = hasUnpublishedChanges();
+    indicator.textContent = dirty ? '● Unpublished changes' : '✓ All changes published';
+    indicator.classList.toggle('is-dirty', dirty);
+    if (publishBtn) publishBtn.classList.toggle('is-attention', dirty);
+}
+
+function setAdminTab(tab) {
+    ADMIN_ACTIVE_TAB = tab;
+    document.querySelectorAll('[data-admin-panel]').forEach(section => {
+        section.hidden = section.dataset.adminPanel !== tab;
+    });
+    document.querySelectorAll('.admin-tab').forEach(button => {
+        const isActive = button.dataset.tab === tab;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-selected', String(isActive));
+    });
+}
+
+function updatePendingBookingsBadge() {
+    const badge = document.getElementById('pendingBookingsBadge');
+    if (!badge) return;
+    const pending = Array.isArray(BOOKING_REQUESTS)
+        ? BOOKING_REQUESTS.filter(booking => booking.status === 'pending').length
+        : 0;
+    badge.textContent = pending;
+    badge.hidden = pending === 0;
+}
+
+window.addEventListener('beforeunload', event => {
+    const panel = document.getElementById('adminPanelSection');
+    if (panel && panel.style.display !== 'none' && hasUnpublishedChanges()) {
+        event.preventDefault();
+        event.returnValue = '';
+    }
+});
 
 function getAuthHeaders(token) {
     const prefix = localStorage.getItem('gh_token_prefix') || 'token';
@@ -137,6 +188,11 @@ async function accessOwnerPortal(providedToken = '') {
 }
 
 function logoutAdmin(quiet = false) {
+    if (!quiet && hasUnpublishedChanges()
+        && !confirm('You have unpublished changes. Lock the panel anyway? Your changes will be lost.')) {
+        return;
+    }
+    ADMIN_SAVED_SNAPSHOT = null;
     localStorage.removeItem('gh_token');
     localStorage.removeItem('gh_token_prefix');
     BOOKING_REQUESTS = null;
@@ -152,6 +208,7 @@ function renderBookingRequests() {
     const container = document.getElementById('bookingRequestsList');
     if (!container) return;
     container.replaceChildren();
+    updatePendingBookingsBadge();
 
     if (BOOKING_REQUESTS_ERROR) {
         container.textContent = BOOKING_REQUESTS_ERROR;
@@ -1078,21 +1135,30 @@ function renderAdminPanel() {
     const members = getTeamMembers();
 
     let html = `
-        <div style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span id="githubSyncStatus" style="font-size: 0.9rem; color: var(--primary-gold);"></span>
-            <div style="display: flex; gap: 10px;">
+        <div class="admin-toolbar">
+            <div class="admin-status">
+                <span id="adminUnsavedStatus" class="admin-unsaved" role="status" aria-live="polite"></span>
+                <span id="githubSyncStatus" class="admin-sync-status"></span>
+            </div>
+            <div class="admin-toolbar-actions">
                 <button id="publishBtn" onclick="syncToGitHub()">🚀 Publish Changes</button>
-                <button onclick="logoutAdmin()" style="background: var(--card-bg); border-color: var(--gold-line); color: var(--primary-gold);">🔒 Lock Panel</button>
+                <button onclick="logoutAdmin()" class="admin-secondary-btn">🔒 Lock Panel</button>
             </div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
+        <div class="admin-tabs" role="tablist" aria-label="Owner portal sections">
+            <button type="button" class="admin-tab" role="tab" data-tab="bookings" onclick="setAdminTab('bookings')">📅 Bookings <span id="pendingBookingsBadge" class="admin-badge" hidden>0</span></button>
+            <button type="button" class="admin-tab" role="tab" data-tab="services" onclick="setAdminTab('services')">💆 Services</button>
+            <button type="button" class="admin-tab" role="tab" data-tab="team" onclick="setAdminTab('team')">👥 Team</button>
+            <button type="button" class="admin-tab" role="tab" data-tab="content" onclick="setAdminTab('content')">📝 About &amp; Contact</button>
+        </div>
+        <div data-admin-panel="bookings" style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
                 <h4 style="color: var(--primary-gold); margin: 0;">Booking Requests</h4>
                 <button type="button" onclick="refreshBookingRequests()" style="padding: 8px 12px;">Refresh</button>
             </div>
             <div id="bookingRequestsList" role="status" aria-live="polite" style="margin-top: 12px;"></div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
+        <div data-admin-panel="content" style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <h4 style="color: var(--primary-gold); margin-top: 0;">About Section Content</h4>
             <div style="display: grid; gap: 12px;">
                 <div>
@@ -1121,7 +1187,7 @@ function renderAdminPanel() {
                 </div>
             </div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
+        <div data-admin-panel="content" style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <h4 style="color: var(--primary-gold); margin-top: 0;">Contact Us Section</h4>
             <div style="display: grid; gap: 12px;">
                 <div>
@@ -1146,7 +1212,7 @@ function renderAdminPanel() {
                 </div>
             </div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
+        <div data-admin-panel="services" class="admin-add-block" style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <h4 style="color: var(--primary-gold); margin-top: 0;">Add New Service Category</h4>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <input type="text" id="newCatTitle" class="form-control" placeholder="Category Title (e.g., Massage)">
@@ -1154,7 +1220,7 @@ function renderAdminPanel() {
                 <button onclick="handleCreateCategory()" style="width: fit-content; padding: 8px 20px;">Add Category</button>
             </div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
+        <div data-admin-panel="team" class="admin-add-block" style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <h4 style="color: var(--primary-gold); margin-top: 0;">Add New Team Member</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
                 <input type="text" id="newTeamMemberName" class="form-control" placeholder="Full name">
@@ -1173,8 +1239,10 @@ function renderAdminPanel() {
                 <button onclick="handleCreateTeamMember()" style="width: fit-content; padding: 8px 20px;">Add Team Member</button>
             </div>
         </div>
+        <section data-admin-panel="team">
         <h3 style="color: var(--primary-gold); margin-bottom: 15px;">Manage Team Members</h3>
         <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px;">
+        ${members.length ? '' : '<p class="admin-empty">No team members yet. Use the form below to add the first one.</p>'}
     `;
 
     members.forEach((member, index) => {
@@ -1216,7 +1284,10 @@ function renderAdminPanel() {
         `;
     });
 
-    html += `</div><h3 style="color: var(--primary-gold); margin-bottom: 15px;">Manage Existing Services</h3>
+    html += `</div></section>
+        <section data-admin-panel="services">
+        <h3 style="color: var(--primary-gold); margin-bottom: 15px;">Manage Existing Services</h3>
+        ${SERVICES_DATA.length ? '' : '<p class="admin-empty">No service categories yet. Use the form below to add the first one.</p>'}
     `;
 
     SERVICES_DATA.forEach((cat, catIdx) => {
@@ -1354,7 +1425,21 @@ function renderAdminPanel() {
         `;
     });
 
+    html += `</section>`;
+
     container.innerHTML = html;
+    setAdminTab(ADMIN_ACTIVE_TAB);
+
+    // First render after login: remember the loaded content (after the price normalization above)
+    if (ADMIN_SAVED_SNAPSHOT === null) ADMIN_SAVED_SNAPSHOT = getAdminSnapshot();
+    updateUnsavedIndicator();
+    if (!container.dataset.changeTracking) {
+        container.dataset.changeTracking = 'true';
+        ['input', 'change', 'click'].forEach(type => {
+            container.addEventListener(type, () => setTimeout(updateUnsavedIndicator, 0));
+        });
+    }
+
     renderBookingRequests();
     if (BOOKING_REQUESTS === null && !BOOKING_REQUESTS_ERROR && !BOOKING_REQUESTS_PROMISE) loadBookingRequests();
 }

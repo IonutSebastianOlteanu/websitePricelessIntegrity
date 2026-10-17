@@ -873,6 +873,136 @@
         #adminPanelSection h3 {
             color: var(--primary-gold);
         }
+        /* Owner portal layout: sticky toolbar, tabs, and "add new" forms below each list */
+        #adminPanelContent {
+            display: flex;
+            flex-direction: column;
+        }
+        #adminPanelContent [hidden] {
+            display: none !important;
+        }
+        #adminPanelContent .admin-add-block {
+            order: 1;
+        }
+        .admin-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 0 -30px 16px;
+            padding: 12px 30px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--gold-line);
+            box-shadow: 0 6px 14px rgba(120, 88, 40, 0.06);
+        }
+        .admin-status {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .admin-unsaved {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+        .admin-unsaved.is-dirty {
+            color: #b3261e;
+        }
+        .admin-sync-status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .admin-toolbar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .admin-secondary-btn {
+            background: var(--card-bg);
+            border-color: var(--gold-line);
+            color: var(--primary-gold);
+        }
+        #publishBtn.is-attention {
+            box-shadow: 0 0 0 3px rgba(223, 183, 108, 0.45);
+        }
+        .admin-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--gold-line);
+        }
+        .admin-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: -1px;
+            padding: 10px 16px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 4px 4px 0 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .admin-tab:hover {
+            color: var(--primary-gold);
+            background: rgba(223, 183, 108, 0.08);
+            filter: none;
+        }
+        .admin-tab.is-active {
+            background: var(--card-bg);
+            border-color: var(--gold-line);
+            border-bottom-color: var(--card-bg);
+            border-top: 3px solid var(--gold-bright);
+            color: var(--primary-gold);
+        }
+        .admin-badge {
+            min-width: 20px;
+            padding: 1px 7px;
+            border-radius: 10px;
+            background: #b3261e;
+            color: #fff;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .admin-empty {
+            margin: 0;
+            padding: 16px;
+            border: 1px dashed var(--gold-line);
+            border-radius: 4px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .admin-toolbar {
+                padding-top: 10px;
+                padding-bottom: 10px;
+                gap: 8px;
+            }
+            .admin-toolbar-actions {
+                width: 100%;
+                flex-wrap: nowrap;
+            }
+            .admin-toolbar-actions button {
+                flex: 1;
+                padding: 9px 10px;
+                font-size: 0.78rem;
+            }
+            .admin-tab {
+                flex: 1 1 45%;
+                justify-content: center;
+                padding: 10px 8px;
+                font-size: 0.82rem;
+            }
+        }
         #adminPanelSection button:disabled {
             cursor: not-allowed;
             filter: none;
