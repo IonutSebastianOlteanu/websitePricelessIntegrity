@@ -121,12 +121,12 @@ async function renderOwnerDetails(ownerData) {
     if (!card) return;
     card.innerHTML = `
         <h3>Salon & Owner Details</h3>
-        <p style="color: #aaa; margin-bottom: 25px;">${currentOwnerData.description}</p>
+        <p style="color: var(--text-muted); margin-bottom: 25px;">${currentOwnerData.description}</p>
         <div class="contact-info-item">
-            <p><strong>Phone:</strong> <a href="tel:${currentOwnerData.phone}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(255, 255, 255, 0.3)'">${currentOwnerData.phone}</a></p>
+            <p><strong>Phone:</strong> <a href="tel:${currentOwnerData.phone}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(169, 125, 51, 0.4); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(169, 125, 51, 0.4)'">${currentOwnerData.phone}</a></p>
         </div>
         <div class="contact-info-item">
-            <p><strong>Email:</strong> <a href="mailto:${currentOwnerData.email}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.3); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(255, 255, 255, 0.3)'">${currentOwnerData.email}</a></p>
+            <p><strong>Email:</strong> <a href="mailto:${currentOwnerData.email}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(169, 125, 51, 0.4); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(169, 125, 51, 0.4)'">${currentOwnerData.email}</a></p>
         </div>
         <div class="contact-info-item">
             <p><strong>Address:</strong> ${currentOwnerData.address}</p>

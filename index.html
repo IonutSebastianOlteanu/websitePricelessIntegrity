@@ -5,29 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MADAM BEAUTY | by PRICELESS Integrity</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Lato:wght@300;400;700&display=swap">
     <style>
+        /* Ivory and polished-gold palette taken from the Madam Beauty logo artwork */
         :root {
-            --primary-gold: #dfb76c; /* Vibrant gold from logo */
-            --light-text: #f5f5f5;
-            --dark-bg: #0b0b0b; /* Deep rich black */
-            --card-bg: #161616; /* Premium dark grey for contrast */
+            --primary-gold: #96702c; /* Deep gold, readable as text on ivory */
+            --gold-bright: #dfb76c; /* Highlight gold from the logo */
+            --gold-metal: linear-gradient(135deg, #f1dca0 0%, #d4ac5c 45%, #a97d33 100%);
+            --gold-line: rgba(169, 125, 51, 0.25);
+            --light-text: #3b2a1a; /* Main text: warm espresso brown */
+            --text-muted: #6e5a43;
+            --dark-bg: #faf6eb; /* Page background: ivory cream from the logo */
+            --card-bg: #fffdf8;
+            --field-bg: #ffffff;
+            --field-border: #e3d6bb;
+            --card-shadow: 0 10px 30px rgba(120, 88, 40, 0.10);
+            --heading-font: "Cinzel", Georgia, "Times New Roman", serif;
         }
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Lato", Arial, sans-serif;
             margin: 0;
             background-color: var(--dark-bg);
             color: var(--light-text);
             line-height: 1.6;
         }
+        h1, h2, h3 {
+            font-family: var(--heading-font);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+        /* Gold line-diamond-line ornament, echoing the flourish under the logo */
+        .container > h2::after,
+        .contact-section > h2::after,
+        .about-header-row h2::after {
+            content: "";
+            display: block;
+            width: 140px;
+            height: 10px;
+            margin: 10px auto 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='10' viewBox='0 0 140 10'%3E%3Cpath d='M0 5h58M82 5h58' stroke='%23c9a052' stroke-width='1'/%3E%3Ccircle cx='62' cy='5' r='1.6' fill='%23c9a052'/%3E%3Ccircle cx='78' cy='5' r='1.6' fill='%23c9a052'/%3E%3Cpath d='M70 0l4 5-4 5-4-5z' fill='%23c9a052'/%3E%3C/svg%3E") no-repeat center;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+        ::selection {
+            background: rgba(223, 183, 108, 0.35);
+            color: #3b2a1a;
+        }
+        .service-card:focus-visible,
+        .about-expand-btn:focus-visible,
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid var(--primary-gold);
+            outline-offset: 3px;
+        }
+        /* Brand wordmark in the header, styled like the logo lettering */
+        .brand {
+            margin-right: auto;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+            text-decoration: none;
+            color: var(--primary-gold);
+        }
+        .brand-name {
+            font-family: var(--heading-font);
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+        }
+        .brand-tagline {
+            margin-top: 4px;
+            font-size: 0.68rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        @media (max-width: 900px) {
+            .brand {
+                display: none;
+            }
+        }
         header {
-            background: #000000;
+            background: var(--card-bg);
             padding: 0 5%;
             color: var(--primary-gold);
-            border-bottom: 1px solid rgba(223, 183, 108, 0.15);
+            border-bottom: 1px solid var(--gold-line);
+            box-shadow: 0 2px 18px rgba(120, 88, 40, 0.06);
         }
         .top-nav {
             max-width: 1200px;
-            min-height: 104px;
+            min-height: 88px;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -42,12 +117,15 @@
             max-width: calc(100% - 104px);
             padding: 12px 18px;
             transform: translate(-50%, -50%);
-            border: 1px solid rgba(223, 183, 108, 0.6);
+            border: 1px solid #c9a052;
             border-radius: 3px;
-            background: var(--card-bg);
-            color: var(--primary-gold);
+            background: var(--gold-metal);
+            color: #3b2a1a;
+            font-family: var(--heading-font);
             font-size: 0.9rem;
             font-weight: 700;
+            letter-spacing: 0.06em;
+            box-shadow: 0 4px 14px rgba(169, 125, 51, 0.25);
             line-height: 1.25;
             text-align: center;
             cursor: pointer;
@@ -56,7 +134,8 @@
         .booking-toggle:hover,
         .booking-toggle[aria-expanded="true"] {
             border-color: var(--primary-gold);
-            background: rgba(223, 183, 108, 0.12);
+            filter: brightness(1.05);
+            box-shadow: 0 6px 18px rgba(169, 125, 51, 0.35);
         }
         .booking-toggle:focus-visible {
             outline: 2px solid var(--primary-gold);
@@ -113,8 +192,8 @@
             padding: 0;
             overflow: hidden;
             background: var(--card-bg);
-            border: 0 solid rgba(223, 183, 108, 0.3);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+            border: 0 solid var(--gold-line);
+            box-shadow: 0 12px 24px rgba(120, 88, 40, 0.15);
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
@@ -179,28 +258,88 @@
             justify-content: center;
             gap: 14px;
             text-align: center;
-            background-image: url("backgroundSecondPage_2.jpg");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background-color: #faf6eb; /* Same cream as the logo artwork */
+            border-bottom: 1px solid var(--gold-line);
             box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero > * {
+            position: relative;
+            z-index: 1;
+        }
+        /* Gold ribbon corners cut from the intro artwork (images/intro-logo.jpg, 970x967) */
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            background-image: url("images/intro-logo.jpg");
+            background-size: 970px 967px;
+            background-repeat: no-repeat;
+            pointer-events: none;
+        }
+        .hero::before {
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 165px;
+            background-position: left top;
+            -webkit-mask-image:
+                linear-gradient(to right, #000 55%, transparent),
+                linear-gradient(to bottom, #000 55%, transparent);
+            -webkit-mask-composite: source-in;
+            mask-image:
+                linear-gradient(to right, #000 55%, transparent),
+                linear-gradient(to bottom, #000 55%, transparent);
+            mask-composite: intersect;
+        }
+        .hero::after {
+            right: 0;
+            bottom: 0;
+            width: 195px;
+            height: 200px;
+            background-position: right bottom;
+            -webkit-mask-image:
+                linear-gradient(to left, #000 55%, transparent),
+                linear-gradient(to top, #000 55%, transparent);
+            -webkit-mask-composite: source-in;
+            mask-image:
+                linear-gradient(to left, #000 55%, transparent),
+                linear-gradient(to top, #000 55%, transparent);
+            mask-composite: intersect;
+        }
+        /* Gold ornament under the headline, like the flourish in the logo */
+        .hero h1::after {
+            content: "";
+            display: block;
+            width: 160px;
+            height: 10px;
+            margin: 18px auto 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='10' viewBox='0 0 140 10'%3E%3Cpath d='M0 5h58M82 5h58' stroke='%23c9a052' stroke-width='1'/%3E%3Ccircle cx='62' cy='5' r='1.6' fill='%23c9a052'/%3E%3Ccircle cx='78' cy='5' r='1.6' fill='%23c9a052'/%3E%3Cpath d='M70 0l4 5-4 5-4-5z' fill='%23c9a052'/%3E%3C/svg%3E") no-repeat center / contain;
         }
         .hero h1 {
             max-width: 860px;
             margin: 0;
-            font-size: 2.5rem;
-            color: #3b211b;
-            font-weight: 600;
+            font-size: 2.8rem;
+            color: #9a6e22;
+            font-weight: 700;
             line-height: 1.25;
-            font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
-            font-style: italic;
+            font-family: var(--heading-font);
+            font-style: normal;
             text-transform: none;
-            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.45);
+            /* Polished-gold lettering like the logo artwork */
+            background: linear-gradient(180deg, #b8873a 0%, #d9b25f 35%, #a07228 65%, #835b1c 100%);
+            background-size: 100% 1.25em; /* one gradient per text line, matching line-height */
+            background-repeat: repeat-y;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 1px 1px rgba(120, 88, 40, 0.25));
         }
         .hero p {
             max-width: 620px;
             margin: 0;
-            color: #3b211b;
+            color: #59462f;
             font-size: 1.25rem;
             line-height: 1.5;
             text-shadow: 0 1px 1px rgba(255, 255, 255, 0.45);
@@ -209,6 +348,14 @@
             .hero {
                 min-height: 300px;
                 padding: 36px 20px;
+            }
+            .hero::before {
+                transform: scale(0.6);
+                transform-origin: left top;
+            }
+            .hero::after {
+                transform: scale(0.55);
+                transform-origin: right bottom;
             }
             .hero h1 {
                 max-width: 300px;
@@ -232,6 +379,7 @@
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            align-items: start; /* an opened card no longer stretches its neighbour */
             gap: 20px;
             margin-top: 30px;
         }
@@ -239,19 +387,23 @@
             background: var(--card-bg);
             padding: 20px;
             border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid var(--gold-line);
+            box-shadow: var(--card-shadow);
             text-align: center;
-            border-top: 3px solid var(--primary-gold);
+            border-top: 3px solid var(--gold-bright);
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .service-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 16px 36px rgba(120, 88, 40, 0.16);
+        }
+        .service-card h3 {
+            color: var(--light-text);
         }
         button {
-            background-color: var(--primary-gold);
-            color: white;
-            border: none;
+            background: var(--gold-metal);
+            color: #3b2a1a;
             padding: 12px 30px;
             border-radius: 4px;
             cursor: pointer;
@@ -259,11 +411,11 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border: 2px solid var(--primary-gold);
-            transition: background-color 0.3s, color 0.3s;
+            border: 1px solid #c9a052;
+            transition: background-color 0.3s, color 0.3s, filter 0.3s;
         }
         button:hover {
-            opacity: 0.9;
+            filter: brightness(1.05);
         }
         /* Intro Overlay Slider Styles */
         .intro-overlay {
@@ -272,11 +424,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #000000;
+            background-color: #faf6eb;
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
+            gap: 8px;
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
         .intro-overlay.hidden {
@@ -286,28 +440,43 @@
         .intro-content {
             text-align: center;
             position: absolute;
-            bottom: 10%;
+            left: 50%;
+            bottom: 3vh;
             z-index: 10;
+            transform: translateX(-50%);
         }
         .intro-img {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 50%;
+            left: 50%;
+            width: min(100vw, 100vh * 970 / 967);
+            width: min(100vw, 100dvh * 970 / 967);
+            height: auto;
             object-fit: contain;
+            transform: translate(-50%, -50%);
+            /* Fade the picture's edges into the matching cream background so it reads as full screen */
+            -webkit-mask-image:
+                linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+                linear-gradient(to bottom, transparent, #000 6%, #000 94%, transparent);
+            -webkit-mask-composite: source-in;
+            mask-image:
+                linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
+                linear-gradient(to bottom, transparent, #000 6%, #000 94%, transparent);
+            mask-composite: intersect;
         }
         .intro-content button {
-            background-color: #dfb76c; /* Vibrant gold matching the logo */
-            color: #000000; /* Deep black text for readability */
+            background: rgba(250, 246, 235, 0.85);
+            font-family: var(--heading-font);
+            white-space: nowrap;
+            color: #805b22;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
-            border: 2px solid #dfb76c;
+            border: 1px solid var(--primary-gold);
         }
         .intro-content button:hover {
-            background-color: transparent;
-            color: #dfb76c;
+            background-color: rgba(223, 183, 108, 0.12);
+            color: #805b22;
         }
         .about-section {
             max-width: 1000px;
@@ -344,13 +513,13 @@
         }
         .about-section-inner {
             display: grid;
-            grid-template-columns: 1.4fr 1fr;
+            grid-template-columns: 1fr;
             gap: 30px;
             background: var(--card-bg);
-            border: 1px solid rgba(223, 183, 108, 0.18);
+            border: 1px solid var(--gold-line);
             border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border-top: 3px solid var(--primary-gold);
+            box-shadow: var(--card-shadow);
+            border-top: 3px solid var(--gold-bright);
             max-height: 0;
             overflow: hidden;
             opacity: 0;
@@ -384,25 +553,39 @@
             margin: 0 0 12px;
             font-weight: 700;
         }
-        .about-copy h2 {
+        /* All About Us text shares one font, color and size; only labels and names are bold */
+        .about-section-inner .section-kicker,
+        .about-copy h2,
+        .about-copy p,
+        .team-header h3,
+        .team-header p,
+        .team-card h4,
+        .team-role,
+        .team-card p {
+            font-family: inherit;
             color: var(--light-text);
-            margin-top: 0;
-            margin-bottom: 14px;
             font-size: 0.95rem;
             font-weight: 400;
             line-height: 1.6;
             letter-spacing: 0;
+            text-transform: none;
+        }
+        .about-section-inner .section-kicker,
+        .team-card h4 {
+            font-weight: 700;
+        }
+        .about-copy h2 {
+            margin-top: 0;
+            margin-bottom: 14px;
         }
         .about-copy p {
-            color: #d7d7d7;
             margin-bottom: 14px;
-            font-size: 0.95rem;
         }
         .about-section-inner {
-            background: linear-gradient(180deg, rgba(22,22,22,0.98), rgba(18,18,18,0.96));
-            border: 1px solid rgba(223, 183, 108, 0.18);
-            border-top: 3px solid var(--primary-gold);
-            box-shadow: 0 18px 40px rgba(0,0,0,0.22);
+            background: linear-gradient(180deg, #fffdf8, #fbf6ea);
+            border: 1px solid var(--gold-line);
+            border-top: 3px solid var(--gold-bright);
+            box-shadow: 0 18px 40px rgba(120, 88, 40, 0.10);
         }
         .about-points {
             display: flex;
@@ -411,8 +594,8 @@
             gap: 14px;
         }
         .about-points div {
-            background: linear-gradient(135deg, rgba(223, 183, 108, 0.10), rgba(223, 183, 108, 0.04));
-            border: 1px solid rgba(223, 183, 108, 0.18);
+            background: linear-gradient(135deg, rgba(223, 183, 108, 0.18), rgba(223, 183, 108, 0.06));
+            border: 1px solid var(--gold-line);
             color: var(--light-text);
             padding: 16px 18px;
             border-radius: 4px;
@@ -431,19 +614,11 @@
             margin-bottom: 18px;
         }
         .team-header h3 {
-            color: var(--primary-gold);
             margin: 0 0 6px;
-            font-size: 0.95rem;
-            letter-spacing: 0;
-            text-transform: none;
-            font-weight: 400;
-            line-height: 1.6;
         }
         .team-header p {
-            color: #d7d7d7;
             margin: 0;
             max-width: 620px;
-            font-size: 0.9rem;
         }
         .team-grid {
             display: grid;
@@ -452,13 +627,13 @@
         }
         .team-card {
             position: relative;
-            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-            border: 1px solid rgba(223, 183, 108, 0.18);
+            background: var(--card-bg);
+            border: 1px solid var(--gold-line);
             border-radius: 12px;
             padding: 28px 20px 22px;
             text-align: center;
             transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+            box-shadow: 0 12px 24px rgba(120, 88, 40, 0.08);
             overflow: hidden;
         }
         .team-card::before {
@@ -471,8 +646,8 @@
         }
         .team-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(223, 183, 108, 0.38);
-            box-shadow: 0 20px 30px rgba(0,0,0,0.18);
+            border-color: rgba(169, 125, 51, 0.45);
+            box-shadow: 0 20px 30px rgba(120, 88, 40, 0.15);
         }
         .team-photo-wrap {
             width: 78px;
@@ -506,31 +681,69 @@
             letter-spacing: 0.04em;
         }
         .team-card h4 {
-            margin: 0 0 8px;
-            color: var(--light-text);
-            font-size: 1.3rem;
-            font-weight: 600;
+            margin: 0 0 4px;
         }
         .team-role {
-            color: var(--primary-gold);
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            font-size: 0.68rem;
             margin-bottom: 12px;
         }
         .team-card p {
             margin: 0;
-            color: #d7d7d7;
-            font-size: 0.92rem;
-            line-height: 1.6;
-        }
-        .about-section :is(h2, h3, h4, p, .team-role, .team-avatar) {
-            color: #fff;
         }
         .about-section .about-header-row h2 {
             color: var(--primary-gold);
-            font-size: 1.5rem;
+        }
+        .about-copy {
+            max-width: 760px;
+        }
+        /* Footer */
+        .site-footer {
+            margin-top: 40px;
+            padding: 44px 20px 36px;
+            text-align: center;
+            background: var(--card-bg);
+            border-top: 1px solid var(--gold-line);
+        }
+        .footer-brand {
+            margin: 0;
+            font-family: var(--heading-font);
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: var(--primary-gold);
+        }
+        .footer-tagline {
+            margin: 4px 0 0;
+            font-size: 0.72rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .site-footer::before {
+            content: "";
+            display: block;
+            width: 140px;
+            height: 10px;
+            margin: 0 auto 18px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='10' viewBox='0 0 140 10'%3E%3Cpath d='M0 5h58M82 5h58' stroke='%23c9a052' stroke-width='1'/%3E%3Ccircle cx='62' cy='5' r='1.6' fill='%23c9a052'/%3E%3Ccircle cx='78' cy='5' r='1.6' fill='%23c9a052'/%3E%3Cpath d='M70 0l4 5-4 5-4-5z' fill='%23c9a052'/%3E%3C/svg%3E") no-repeat center;
+        }
+        .footer-copyright {
+            margin: 22px 0 16px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .owner-portal-btn {
+            background: transparent;
+            border: 1px solid var(--gold-line);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 400;
+            padding: 5px 15px;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .owner-portal-btn:hover {
+            color: var(--primary-gold);
+            border-color: var(--primary-gold);
         }
         @media (max-width: 768px) {
             .about-section-inner {
@@ -539,11 +752,6 @@
             }
             .about-section-inner.expanded {
                 max-height: 5000px;
-            }
-            .about-copy p,
-            .team-card p,
-            .team-header p {
-                font-size: 0.95rem;
             }
         }
         /* Contact Section Styles */
@@ -561,8 +769,9 @@
             background: var(--card-bg);
             padding: 30px;
             border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border-top: 3px solid var(--primary-gold);
+            border: 1px solid var(--gold-line);
+            box-shadow: var(--card-shadow);
+            border-top: 3px solid var(--gold-bright);
         }
         .contact-map {
             padding: 0;
@@ -575,13 +784,14 @@
             flex-grow: 1;
             width: 100%;
             border: 0;
-            filter: grayscale(0.4);
+            filter: sepia(0.25) saturate(0.85);
         }
         .directions-link {
             display: block;
             text-align: center;
-            background-color: var(--primary-gold);
-            color: #000;
+            background: var(--gold-metal);
+            color: #3b2a1a;
+            letter-spacing: 0.08em;
             text-decoration: none;
             padding: 12px;
             font-weight: bold;
@@ -605,8 +815,8 @@
         .form-control {
             width: 100%;
             padding: 12px;
-            background-color: #222;
-            border: 1px solid #444;
+            background-color: var(--field-bg);
+            border: 1px solid var(--field-border);
             border-radius: 4px;
             color: var(--light-text);
             box-sizing: border-box;
@@ -641,13 +851,31 @@
             min-width: 0;
         }
         .booking-field label {
-            color: #ccc;
+            color: var(--text-muted);
             font-size: 0.85rem;
         }
         .booking-note {
             margin: 0;
-            color: #aaa;
+            color: var(--text-muted);
             font-size: 0.9rem;
+        }
+        input,
+        select,
+        textarea,
+        button {
+            font-family: inherit;
+        }
+        #adminPanelSection {
+            border: 1px solid var(--gold-line);
+            border-top: 3px solid var(--gold-bright);
+            box-shadow: var(--card-shadow);
+        }
+        #adminPanelSection h3 {
+            color: var(--primary-gold);
+        }
+        #adminPanelSection button:disabled {
+            cursor: not-allowed;
+            filter: none;
         }
         .booking-form button {
             justify-self: start;
@@ -675,7 +903,7 @@
 
     <!-- Intro Welcome Screen -->
     <div id="introScreen" class="intro-overlay">
-        <img src="salonIntro.jpeg" alt="Madam Beauty Welcome" class="intro-img">
+        <img src="images/intro-logo.jpg" alt="Madam Beauty by PRICELESS Integrity" class="intro-img">
         <div class="intro-content">
             <button onclick="closeIntro()">Enter Experience</button>
         </div>
@@ -683,6 +911,10 @@
 
     <header>
         <nav class="top-nav" aria-label="Main navigation">
+            <a class="brand" href="#" aria-label="Madam Beauty home">
+                <span class="brand-name">MADAM BEAUTY</span>
+                <span class="brand-tagline">by Priceless Integrity</span>
+            </a>
             <button class="menu-toggle" type="button" aria-label="Open navigation" title="Open navigation" aria-expanded="false" aria-controls="mainNavLinks">
                 <i class="fa-solid fa-bars" aria-hidden="true"></i>
             </button>
@@ -799,14 +1031,16 @@
     </div>
 
     <!-- Owner Control Panel Section -->
-    <div id="adminPanelSection" class="container" style="display: none; background: var(--card-bg); padding: 30px; border-radius: 4px; border: 1px solid var(--primary-gold); margin-top: 40px;">
+    <div id="adminPanelSection" class="container" style="display: none; background: var(--card-bg); padding: 30px; border-radius: 4px; margin-top: 40px;">
         <h2 style="color: var(--primary-gold); text-align: center; margin-top: 0;">Owner Control Panel</h2>
         <div id="adminPanelContent"></div>
     </div>
 
-    <footer style="text-align: center; padding: 40px; opacity: 0.75;">
-        <div id="footerCopyright" style="margin-bottom: 20px; font-size: 0.85rem;"></div>
-        <button onclick="accessOwnerPortal()" style="background: transparent; border: 1px solid #444; color: #888; font-size: 0.8rem; padding: 5px 15px; text-transform: none; letter-spacing: 0;">Owner Portal</button>
+    <footer class="site-footer">
+        <p class="footer-brand">MADAM BEAUTY</p>
+        <p class="footer-tagline">by Priceless Integrity</p>
+        <div id="footerCopyright" class="footer-copyright"></div>
+        <button class="owner-portal-btn" onclick="accessOwnerPortal()">Owner Portal</button>
     </footer>
 
     <!-- Load modularized business logic files -->
@@ -858,7 +1092,14 @@
             bookingForm.querySelector('select').focus();
         });
         document.addEventListener('click', function (event) {
-            if (!event.composedPath().includes(mainNav)) closeMenu();
+            const path = event.composedPath();
+            if (!path.includes(mainNav)) closeMenu();
+            // Auto-close the booking form when the visitor clicks anywhere else on the page
+            const opensBooking = path.includes(bookingToggle)
+                || (event.target.closest && event.target.closest('a[href="#bookingToggle"]'));
+            if (!bookingForm.hidden && !path.includes(bookingForm) && !opensBooking) {
+                setBookingFormOpen(false);
+            }
         });
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {

@@ -52,8 +52,8 @@ function toggleDescription(event, button) {
     const isExpanded = button.getAttribute('data-expanded') === 'true';
     if (isExpanded) {
         textContainer.style.webkitLineClamp = '2';
-        textContainer.style.webkitMaskImage = 'linear-gradient(180deg, #000 60%, transparent 100%)';
-        textContainer.style.maskImage = 'linear-gradient(180deg, #000 60%, transparent 100%)';
+        textContainer.style.webkitMaskImage = 'linear-gradient(180deg, #000 55%, rgba(0, 0, 0, 0.35) 100%)';
+        textContainer.style.maskImage = 'linear-gradient(180deg, #000 55%, rgba(0, 0, 0, 0.35) 100%)';
         button.innerText = 'Read more';
         button.setAttribute('data-expanded', 'false');
     } else {
@@ -71,7 +71,7 @@ function highlightText(text, term) {
     if (!term.trim()) return stringText;
     const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`(${escapedTerm})`, 'gi');
-    return stringText.replace(regex, '<mark style="background-color: rgba(223, 183, 108, 0.4); color: inherit; padding: 0 2px; border-radius: 2px;">$1</mark>');
+    return stringText.replace(regex, '<mark style="background-color: rgba(223, 183, 108, 0.45); color: inherit; padding: 0 2px; border-radius: 2px;">$1</mark>');
 }
 
 function clearSearch() {
@@ -140,7 +140,7 @@ function renderServices(searchTerm = "") {
 
     if (filtered.length === 0) {
         grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; color: #bbb; padding: 40px 20px;">
+            <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 20px;">
                 <p style="font-size: 1.05rem; margin-bottom: 12px;">No services found matching "<strong>${escapeHtml(searchTerm)}</strong>"</p>
                 <button onclick="clearSearch()" style="background: var(--primary-gold); color: #111; border: none; padding: 8px 18px; border-radius: 4px; font-weight: 600; cursor: pointer;">Clear Search</button>
             </div>`;
@@ -162,9 +162,9 @@ function renderServices(searchTerm = "") {
         });
 
         const highlightStyle = hasDiscounts
-            ? 'border: 1px solid rgba(255, 77, 77, 0.4); box-shadow: 0 4px 20px rgba(255, 77, 77, 0.15);'
+            ? 'border-color: rgba(179, 38, 30, 0.35); border-top-color: var(--gold-bright); box-shadow: 0 10px 30px rgba(179, 38, 30, 0.10);'
             : hasVariants
-                ? 'border: 1px solid rgba(223, 183, 108, 0.4); box-shadow: 0 4px 20px rgba(223, 183, 108, 0.1);'
+                ? 'border-color: rgba(223, 183, 108, 0.45); border-top-color: var(--gold-bright); box-shadow: 0 10px 30px rgba(169, 125, 51, 0.12);'
                 : '';
 
         return `
@@ -175,7 +175,7 @@ function renderServices(searchTerm = "") {
             </h3>
             <p>${service.description}</p>
             <div class="service-details" style="display: ${displayStyle}; margin-top: 20px;">
-                <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: #ccc;">
+                <ul style="list-style: none; padding: 0; font-size: 0.85rem; color: var(--text-muted);">
                     ${service.details.map(detail => {
                         const hasVariants = detail.variants && detail.variants.length > 0;
 
@@ -183,23 +183,22 @@ function renderServices(searchTerm = "") {
                         const displayPrice = detail.price || detail.originalPrice || '';
 
                         return `
-                        <li style="margin-bottom: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 12px; padding-left: 12px; border-left: 2px solid rgba(223, 183, 108, 0.2); transition: border-left-color 0.3s;" onmouseenter="this.style.borderLeftColor='var(--primary-gold)'" onmouseleave="this.style.borderLeftColor='rgba(223, 183, 108, 0.2)'">
-                            <div style="font-weight: 600; color: #fff; font-size: 0.95rem; letter-spacing: 0.5px; text-align: left; margin-bottom: 6px;">
+                        <li style="margin-bottom: 18px; border-bottom: 1px solid var(--gold-line); padding-bottom: 12px; padding-left: 12px; border-left: 2px solid rgba(223, 183, 108, 0.2); transition: border-left-color 0.3s;" onmouseenter="this.style.borderLeftColor='var(--primary-gold)'" onmouseleave="this.style.borderLeftColor='rgba(223, 183, 108, 0.2)'">
+                            <div style="font-weight: 600; color: var(--light-text); font-size: 0.95rem; letter-spacing: 0.5px; text-align: left; margin-bottom: 6px;">
                                 ${highlightText(detail.name, searchTerm)}
                             </div>
                             ${detail.description ? (() => {
                                 const isLong = detail.description.length > 130;
                                 const containsSearchTerm = isSearching && detail.description.toLowerCase().includes(searchTerm.toLowerCase());
                                 const shouldClamp = isLong && !containsSearchTerm;
-                                const maskStyle = shouldClamp ? '-webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%); mask-image: linear-gradient(180deg, #000 60%, transparent 100%);' : '';
+                                const maskStyle = shouldClamp ? '-webkit-mask-image: linear-gradient(180deg, #000 55%, rgba(0, 0, 0, 0.35) 100%); mask-image: linear-gradient(180deg, #000 55%, rgba(0, 0, 0, 0.35) 100%);' : '';
                                 return `
                                 <div style="margin-bottom: 10px; text-align: left;">
-                                    <p style="margin: 0; font-size: 0.8rem; color: #a5a5a5; line-height: 1.5; font-style: italic; font-weight: 300; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: ${shouldClamp ? '2' : 'unset'}; overflow: hidden;">
-                                    <p style="margin: 0; font-size: 0.8rem; color: #a5a5a5; line-height: 1.5; font-style: italic; font-weight: 300; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: ${shouldClamp ? '2' : 'unset'}; overflow: hidden; ${maskStyle}">
+                                    <p style="margin: 0; font-size: 0.9rem; color: var(--light-text); line-height: 1.65; font-weight: 400; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: ${shouldClamp ? '2' : 'unset'}; overflow: hidden; ${maskStyle}">
                                         ${highlightText(detail.description, searchTerm)}
                                     </p>
                                     ${isLong ? `
-                                    <button type="button" onclick="toggleDescription(event, this)" data-expanded="${!shouldClamp}" style="background: none; border: none; color: var(--primary-gold); font-size: 0.75rem; padding: 2px 0; cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 600; margin-top: 2px;">${shouldClamp ? 'Read more' : 'Read less'}</button>
+                                    <button type="button" onclick="toggleDescription(event, this)" data-expanded="${!shouldClamp}" style="background: none; border: none; color: var(--primary-gold); font-size: 0.85rem; padding: 4px 0; cursor: pointer; text-transform: none; letter-spacing: 0; font-weight: 600; margin-top: 2px;">${shouldClamp ? 'Read more' : 'Read less'}</button>
                                     ` : ''}
                                 </div>`;
                             })() : ''}
@@ -207,14 +206,14 @@ function renderServices(searchTerm = "") {
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; padding: 6px 0;">
                                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                                     ${hasVariants ? `<span style="background: rgba(223, 183, 108, 0.15); color: var(--primary-gold); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px;">Option 1</span>` : ''}
-                                    ${detail.duration ? `<span style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; color: #ccc;">${highlightText(detail.duration, searchTerm)}</span>` : ''}
+                                    ${detail.duration ? `<span style="background: rgba(223, 183, 108, 0.10); border: 1px solid var(--gold-line); padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; color: var(--text-muted);">${highlightText(detail.duration, searchTerm)}</span>` : ''}
                                 </div>
                                 <div style="text-align: right; display: flex; align-items: center; gap: 6px; justify-content: flex-end; flex-wrap: wrap;">
                                     ${isPromo ? `
-                                        <span style="background: #ff4d4d; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Special Offer</span>
-                                        <span style="color: #888; text-decoration: line-through; font-size: 0.8rem; margin-right: 4px;">${highlightText(detail.originalPrice, searchTerm)}</span>
+                                        <span style="background: #b3261e; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Special Offer</span>
+                                        <span style="color: #8a7a66; text-decoration: line-through; font-size: 0.8rem; margin-right: 4px;">${highlightText(detail.originalPrice, searchTerm)}</span>
                                     ` : ''}
-                                    ${displayPrice ? `<span style="${isPromo ? 'color: #ff4d4d;' : 'color: var(--primary-gold);'} font-weight: 600; font-size: 0.95rem; white-space: nowrap; letter-spacing: 0.5px;">${highlightText(displayPrice, searchTerm)}</span>` : ''}
+                                    ${displayPrice ? `<span style="${isPromo ? 'color: #b3261e;' : 'color: var(--primary-gold);'} font-weight: 600; font-size: 0.95rem; white-space: nowrap; letter-spacing: 0.5px;">${highlightText(displayPrice, searchTerm)}</span>` : ''}
                                 </div>
                             </div>
                             ` : ''}
@@ -223,17 +222,17 @@ function renderServices(searchTerm = "") {
                                     const isVariantPromo = v.price && v.originalPrice;
                                     const displayVariantPrice = v.price || v.originalPrice || '';
                                     return `
-                                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 4px; padding: 6px 0; border-top: 1px dashed rgba(255, 255, 255, 0.08);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 4px; padding: 6px 0; border-top: 1px dashed var(--gold-line);">
                                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                                             <span style="background: rgba(223, 183, 108, 0.15); color: var(--primary-gold); font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px;">Option ${vIdx + 2}</span>
-                                            ${v.duration ? `<span style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; color: #ccc;">${highlightText(v.duration, searchTerm)}</span>` : ''}
+                                            ${v.duration ? `<span style="background: rgba(223, 183, 108, 0.10); border: 1px solid var(--gold-line); padding: 2px 8px; border-radius: 12px; font-size: 0.78rem; color: var(--text-muted);">${highlightText(v.duration, searchTerm)}</span>` : ''}
                                         </div>
                                         <div style="text-align: right; display: flex; align-items: center; gap: 6px; justify-content: flex-end; flex-wrap: wrap;">
                                             ${isVariantPromo ? `
-                                                <span style="background: #ff4d4d; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Special Offer</span>
-                                                <span style="color: #888; text-decoration: line-through; font-size: 0.8rem; margin-right: 4px;">${highlightText(v.originalPrice, searchTerm)}</span>
+                                                <span style="background: #b3261e; color: #fff; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1;">Special Offer</span>
+                                                <span style="color: #8a7a66; text-decoration: line-through; font-size: 0.8rem; margin-right: 4px;">${highlightText(v.originalPrice, searchTerm)}</span>
                                             ` : ''}
-                                            <span style="${isVariantPromo ? 'color: #ff4d4d;' : 'color: var(--primary-gold);'} font-weight: 600; font-size: 0.95rem; white-space: nowrap; letter-spacing: 0.5px;">${highlightText(displayVariantPrice, searchTerm)}</span>
+                                            <span style="${isVariantPromo ? 'color: #b3261e;' : 'color: var(--primary-gold);'} font-weight: 600; font-size: 0.95rem; white-space: nowrap; letter-spacing: 0.5px;">${highlightText(displayVariantPrice, searchTerm)}</span>
                                         </div>
                                     </div>`;
                                 }).join('')}

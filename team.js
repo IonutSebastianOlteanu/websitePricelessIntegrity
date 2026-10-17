@@ -97,7 +97,7 @@ function renderTeamMembers() {
     const members = getTeamMembers();
     if (!members.length) {
         container.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; color: #bbb; padding: 20px 10px;">
+            <div style="grid-column: 1 / -1; text-align: center; color: var(--light-text); padding: 20px 10px;">
                 Team details will appear here once the owner adds members.
             </div>
         `;

@@ -83,7 +83,7 @@ function showOwnerLogin(message = '') {
         <form id="ownerLoginForm" style="max-width: 420px; margin: 0 auto; display: grid; gap: 12px;">
             <label for="ownerGitHubToken">Enter password provided by administrator</label>
             <input id="ownerGitHubToken" type="password" autocomplete="current-password" required class="form-control">
-            <p id="ownerLoginMessage" role="alert" style="margin: 0; color: #f0a6a6;"></p>
+            <p id="ownerLoginMessage" role="alert" style="margin: 0; color: #b3261e;"></p>
             <button type="submit">Unlock owner portal</button>
         </form>
     `;
@@ -168,14 +168,14 @@ function renderBookingRequests() {
 
     BOOKING_REQUESTS.forEach(booking => {
         const card = document.createElement('article');
-        card.style.cssText = 'padding: 16px; margin-top: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;';
+        card.style.cssText = 'padding: 16px; margin-top: 12px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px;';
 
         const heading = document.createElement('strong');
         heading.textContent = `${booking.service_name} · ${booking.reference}`;
         card.appendChild(heading);
 
         const details = document.createElement('p');
-        details.style.cssText = 'color: #ccc; margin: 8px 0; white-space: pre-line;';
+        details.style.cssText = 'color: var(--text-muted); margin: 8px 0; white-space: pre-line;';
         details.textContent = [
             `${booking.category_title} · ${booking.preferred_date} at ${booking.preferred_time} (New York time)`,
             `${booking.customer_name} · ${booking.customer_phone} · ${booking.customer_email}`,
@@ -196,7 +196,7 @@ function renderBookingRequests() {
                 button.type = 'button';
                 button.textContent = label;
                 button.style.cssText = action === 'decline'
-                    ? 'background: #d9534f; border-color: #d9534f; padding: 8px 12px;'
+                    ? 'background: #b3261e; border-color: #b3261e; color: #fff; padding: 8px 12px;'
                     : 'padding: 8px 12px;';
                 button.addEventListener('click', () => updateBookingRequest(booking.id, action, button));
                 actions.appendChild(button);
@@ -987,14 +987,14 @@ function updateImagePreview(value, previewId) {
 
     const imageValue = (value || '').trim();
     if (!imageValue) {
-        preview.innerHTML = '<span style="font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;">No photo</span>';
+        preview.innerHTML = '<span style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.5px;">No photo</span>';
         preview.style.borderStyle = 'dashed';
         return;
     }
 
     preview.style.borderStyle = 'solid';
     preview.innerHTML = `
-        <img src="${imageValue}" alt="Team member preview" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;\'>No photo</span>';">
+        <img src="${imageValue}" alt="Team member preview" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=\'font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.5px;\'>No photo</span>';">
     `;
 }
 
@@ -1079,74 +1079,74 @@ function renderAdminPanel() {
 
     let html = `
         <div style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
-            <span id="githubSyncStatus" style="font-size: 0.9rem; color: #dfb76c;"></span>
+            <span id="githubSyncStatus" style="font-size: 0.9rem; color: var(--primary-gold);"></span>
             <div style="display: flex; gap: 10px;">
-                <button id="publishBtn" onclick="syncToGitHub()" style="background: #007bff; border-color: #007bff;">🚀 Publish Changes</button>
-                <button onclick="logoutAdmin()" style="background: #555; border-color: #555;">🔒 Lock Panel</button>
+                <button id="publishBtn" onclick="syncToGitHub()">🚀 Publish Changes</button>
+                <button onclick="logoutAdmin()" style="background: var(--card-bg); border-color: var(--gold-line); color: var(--primary-gold);">🔒 Lock Panel</button>
             </div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
                 <h4 style="color: var(--primary-gold); margin: 0;">Booking Requests</h4>
                 <button type="button" onclick="refreshBookingRequests()" style="padding: 8px 12px;">Refresh</button>
             </div>
             <div id="bookingRequestsList" role="status" aria-live="polite" style="margin-top: 12px;"></div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <h4 style="color: var(--primary-gold); margin-top: 0;">About Section Content</h4>
             <div style="display: grid; gap: 12px;">
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story label</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story label</label>
                     <input type="text" value="${aboutContent.storyLabel || ''}" oninput="updateAboutField('storyLabel', this.value)" class="form-control">
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story title</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story title</label>
                     <input type="text" value="${aboutContent.storyTitle || ''}" oninput="updateAboutField('storyTitle', this.value)" class="form-control">
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story intro</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Story intro</label>
                     <textarea rows="3" oninput="updateAboutField('storyIntro', this.value)" class="form-control">${aboutContent.storyIntro || ''}</textarea>
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Expanded story paragraph 1</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Expanded story paragraph 1</label>
                     <textarea rows="2" oninput="updateAboutField('storyExpanded1', this.value)" class="form-control">${aboutContent.storyExpanded1 || ''}</textarea>
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Team label</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Team label</label>
                     <input type="text" value="${aboutContent.teamLabel || ''}" oninput="updateAboutField('teamLabel', this.value)" class="form-control">
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Team description</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Team description</label>
                     <textarea rows="2" oninput="updateAboutField('teamDescription', this.value)" class="form-control">${aboutContent.teamDescription || ''}</textarea>
                 </div>
             </div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <h4 style="color: var(--primary-gold); margin-top: 0;">Contact Us Section</h4>
             <div style="display: grid; gap: 12px;">
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Description</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Description</label>
                     <textarea rows="3" oninput="updateOwnerField('description', this.value)" class="form-control">${OWNER_DATA.description || ''}</textarea>
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Phone</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Phone</label>
                     <input type="text" value="${OWNER_DATA.phone || ''}" oninput="updateOwnerField('phone', this.value)" class="form-control">
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
                     <input type="text" value="${OWNER_DATA.email || ''}" oninput="updateOwnerField('email', this.value)" class="form-control">
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Address</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Address</label>
                     <input type="text" value="${OWNER_DATA.address || ''}" oninput="updateOwnerField('address', this.value)" class="form-control">
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Hours / Program</label>
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Hours / Program</label>
                     <input type="text" value="${OWNER_DATA.program || ''}" oninput="updateOwnerField('program', this.value)" class="form-control">
                 </div>
             </div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <h4 style="color: var(--primary-gold); margin-top: 0;">Add New Service Category</h4>
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <input type="text" id="newCatTitle" class="form-control" placeholder="Category Title (e.g., Massage)">
@@ -1154,20 +1154,20 @@ function renderAdminPanel() {
                 <button onclick="handleCreateCategory()" style="width: fit-content; padding: 8px 20px;">Add Category</button>
             </div>
         </div>
-        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+        <div style="margin-bottom: 30px; padding: 20px; background: #fbf6ea; border-radius: 4px; border: 1px solid var(--gold-line);">
             <h4 style="color: var(--primary-gold); margin-top: 0;">Add New Team Member</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
                 <input type="text" id="newTeamMemberName" class="form-control" placeholder="Full name">
                 <input type="text" id="newTeamMemberRole" class="form-control" placeholder="Role">
                 <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 12px;">
                     <input type="text" id="newTeamMemberImage" class="form-control" placeholder="Photo URL or data URL" oninput="updateImagePreview(this.value, 'newTeamMemberPreview')" style="flex: 1; min-width: 0;">
-                    <div id="newTeamMemberPreview" style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 0.7rem; text-align: center; flex-shrink: 0;">
-                        <span style="font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;">No photo</span>
+                    <div id="newTeamMemberPreview" style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 1px solid var(--field-border); background: var(--field-bg); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.7rem; text-align: center; flex-shrink: 0;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.5px;">No photo</span>
                     </div>
                 </div>
                 <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px;">
-                    <label style="font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Upload photo</label>
-                    <input type="file" id="newTeamMemberImageFile" accept="image/*" onchange="handleTeamMemberImageUpload(this, 'new')" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                    <label style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Upload photo</label>
+                    <input type="file" id="newTeamMemberImageFile" accept="image/*" onchange="handleTeamMemberImageUpload(this, 'new')" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                 </div>
                 <input type="text" id="newTeamMemberBio" class="form-control" placeholder="Short bio" style="grid-column: 1 / -1;">
                 <button onclick="handleCreateTeamMember()" style="width: fit-content; padding: 8px 20px;">Add Team Member</button>
@@ -1179,37 +1179,37 @@ function renderAdminPanel() {
 
     members.forEach((member, index) => {
         html += `
-            <div style="padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;">
+            <div style="padding: 16px; background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 8px;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;">
                     <div style="display: flex; gap: 6px; align-items: center;">
-                        <button onclick="moveTeamMember(${index}, 'up')" ${index === 0 ? 'disabled style="background: #252525; color: #555; border: 1px solid #333; cursor: not-allowed; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"' : 'style="background: #333; border: 1px solid #555; color: white; cursor: pointer; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"'}>▲</button>
-                        <button onclick="moveTeamMember(${index}, 'down')" ${index === members.length - 1 ? 'disabled style="background: #252525; color: #555; border: 1px solid #333; cursor: not-allowed; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"' : 'style="background: #333; border: 1px solid #555; color: white; cursor: pointer; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"'}>▼</button>
+                        <button onclick="moveTeamMember(${index}, 'up')" ${index === 0 ? 'disabled style="background: #f3ede0; color: #b9ab95; border: 1px solid #e6dcc8; cursor: not-allowed; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"' : 'style="background: var(--card-bg); border: 1px solid var(--gold-line); color: var(--primary-gold); cursor: pointer; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"'}>▲</button>
+                        <button onclick="moveTeamMember(${index}, 'down')" ${index === members.length - 1 ? 'disabled style="background: #f3ede0; color: #b9ab95; border: 1px solid #e6dcc8; cursor: not-allowed; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"' : 'style="background: var(--card-bg); border: 1px solid var(--gold-line); color: var(--primary-gold); cursor: pointer; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;"'}>▼</button>
                     </div>
-                    <button onclick="deleteTeamMember(${index})" style="background: #d9534f; border-color: #d9534f; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;">Delete</button>
+                    <button onclick="deleteTeamMember(${index})" style="background: #b3261e; border-color: #b3261e; color: white; padding: 6px 12px; font-size: 0.8rem; border-radius: 4px;">Delete</button>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <div>
-                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Name</span>
-                        <input type="text" value="${member.name || ''}" onchange="updateTeamMemberName(${index}, this.value)" class="form-control" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Name</span>
+                        <input type="text" value="${member.name || ''}" onchange="updateTeamMemberName(${index}, this.value)" class="form-control" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                     </div>
                     <div>
-                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Role</span>
-                        <input type="text" value="${member.role || ''}" onchange="updateTeamMemberRole(${index}, this.value)" class="form-control" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Role</span>
+                        <input type="text" value="${member.role || ''}" onchange="updateTeamMemberRole(${index}, this.value)" class="form-control" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                     </div>
                     <div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px;">
-                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Photo URL</span>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Photo URL</span>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <input type="text" value="${member.image || ''}" onchange="updateTeamMemberImage(${index}, this.value)" oninput="updateImagePreview(this.value, 'teamMemberPreview-${index}')" class="form-control" placeholder="https://... or data URL" style="flex: 1; min-width: 0; padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
-                            <div id="teamMemberPreview-${index}" style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                ${member.image ? `<img src="${member.image}" alt="${(member.name || 'Team member').replace(/"/g, '&quot;')}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;&quot;>No photo</span>'">` : '<span style="font-size: 0.7rem; color: #aaa; letter-spacing: 0.5px;">No photo</span>'}
+                            <input type="text" value="${member.image || ''}" onchange="updateTeamMemberImage(${index}, this.value)" oninput="updateImagePreview(this.value, 'teamMemberPreview-${index}')" class="form-control" placeholder="https://... or data URL" style="flex: 1; min-width: 0; padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
+                            <div id="teamMemberPreview-${index}" style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 1px solid var(--field-border); background: var(--field-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                ${member.image ? `<img src="${member.image}" alt="${(member.name || 'Team member').replace(/"/g, '&quot;')}" style="width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%;" onerror="this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.5px;&quot;>No photo</span>'">` : '<span style="font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.5px;">No photo</span>'}
                             </div>
                         </div>
-                        <label style="font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;">Upload new photo</label>
-                        <input type="file" accept="image/*" onchange="handleTeamMemberImageUpload(this, ${index})" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                        <label style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Upload new photo</label>
+                        <input type="file" accept="image/*" onchange="handleTeamMemberImageUpload(this, ${index})" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                     </div>
                     <div style="grid-column: 1 / -1;">
-                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Bio</span>
-                        <input type="text" value="${member.bio || ''}" onchange="updateTeamMemberBio(${index}, this.value)" class="form-control" style="padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Bio</span>
+                        <input type="text" value="${member.bio || ''}" onchange="updateTeamMemberBio(${index}, this.value)" class="form-control" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                     </div>
                 </div>
             </div>
@@ -1221,12 +1221,12 @@ function renderAdminPanel() {
 
     SERVICES_DATA.forEach((cat, catIdx) => {
         html += `
-            <div style="background: #1b1b1b; padding: 20px; border-radius: 4px; margin-bottom: 20px; border-left: 3px solid var(--primary-gold);">
+            <div style="background: #fbf6ea; border: 1px solid var(--gold-line); padding: 20px; border-radius: 4px; margin-bottom: 20px; border-left: 3px solid var(--primary-gold);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <input type="text" aria-label="Category name" value="${cat.title}" onchange="updateCategoryTitle(${catIdx}, this.value)" class="form-control" style="max-width: 360px; padding: 8px; font-size: 1rem; font-weight: bold; color: #fff;">
-                    <button onclick="deleteCategory(${catIdx})" style="background: #d9534f; border-color: #d9534f; color: white; padding: 5px 10px; font-size: 0.8rem;">Delete Category</button>
+                    <input type="text" aria-label="Category name" value="${cat.title}" onchange="updateCategoryTitle(${catIdx}, this.value)" class="form-control" style="max-width: 360px; padding: 8px; font-size: 1rem; font-weight: bold; color: var(--light-text);">
+                    <button onclick="deleteCategory(${catIdx})" style="background: #b3261e; border-color: #b3261e; color: white; padding: 5px 10px; font-size: 0.8rem;">Delete Category</button>
                 </div>
-                <p style="font-size: 0.9rem; color: #888; margin-bottom: 15px;">${cat.description}</p>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">${cat.description}</p>
                 <div style="margin-left: 10px;">
                     <ul style="list-style: none; padding: 0; margin: 0;">
         `;
@@ -1234,77 +1234,77 @@ function renderAdminPanel() {
         cat.details.forEach((item, itemIdx) => {
             const hasVariants = item.variants && item.variants.length > 0;
             html += `
-                <li style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; padding: 16px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                <li style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; padding: 16px; background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 8px; box-shadow: 0 4px 12px rgba(120,88,40,0.08);">
                     <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap;">
                         <div style="flex: 2; min-width: 200px; display: flex; flex-direction: column; gap: 4px;">
-                            <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Service Name</span>
-                            <input type="text" value="${item.name}" onchange="updateItemName(${catIdx}, ${itemIdx}, this.value)" class="form-control" style="padding: 8px; font-size: 0.95rem; font-weight: bold; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Service Name</span>
+                            <input type="text" value="${item.name}" onchange="updateItemName(${catIdx}, ${itemIdx}, this.value)" class="form-control" style="padding: 8px; font-size: 0.95rem; font-weight: bold; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                         </div>
                         <div style="max-width: 130px; display: flex; flex-direction: column; gap: 4px;">
-                            <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Duration</span>
-                            <input type="text" value="${item.duration || ''}" onchange="updateDuration(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="e.g. 60 min" style="padding: 8px; font-size: 0.9rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Duration</span>
+                            <input type="text" value="${item.duration || ''}" onchange="updateDuration(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="e.g. 60 min" style="padding: 8px; font-size: 0.9rem; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                         </div>
                         <div style="max-width: 140px; display: flex; flex-direction: column; gap: 4px;">
-                            <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Original Price</span>
-                            <input type="text" value="${item.originalPrice || ''}" onchange="updateOriginalPrice(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="e.g. $120" style="padding: 8px; font-size: 0.9rem; text-align: right; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Original Price</span>
+                            <input type="text" value="${item.originalPrice || ''}" onchange="updateOriginalPrice(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="e.g. $120" style="padding: 8px; font-size: 0.9rem; text-align: right; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                         </div>
                         <div style="max-width: 120px; display: flex; flex-direction: column; gap: 4px;">
-                            <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Promo Price</span>
-                            <input type="text" value="${item.price || ''}" onchange="updatePrice(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="e.g. $100" style="padding: 8px; font-size: 0.9rem; text-align: right; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #fff;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Promo Price</span>
+                            <input type="text" value="${item.price || ''}" onchange="updatePrice(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="e.g. $100" style="padding: 8px; font-size: 0.9rem; text-align: right; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                         </div>
                         <div style="display: flex; gap: 4px; align-self: flex-end; height: 38px;">
-                            <button onclick="moveItem(${catIdx}, ${itemIdx}, 'up')" ${itemIdx === 0 ? 'disabled style="background: #252525; color: #555; border: 1px solid #333; cursor: not-allowed; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px;"' : 'style="background: #333; border: 1px solid #555; color: white; cursor: pointer; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px;"'}>▲</button>
-                            <button onclick="moveItem(${catIdx}, ${itemIdx}, 'down')" ${itemIdx === cat.details.length - 1 ? 'disabled style="background: #252525; color: #555; border: 1px solid #333; cursor: not-allowed; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px;"' : 'style="background: #333; border: 1px solid #555; color: white; cursor: pointer; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px;"'}>▼</button>
-                            <button onclick="deleteItem(${catIdx}, ${itemIdx})" style="background: #d9534f; border-color: #d9534f; color: white; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px; cursor: pointer;">✕</button>
+                            <button onclick="moveItem(${catIdx}, ${itemIdx}, 'up')" ${itemIdx === 0 ? 'disabled style="background: #f3ede0; color: #b9ab95; border: 1px solid #e6dcc8; cursor: not-allowed; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px;"' : 'style="background: var(--card-bg); border: 1px solid var(--gold-line); color: var(--primary-gold); cursor: pointer; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px;"'}>▲</button>
+                            <button onclick="moveItem(${catIdx}, ${itemIdx}, 'down')" ${itemIdx === cat.details.length - 1 ? 'disabled style="background: #f3ede0; color: #b9ab95; border: 1px solid #e6dcc8; cursor: not-allowed; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px;"' : 'style="background: var(--card-bg); border: 1px solid var(--gold-line); color: var(--primary-gold); cursor: pointer; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px;"'}>▼</button>
+                            <button onclick="deleteItem(${catIdx}, ${itemIdx})" style="background: #b3261e; border-color: #b3261e; color: white; padding: 8px 12px; font-size: 0.85rem; border-radius: 4px; cursor: pointer;">✕</button>
                         </div>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-size: 0.7rem; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Service Description</span>
-                        <input type="text" value="${item.description || ''}" onchange="updateItemDescription(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="Service description (optional)" style="padding: 8px; font-size: 0.85rem; color: #ccc; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Service Description</span>
+                        <input type="text" value="${item.description || ''}" onchange="updateItemDescription(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="Service description (optional)" style="padding: 8px; font-size: 0.85rem; color: var(--text-muted); background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 4px;">
                     </div>
-                    <div style="padding: 12px; background: rgba(0,0,0,0.25); border-radius: 6px; border-left: 3px solid var(--primary-gold); margin-top: 5px;">
+                    <div style="padding: 12px; background: #f7f0e1; border-radius: 6px; border-left: 3px solid var(--primary-gold); margin-top: 5px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 6px;">
                             <span style="font-size: 0.8rem; font-weight: bold; color: var(--primary-gold); letter-spacing: 0.5px; text-transform: uppercase;">
                                 🏷️ Variants (Multiple Prices / Durations)
                             </span>
-                            <button onclick="addVariant(${catIdx}, ${itemIdx})" style="padding: 4px 10px; font-size: 0.75rem; background: #28a745; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: 600;">+ Add Variant</button>
+                            <button onclick="addVariant(${catIdx}, ${itemIdx})" style="padding: 4px 10px; font-size: 0.75rem; background: #2e7d32; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: 600;">+ Add Variant</button>
                         </div>
                         ${(hasVariants || (pendingVariant && pendingVariant.catIdx === catIdx && pendingVariant.itemIdx === itemIdx)) ? `
                             <div style="display: flex; flex-direction: column; gap: 10px;">
                                 ${item.variants ? item.variants.map((v, vIdx) => `
-                                    <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; background: rgba(255,255,255,0.01); padding: 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.03);">
+                                    <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; background: var(--field-bg); padding: 8px; border-radius: 4px; border: 1px solid var(--gold-line);">
                                         <div style="flex: 1; min-width: 120px; display: flex; flex-direction: column; gap: 2px;">
-                                            <span style="font-size: 0.65rem; color: #777; font-weight: bold;">DURATION</span>
-                                            <input type="text" value="${v.duration}" onchange="updateVariantDuration(${catIdx}, ${itemIdx}, ${vIdx}, this.value)" class="form-control" placeholder="Duration" style="padding: 6px; font-size: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;">
+                                            <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: bold;">DURATION</span>
+                                            <input type="text" value="${v.duration}" onchange="updateVariantDuration(${catIdx}, ${itemIdx}, ${vIdx}, this.value)" class="form-control" placeholder="Duration" style="padding: 6px; font-size: 0.8rem; background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 4px;">
                                         </div>
                                         <div style="width: 110px; display: flex; flex-direction: column; gap: 2px;">
-                                            <span style="font-size: 0.65rem; color: #777; font-weight: bold;">ORIGINAL PRICE</span>
-                                            <input type="text" value="${v.originalPrice || ''}" onchange="updateVariantOriginalPrice(${catIdx}, ${itemIdx}, ${vIdx}, this.value)" class="form-control" placeholder="e.g. $120" style="padding: 6px; font-size: 0.8rem; max-width: 110px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;">
+                                            <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: bold;">ORIGINAL PRICE</span>
+                                            <input type="text" value="${v.originalPrice || ''}" onchange="updateVariantOriginalPrice(${catIdx}, ${itemIdx}, ${vIdx}, this.value)" class="form-control" placeholder="e.g. $120" style="padding: 6px; font-size: 0.8rem; max-width: 110px; background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 4px;">
                                         </div>
                                         <div style="width: 110px; display: flex; flex-direction: column; gap: 2px;">
-                                            <span style="font-size: 0.65rem; color: #777; font-weight: bold;">PROMO PRICE</span>
-                                            <input type="text" value="${v.price}" onchange="updateVariantPrice(${catIdx}, ${itemIdx}, ${vIdx}, this.value)" class="form-control" placeholder="e.g. $100" style="padding: 6px; font-size: 0.8rem; max-width: 110px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;">
+                                            <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: bold;">PROMO PRICE</span>
+                                            <input type="text" value="${v.price}" onchange="updateVariantPrice(${catIdx}, ${itemIdx}, ${vIdx}, this.value)" class="form-control" placeholder="e.g. $100" style="padding: 6px; font-size: 0.8rem; max-width: 110px; background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 4px;">
                                         </div>
-                                        <button onclick="deleteVariant(${catIdx}, ${itemIdx}, ${vIdx})" style="background: #d9534f; border: none; color: white; padding: 6px 10px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; height: 28px;">✕</button>
+                                        <button onclick="deleteVariant(${catIdx}, ${itemIdx}, ${vIdx})" style="background: #b3261e; border: none; color: white; padding: 6px 10px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; height: 28px;">✕</button>
                                     </div>
                                 `).join('') : ''}
                                 ${pendingVariant && pendingVariant.catIdx === catIdx && pendingVariant.itemIdx === itemIdx ? `
-                                    <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; background: rgba(40, 167, 69, 0.1); padding: 12px; border-radius: 6px; border: 1px dashed #28a745; margin-top: 5px;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; background: rgba(46, 125, 50, 0.08); padding: 12px; border-radius: 6px; border: 1px dashed #2e7d32; margin-top: 5px;">
                                         <div style="flex: 1; min-width: 120px; display: flex; flex-direction: column; gap: 2px;">
-                                            <span style="font-size: 0.65rem; color: #28a745; font-weight: bold;">NEW VARIANT DURATION</span>
-                                            <input type="text" value="${pendingVariant.duration}" oninput="updatePendingVariantDuration(this.value)" class="form-control" placeholder="Duration" style="padding: 6px; font-size: 0.8rem; background: rgba(0,0,0,0.2); border: 1px solid #28a745; border-radius: 4px; color: #fff;">
+                                            <span style="font-size: 0.65rem; color: #2e7d32; font-weight: bold;">NEW VARIANT DURATION</span>
+                                            <input type="text" value="${pendingVariant.duration}" oninput="updatePendingVariantDuration(this.value)" class="form-control" placeholder="Duration" style="padding: 6px; font-size: 0.8rem; background: var(--field-bg); border: 1px solid #2e7d32; border-radius: 4px; color: var(--light-text);">
                                         </div>
                                         <div style="width: 110px; display: flex; flex-direction: column; gap: 2px;">
-                                            <span style="font-size: 0.65rem; color: #28a745; font-weight: bold;">ORIGINAL PRICE</span>
-                                            <input type="text" value="${pendingVariant.originalPrice}" oninput="updatePendingVariantOriginalPrice(this.value)" class="form-control" placeholder="e.g. $120" style="padding: 6px; font-size: 0.8rem; max-width: 110px; background: rgba(0,0,0,0.2); border: 1px solid #28a745; border-radius: 4px; color: #fff;">
+                                            <span style="font-size: 0.65rem; color: #2e7d32; font-weight: bold;">ORIGINAL PRICE</span>
+                                            <input type="text" value="${pendingVariant.originalPrice}" oninput="updatePendingVariantOriginalPrice(this.value)" class="form-control" placeholder="e.g. $120" style="padding: 6px; font-size: 0.8rem; max-width: 110px; background: var(--field-bg); border: 1px solid #2e7d32; border-radius: 4px; color: var(--light-text);">
                                         </div>
                                         <div style="width: 110px; display: flex; flex-direction: column; gap: 2px;">
-                                            <span style="font-size: 0.65rem; color: #28a745; font-weight: bold;">PROMO PRICE</span>
-                                            <input type="text" value="${pendingVariant.price}" oninput="updatePendingVariantPrice(this.value)" class="form-control" placeholder="e.g. $100" style="padding: 6px; font-size: 0.8rem; max-width: 110px; background: rgba(0,0,0,0.2); border: 1px solid #28a745; border-radius: 4px; color: #fff;">
+                                            <span style="font-size: 0.65rem; color: #2e7d32; font-weight: bold;">PROMO PRICE</span>
+                                            <input type="text" value="${pendingVariant.price}" oninput="updatePendingVariantPrice(this.value)" class="form-control" placeholder="e.g. $100" style="padding: 6px; font-size: 0.8rem; max-width: 110px; background: var(--field-bg); border: 1px solid #2e7d32; border-radius: 4px; color: var(--light-text);">
                                         </div>
                                         <div style="display: flex; gap: 6px;">
-                                            <button onclick="confirmPendingVariant()" style="background: #28a745; border: none; color: white; padding: 6px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; height: 28px; font-weight: bold;">Confirm ✔</button>
-                                            <button onclick="cancelPendingVariant()" style="background: #6c757d; border: none; color: white; padding: 6px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; height: 28px;">Cancel</button>
+                                            <button onclick="confirmPendingVariant()" style="background: #2e7d32; border: none; color: white; padding: 6px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; height: 28px; font-weight: bold;">Confirm ✔</button>
+                                            <button onclick="cancelPendingVariant()" style="background: #8a7a66; border: none; color: white; padding: 6px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; height: 28px;">Cancel</button>
                                         </div>
                                     </div>
                                 ` : ''}
@@ -1321,33 +1321,33 @@ function renderAdminPanel() {
 
         html += `
                     </ul>
-                    <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 25px; background: rgba(0, 0, 0, 0.3); padding: 18px; border-radius: 8px; border: 1px solid rgba(223, 183, 108, 0.2);">
+                    <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 25px; background: #f7f0e1; padding: 18px; border-radius: 8px; border: 1px solid rgba(223, 183, 108, 0.2);">
                         <span style="font-size: 0.8rem; font-weight: bold; color: var(--primary-gold); text-transform: uppercase; letter-spacing: 0.5px;">
                             ✨ Add New Service Item
                         </span>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
                             <div style="display: flex; flex-direction: column; gap: 4px; grid-column: span 2;">
-                                <span style="font-size: 0.7rem; color: #aaa;">Service Name *</span>
-                                <input type="text" id="newItemName-${catIdx}" class="form-control" placeholder="e.g. Microneedling Therapy" style="padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+                                <span style="font-size: 0.7rem; color: var(--text-muted);">Service Name *</span>
+                                <input type="text" id="newItemName-${catIdx}" class="form-control" placeholder="e.g. Microneedling Therapy" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px;">
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 4px;">
-                                <span style="font-size: 0.7rem; color: #aaa;">Duration</span>
-                                <input type="text" id="newItemDuration-${catIdx}" class="form-control" placeholder="e.g. 60 min" style="padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+                                <span style="font-size: 0.7rem; color: var(--text-muted);">Duration</span>
+                                <input type="text" id="newItemDuration-${catIdx}" class="form-control" placeholder="e.g. 60 min" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px;">
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <span style="font-size: 0.7rem; color: #aaa;">Original Price *</span>
-                                <input type="text" id="newItemOriginalPrice-${catIdx}" class="form-control" placeholder="e.g. $150" style="padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">Original Price *</span>
+                                <input type="text" id="newItemOriginalPrice-${catIdx}" class="form-control" placeholder="e.g. $150" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px;">
                             </div>
                             <div style="display: flex; flex-direction: column; gap: 4px;">
-                                <span style="font-size: 0.7rem; color: #aaa;">Promo Price</span>
-                                <input type="text" id="newItemPrice-${catIdx}" class="form-control" placeholder="e.g. $120" style="padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;">
+                                <span style="font-size: 0.7rem; color: var(--text-muted);">Promo Price</span>
+                                <input type="text" id="newItemPrice-${catIdx}" class="form-control" placeholder="e.g. $120" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px;">
                             </div>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <span style="font-size: 0.7rem; color: #aaa;">Item Description (optional)</span>
-                            <textarea id="newItemDesc-${catIdx}" class="form-control" placeholder="Write a short enticing description of what this service entails..." style="padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; height: 60px; resize: vertical; font-family: inherit; font-size: 0.85rem; color: #fff;"></textarea>
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">Item Description (optional)</span>
+                            <textarea id="newItemDesc-${catIdx}" class="form-control" placeholder="Write a short enticing description of what this service entails..." style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; height: 60px; resize: vertical; font-family: inherit; font-size: 0.85rem; color: var(--light-text);"></textarea>
                         </div>
-                        <button onclick="handleCreateItem(${catIdx})" style="padding: 10px 20px; font-size: 0.85rem; font-weight: bold; background: var(--primary-gold); color: #111; border: none; border-radius: 4px; cursor: pointer; align-self: flex-start; transition: transform 0.2s, opacity 0.2s;" onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">+ Add Item to ${cat.title}</button>
+                        <button onclick="handleCreateItem(${catIdx})" style="padding: 10px 20px; font-size: 0.85rem; font-weight: bold; background: var(--gold-metal); color: #3b2a1a; border: 1px solid #c9a052; border-radius: 4px; cursor: pointer; align-self: flex-start; transition: transform 0.2s, opacity 0.2s;" onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">+ Add Item to ${cat.title}</button>
                     </div>
                 </div>
             </div>
