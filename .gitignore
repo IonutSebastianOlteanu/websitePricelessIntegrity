@@ -2,5 +2,6 @@ node_modules/
 .venv/
 .git/
 .wrangler/
+.dev.vars
 .DS_Store
 npm-debug.log*

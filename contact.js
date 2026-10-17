@@ -46,6 +46,75 @@ function updateOwnerField(field, value) {
     renderOwnerDetails(OWNER_DATA);
 }
 
+function populateBookingServices() {
+    const serviceSelect = document.getElementById('bookingService');
+    if (!serviceSelect || typeof SERVICES_DATA === 'undefined') return;
+
+    const selectedService = serviceSelect.value;
+    serviceSelect.replaceChildren(new Option('Select a service', '', true, !selectedService));
+    SERVICES_DATA.forEach(category => {
+        const group = document.createElement('optgroup');
+        group.label = category.title || 'Services';
+        (Array.isArray(category.details) ? category.details : []).forEach(service => {
+            const option = document.createElement('option');
+            option.value = service.name;
+            option.dataset.categoryTitle = group.label;
+            option.textContent = service.name;
+            option.selected = option.value === selectedService;
+            group.appendChild(option);
+        });
+        if (group.childElementCount) serviceSelect.appendChild(group);
+    });
+}
+
+function initializeBookingForm() {
+    const form = document.getElementById('bookingForm');
+    const dateInput = document.getElementById('bookingDate');
+    if (!form || !dateInput) return;
+
+    const today = new Date();
+    dateInput.min = [today.getFullYear(), String(today.getMonth() + 1).padStart(2, '0'), String(today.getDate()).padStart(2, '0')].join('-');
+
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+        if (!form.reportValidity()) return;
+
+        const request = new FormData(form);
+        const selectedService = document.getElementById('bookingService').selectedOptions[0];
+        const submitButton = form.querySelector('[type="submit"]');
+        const status = document.getElementById('bookingStatus');
+        submitButton.disabled = true;
+        status.textContent = 'Sending your request...';
+
+        try {
+            const response = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: request.get('name'),
+                    email: request.get('email'),
+                    phone: request.get('phone'),
+                    categoryTitle: selectedService.dataset.categoryTitle,
+                    serviceName: selectedService.value,
+                    preferredDate: request.get('date'),
+                    preferredTime: request.get('time'),
+                    notes: request.get('notes'),
+                    website: request.get('website')
+                })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || 'Your request could not be sent. Please try again.');
+            status.textContent = result.message || 'Your appointment request was received.';
+            form.reset();
+            populateBookingServices();
+        } catch (error) {
+            status.textContent = error.message;
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+}
+
 async function renderOwnerDetails(ownerData) {
     const currentOwnerData = ownerData || await loadOwnerData();
     const card = document.getElementById('ownerCard');

@@ -4,6 +4,9 @@ const GITHUB_FILE_PATH = 'services.json';
 const TEAM_FILE_PATH = 'team.json';
 const CONTACT_FILE_PATH = 'contact.json';
 let RESOLVED_GITHUB_BRANCH = null;
+let BOOKING_REQUESTS = null;
+let BOOKING_REQUESTS_ERROR = '';
+let BOOKING_REQUESTS_PROMISE = null;
 
 function getAuthHeaders(token) {
     const prefix = localStorage.getItem('gh_token_prefix') || 'token';
@@ -136,10 +139,118 @@ async function accessOwnerPortal(providedToken = '') {
 function logoutAdmin(quiet = false) {
     localStorage.removeItem('gh_token');
     localStorage.removeItem('gh_token_prefix');
+    BOOKING_REQUESTS = null;
+    BOOKING_REQUESTS_ERROR = '';
     const panel = document.getElementById('adminPanelSection');
     if (panel) panel.style.display = 'none';
     if (!quiet) {
         alert("Logged out successfully.");
+    }
+}
+
+function renderBookingRequests() {
+    const container = document.getElementById('bookingRequestsList');
+    if (!container) return;
+    container.replaceChildren();
+
+    if (BOOKING_REQUESTS_ERROR) {
+        container.textContent = BOOKING_REQUESTS_ERROR;
+        return;
+    }
+    if (BOOKING_REQUESTS === null) {
+        container.textContent = 'Loading booking requests...';
+        return;
+    }
+    if (BOOKING_REQUESTS.length === 0) {
+        container.textContent = 'No booking requests yet.';
+        return;
+    }
+
+    BOOKING_REQUESTS.forEach(booking => {
+        const card = document.createElement('article');
+        card.style.cssText = 'padding: 16px; margin-top: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px;';
+
+        const heading = document.createElement('strong');
+        heading.textContent = `${booking.service_name} · ${booking.reference}`;
+        card.appendChild(heading);
+
+        const details = document.createElement('p');
+        details.style.cssText = 'color: #ccc; margin: 8px 0; white-space: pre-line;';
+        details.textContent = [
+            `${booking.category_title} · ${booking.preferred_date} at ${booking.preferred_time} (New York time)`,
+            `${booking.customer_name} · ${booking.customer_phone} · ${booking.customer_email}`,
+            booking.notes ? `Notes: ${booking.notes}` : ''
+        ].filter(Boolean).join('\n');
+        card.appendChild(details);
+
+        const status = document.createElement('p');
+        status.style.cssText = 'margin: 0 0 10px; color: var(--primary-gold); text-transform: capitalize;';
+        status.textContent = booking.status;
+        card.appendChild(status);
+
+        if (booking.status === 'pending') {
+            const actions = document.createElement('div');
+            actions.style.cssText = 'display: flex; flex-wrap: wrap; gap: 8px;';
+            [['confirm', 'Confirm & Send Invite'], ['decline', 'Decline']].forEach(([action, label]) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.textContent = label;
+                button.style.cssText = action === 'decline'
+                    ? 'background: #d9534f; border-color: #d9534f; padding: 8px 12px;'
+                    : 'padding: 8px 12px;';
+                button.addEventListener('click', () => updateBookingRequest(booking.id, action, button));
+                actions.appendChild(button);
+            });
+            card.appendChild(actions);
+        }
+        container.appendChild(card);
+    });
+}
+
+async function loadBookingRequests() {
+    if (BOOKING_REQUESTS_PROMISE) return BOOKING_REQUESTS_PROMISE;
+    BOOKING_REQUESTS_ERROR = '';
+    BOOKING_REQUESTS = null;
+    renderBookingRequests();
+
+    BOOKING_REQUESTS_PROMISE = (async () => {
+        try {
+            const response = await fetch('/api/bookings', {
+                headers: getAuthHeaders(localStorage.getItem('gh_token') || '')
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || 'Unable to load booking requests.');
+            BOOKING_REQUESTS = Array.isArray(result.bookings) ? result.bookings : [];
+        } catch (error) {
+            BOOKING_REQUESTS_ERROR = `${error.message} Check the Cloudflare booking setup and try Refresh.`;
+        } finally {
+            BOOKING_REQUESTS_PROMISE = null;
+            renderBookingRequests();
+        }
+    })();
+    return BOOKING_REQUESTS_PROMISE;
+}
+
+function refreshBookingRequests() {
+    BOOKING_REQUESTS_ERROR = '';
+    return loadBookingRequests();
+}
+
+async function updateBookingRequest(bookingId, action, button) {
+    if (action === 'decline' && !confirm('Decline this appointment request and email the customer?')) return;
+    button.disabled = true;
+    try {
+        const response = await fetch(`/api/bookings/${encodeURIComponent(bookingId)}`, {
+            method: 'PATCH',
+            headers: { ...getAuthHeaders(localStorage.getItem('gh_token') || ''), 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || 'Unable to update this booking.');
+        await refreshBookingRequests();
+    } catch (error) {
+        alert(error.message);
+        button.disabled = false;
     }
 }
 
@@ -975,6 +1086,13 @@ function renderAdminPanel() {
             </div>
         </div>
         <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                <h4 style="color: var(--primary-gold); margin: 0;">Booking Requests</h4>
+                <button type="button" onclick="refreshBookingRequests()" style="padding: 8px 12px;">Refresh</button>
+            </div>
+            <div id="bookingRequestsList" role="status" aria-live="polite" style="margin-top: 12px;"></div>
+        </div>
+        <div style="margin-bottom: 30px; padding: 20px; background: #222; border-radius: 4px; border: 1px solid #444;">
             <h4 style="color: var(--primary-gold); margin-top: 0;">About Section Content</h4>
             <div style="display: grid; gap: 12px;">
                 <div>
@@ -1237,4 +1355,6 @@ function renderAdminPanel() {
     });
 
     container.innerHTML = html;
+    renderBookingRequests();
+    if (BOOKING_REQUESTS === null && !BOOKING_REQUESTS_ERROR && !BOOKING_REQUESTS_PROMISE) loadBookingRequests();
 }

@@ -34,15 +34,33 @@
             justify-content: flex-end;
             position: relative;
         }
-        .brand-mark {
+        .booking-toggle {
             position: absolute;
             left: 50%;
             top: 50%;
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
+            z-index: 2;
+            max-width: calc(100% - 104px);
+            padding: 12px 18px;
             transform: translate(-50%, -50%);
-            pointer-events: none;
+            border: 1px solid rgba(223, 183, 108, 0.6);
+            border-radius: 3px;
+            background: var(--card-bg);
+            color: var(--primary-gold);
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.25;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .booking-toggle:hover,
+        .booking-toggle[aria-expanded="true"] {
+            border-color: var(--primary-gold);
+            background: rgba(223, 183, 108, 0.12);
+        }
+        .booking-toggle:focus-visible {
+            outline: 2px solid var(--primary-gold);
+            outline-offset: 3px;
         }
         .menu-toggle {
             position: relative;
@@ -593,6 +611,59 @@
             border-color: var(--primary-gold);
             outline: none;
         }
+        .booking-form {
+            max-width: 1000px;
+            margin: 0 auto 28px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .booking-form[hidden] {
+            display: none;
+        }
+        .booking-form h3,
+        .booking-note,
+        .booking-message {
+            grid-column: 1 / -1;
+        }
+        .booking-form h3 {
+            margin-bottom: 0;
+        }
+        .booking-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+        .booking-field label {
+            color: #ccc;
+            font-size: 0.85rem;
+        }
+        .booking-note {
+            margin: 0;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        .booking-form button {
+            justify-self: start;
+        }
+        @media (max-width: 600px) {
+            .booking-toggle {
+                max-width: calc(100% - 88px);
+                width: auto;
+                padding: 6px 9px;
+                font-size: 0.72rem;
+                white-space: nowrap;
+            }
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+            .booking-form h3,
+            .booking-note,
+            .booking-message {
+                grid-column: auto;
+            }
+        }
     </style>
 </head>
 <body>
@@ -607,16 +678,57 @@
 
     <header>
         <nav class="top-nav" aria-label="Main navigation">
-            <img class="brand-mark" src="salonIntro.jpeg" alt="Madam Beauty by PRICELESS Integrity">
             <button class="menu-toggle" type="button" aria-label="Open navigation" title="Open navigation" aria-expanded="false" aria-controls="mainNavLinks">
                 <i class="fa-solid fa-bars" aria-hidden="true"></i>
             </button>
+            <button class="booking-toggle" id="bookingToggle" type="button" aria-expanded="false" aria-controls="bookingForm">Book An Experience Here!</button>
             <div class="nav-links" id="mainNavLinks">
                 <a href="#services">Our Services</a>
+                <a href="#bookingToggle">Book Appointment</a>
                 <a href="#about">About Us</a>
                 <a href="#contact">Contact Us</a>
             </div>
         </nav>
+        <form class="contact-card booking-form" id="bookingForm" hidden>
+            <h3 id="booking">Book An Experience Now!</h3>
+            <div class="booking-field">
+                <label for="bookingService">Service</label>
+                <select class="form-control" id="bookingService" name="service" required>
+                    <option value="" disabled selected>Select a service</option>
+                </select>
+            </div>
+            <div class="booking-field">
+                <label for="bookingDate">Preferred date</label>
+                <input class="form-control" id="bookingDate" name="date" type="date" required>
+            </div>
+            <div class="booking-field">
+                <label for="bookingTime">Preferred time</label>
+                <input class="form-control" id="bookingTime" name="time" type="time" required>
+            </div>
+            <div class="booking-field">
+                <label for="bookingName">Your name</label>
+                <input class="form-control" id="bookingName" name="name" type="text" autocomplete="name" required>
+            </div>
+            <div class="booking-field">
+                <label for="bookingPhone">Phone</label>
+                <input class="form-control" id="bookingPhone" name="phone" type="tel" autocomplete="tel" required>
+            </div>
+            <div class="booking-field">
+                <label for="bookingEmail">Email</label>
+                <input class="form-control" id="bookingEmail" name="email" type="email" autocomplete="email" required>
+            </div>
+            <div class="booking-field booking-message">
+                <label for="bookingNotes">Notes (optional)</label>
+                <textarea class="form-control" id="bookingNotes" name="notes" rows="3"></textarea>
+            </div>
+            <div aria-hidden="true" style="position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;">
+                <label for="bookingWebsite">Leave this field empty</label>
+                <input id="bookingWebsite" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <p class="booking-note booking-message">Your request is not confirmed until the salon replies.</p>
+            <p class="booking-note booking-message" id="bookingStatus" role="status" aria-live="polite"></p>
+            <button type="submit">Send Appointment Request</button>
+        </form>
     </header>
 
     <section class="hero">
@@ -704,6 +816,17 @@
 
         const mainNav = document.querySelector('.top-nav');
         const menuToggle = document.querySelector('.menu-toggle');
+        const bookingToggle = document.getElementById('bookingToggle');
+        const bookingForm = document.getElementById('bookingForm');
+        const setBookingFormOpen = function (isOpen) {
+            bookingForm.hidden = !isOpen;
+            bookingToggle.setAttribute('aria-expanded', String(isOpen));
+        };
+        bookingToggle.addEventListener('click', function () {
+            const isOpen = bookingForm.hidden;
+            setBookingFormOpen(isOpen);
+            if (isOpen) bookingForm.querySelector('select').focus();
+        });
         const closeMenu = function () {
             mainNav.classList.remove('is-open');
             menuToggle.setAttribute('aria-expanded', 'false');
@@ -723,11 +846,23 @@
         mainNav.querySelectorAll('.nav-links a').forEach(function (link) {
             link.addEventListener('click', closeMenu);
         });
+        mainNav.querySelector('a[href="#bookingToggle"]').addEventListener('click', function (event) {
+            event.preventDefault();
+            setBookingFormOpen(true);
+            closeMenu();
+            bookingForm.querySelector('select').focus();
+        });
         document.addEventListener('click', function (event) {
             if (!event.composedPath().includes(mainNav)) closeMenu();
         });
         document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') closeMenu();
+            if (event.key === 'Escape') {
+                closeMenu();
+                if (!bookingForm.hidden) {
+                    setBookingFormOpen(false);
+                    bookingToggle.focus();
+                }
+            }
         });
 
         const aboutBtn = document.querySelector('.about-expand-btn');
@@ -745,10 +880,11 @@
         }
 
         // Initialize and display the services dynamically
-        loadServicesData();
+        loadServicesData().then(populateBookingServices);
         loadTeamData();
         renderOwnerDetails();
         renderFooter();
+        initializeBookingForm();
     </script>
 </body>
 </html>
