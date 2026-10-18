@@ -55,6 +55,20 @@ Before deploying the booking workflow (run `npx wrangler login` once first):
 
 Emails are sent through the `EMAIL` (`send_email`) binding in `wrangler.jsonc`; no API key or secret is needed. The sender address is the `EMAIL_FROM` variable in `wrangler.jsonc` and must be on the onboarded domain. The owner portal uses the existing GitHub token and requires write access to the configured repository for booking management. Customer booking details are stored in D1, not in the public site JSON or GitHub repository.
 
+### Replying as contact@ (email relay)
+
+Mail to `contact@priceless-integrity.com` is handled by the Worker (`email-relay.mjs`) instead of plain forwarding. The Worker delivers each message to the owner's personal inbox with a private Reply-To such as `contact+r-<code>@priceless-integrity.com`. When the owner presses Reply, the Worker sends the reply to the original sender from `contact@priceless-integrity.com`, so the owner's personal address is never shown. Reply addresses are stored in the `relay_threads` D1 table and expire after 180 days; only mail from the owner's address is accepted on them. If relaying fails, the message is forwarded unchanged so incoming mail is not lost.
+
+Setup:
+
+1. Store the owner's personal address as a secret: `npx wrangler secret put OWNER_EMAIL`. It must be a verified destination address in Email Routing.
+2. Apply the migrations and deploy (`npx wrangler d1 migrations apply booking-service-db --remote`, then `npx wrangler deploy`).
+3. In the Cloudflare dashboard, go to **Compute** > **Email Service** > **Email Routing**:
+   - Under **Settings**, enable **Subaddressing**.
+   - Under **Routing rules**, edit the `contact@priceless-integrity.com` rule and change its action to **Send to a Worker** > `websitepricelessintegrity`.
+
+Replies and their attachments must be under 4.5 MB in total.
+
 ### Local testing with the live database
 
 The D1 binding in `wrangler.jsonc` sets `"remote": true`, so `npx wrangler dev` connects to the live `booking-service-db` database instead of a local copy:

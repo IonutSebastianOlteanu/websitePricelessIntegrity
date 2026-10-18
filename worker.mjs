@@ -1,3 +1,5 @@
+import { handleIncomingEmail } from './email-relay.mjs';
+
 const GITHUB_REPO = 'IonutSebastianOlteanu/websitePricelessIntegrity';
 const BUSINESS_TIME_ZONE = 'America/New_York';
 const MAX_REQUEST_BYTES = 16_000;
@@ -382,5 +384,9 @@ export default {
         const bookingMatch = url.pathname.match(/^\/api\/bookings\/([^/]+)$/);
         if (request.method === 'PATCH' && bookingMatch) return updateBooking(request, env, decodeURIComponent(bookingMatch[1]));
         return jsonResponse({ error: 'Not found.' }, 404);
+    },
+
+    async email(message, env) {
+        await handleIncomingEmail(message, env);
     }
 };
