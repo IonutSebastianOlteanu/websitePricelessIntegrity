@@ -21,5 +21,13 @@
 			"migrations_dir": "migrations",
 			"remote": true
 		}
-	]
+	],
+	"send_email": [
+		{
+			"name": "EMAIL"
+		}
+	],
+	"vars": {
+		"EMAIL_FROM": "bookings@priceless-integrity.com"
+	}
 }

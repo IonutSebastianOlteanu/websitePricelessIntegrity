@@ -50,10 +50,10 @@ Before deploying the booking workflow (run `npx wrangler login` once first):
 
 1. The D1 database `booking-service-db` is already configured in `wrangler.jsonc` under the `DB` binding, which `worker.mjs` expects.
 2. Apply the database schema with `npx wrangler d1 migrations apply booking-service-db --remote`.
-3. Verify a sending domain in Resend, then set `RESEND_API_KEY` and `RESEND_FROM_EMAIL` as Worker secrets with `npx wrangler secret put`.
+3. Onboard the sending domain in Cloudflare Email Service: in the dashboard go to **Compute** > **Email Service** > **Email Sending**, select **Onboard Domain**, and choose `priceless-integrity.com`. Cloudflare adds the SPF, DKIM, DMARC, and bounce DNS records automatically (usually within 5-15 minutes).
 4. Deploy the site with `npx wrangler deploy`.
 
-The Resend sender must be an address on a domain verified in Resend. The owner portal uses the existing GitHub token and requires write access to the configured repository for booking management. Customer booking details are stored in D1, not in the public site JSON or GitHub repository.
+Emails are sent through the `EMAIL` (`send_email`) binding in `wrangler.jsonc`; no API key or secret is needed. The sender address is the `EMAIL_FROM` variable in `wrangler.jsonc` and must be on the onboarded domain. The owner portal uses the existing GitHub token and requires write access to the configured repository for booking management. Customer booking details are stored in D1, not in the public site JSON or GitHub repository.
 
 ### Local testing with the live database
 
@@ -64,10 +64,10 @@ npx wrangler login   # once, with an account that has access to the database
 npx wrangler dev     # http://localhost:8787
 ```
 
-Bookings made at the local URL are real records: they appear in the owner portal and, when Resend is configured, notify the salon. Use an obviously fake name and email when testing, then remove test rows:
+Bookings made at the local URL are real records: they appear in the owner portal and, once the sending domain is onboarded, email the salon. Use an obviously fake name and email when testing, then remove test rows:
 
 ```bash
 npx wrangler d1 execute booking-service-db --remote --command "DELETE FROM bookings WHERE customer_email = 'your-test@example.com'"
 ```
 
-Add local Resend values to `.dev.vars` to test email delivery; that file is ignored by Git. To test against a local database instead, remove `"remote": true` from `wrangler.jsonc`, run `npx wrangler d1 migrations apply booking-service-db --local`, then start `npx wrangler dev`.
+In `wrangler dev`, the email binding is simulated locally and no real email is sent. To test against a local database instead, remove `"remote": true` from `wrangler.jsonc`, run `npx wrangler d1 migrations apply booking-service-db --local`, then start `npx wrangler dev`.

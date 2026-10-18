@@ -78,26 +78,16 @@ async function getService(request, env, categoryTitle, serviceName) {
     return { categoryTitle: category.title, serviceName: service.name, durationMinutes };
 }
 
-async function sendResendEmail(env, message, idempotencyKey) {
-    if (!env.RESEND_API_KEY || !env.RESEND_FROM_EMAIL) {
+async function sendEmail(env, message) {
+    if (!env.EMAIL || !env.EMAIL_FROM) {
         throw new Error('Email delivery is not configured.');
     }
-    const headers = {
-        Authorization: `Bearer ${env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json'
-    };
-    if (idempotencyKey) headers['Idempotency-Key'] = idempotencyKey;
-
-    const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ from: env.RESEND_FROM_EMAIL, ...message })
-    });
-    if (!response.ok) {
-        console.error('Resend rejected an email:', response.status, await response.text());
+    try {
+        return await env.EMAIL.send({ from: { email: env.EMAIL_FROM, name: 'Madam Beauty' }, ...message });
+    } catch (error) {
+        console.error('Cloudflare Email Service rejected an email:', error.code, error.message);
         throw new Error('The email provider could not deliver the message.');
     }
-    return response.json();
 }
 
 function formatLocalDateTimeAsUtc(date, time) {
@@ -187,12 +177,12 @@ async function notifySalonOfRequest(request, env, booking) {
         ['Notes', booking.notes || 'None']
     ].map(([label, value]) => `<p><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</p>`).join('');
 
-    await sendResendEmail(env, {
+    await sendEmail(env, {
         to: [salonEmail],
-        reply_to: booking.customer_email,
+        replyTo: booking.customer_email,
         subject: `Appointment request ${booking.reference}: ${booking.service_name}`,
         html: `<h2>New appointment request</h2>${detailRows}<p>Review and respond in the owner portal.</p>`
-    }, `booking-${booking.id}-request`);
+    });
 }
 
 function bookingRequestError(error) {
@@ -319,26 +309,27 @@ async function notifyCustomerOfDecision(request, env, booking, action) {
     const salonEmail = await getSalonEmail(request, env);
     if (action === 'confirm') {
         const calendarInvite = buildCalendarInvite(booking, salonEmail);
-        await sendResendEmail(env, {
+        await sendEmail(env, {
             to: [booking.customer_email],
-            reply_to: salonEmail,
+            replyTo: salonEmail,
             subject: `Appointment confirmed ${booking.reference}: ${booking.service_name}`,
             html: `<h2>Your appointment is confirmed</h2><p>Hi ${escapeHtml(booking.customer_name)},</p><p>Your ${escapeHtml(booking.service_name)} appointment is confirmed for ${escapeHtml(booking.preferred_date)} at ${escapeHtml(booking.preferred_time)} (New York time).</p><p>Booking reference: <strong>${escapeHtml(booking.reference)}</strong></p><p>A calendar invitation is attached. Please contact <a href="mailto:${escapeHtml(salonEmail)}">the salon</a> if you need to make a change.</p>`,
             attachments: [{
                 filename: `madam-beauty-${booking.reference}.ics`,
                 content: encodeBase64(calendarInvite),
-                content_type: 'text/calendar; method=REQUEST; charset=utf-8'
+                type: 'text/calendar; method=REQUEST; charset=utf-8',
+                disposition: 'attachment'
             }]
-        }, `booking-${booking.id}-confirmation`);
+        });
         return;
     }
 
-    await sendResendEmail(env, {
+    await sendEmail(env, {
         to: [booking.customer_email],
-        reply_to: salonEmail,
+        replyTo: salonEmail,
         subject: `Appointment request update ${booking.reference}`,
         html: `<h2>Appointment request update</h2><p>Hi ${escapeHtml(booking.customer_name)},</p><p>Unfortunately, the salon cannot accommodate your requested ${escapeHtml(booking.service_name)} appointment on ${escapeHtml(booking.preferred_date)} at ${escapeHtml(booking.preferred_time)}.</p><p>Please reply to this email or call the salon to find another time.</p><p>Booking reference: <strong>${escapeHtml(booking.reference)}</strong></p>`
-    }, `booking-${booking.id}-declined`);
+    });
 }
 
 async function updateBooking(request, env, bookingId) {
