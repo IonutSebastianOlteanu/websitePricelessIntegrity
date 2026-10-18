@@ -1,3 +1,6 @@
 node_modules
 .git
 .wrangler
+.dev.vars
+migrations
+README.md
