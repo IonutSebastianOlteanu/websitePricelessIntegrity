@@ -7,5 +7,12 @@
         "teamLabel": "Our Team",
         "teamDescription": "Skilled professionals devoted to delivering a refined and memorable experience."
     },
-    "members": []
+    "members": [
+        {
+            "name": "MADALINA IAMANDI",
+            "role": "Founder of MADAM Beauty By PricelessIntegrity",
+            "bio": "Known for her soft touch and meticulous painless extractions, Madalina is an accomplished, New York State licensed medical esthetician with over 21 years of international experience in advanced wellness and skincare therapies. Originally from the scenic Black Sea coast of Romania, Madalina has dedicated her life to the art of holistic  and non-invasive facial rejuvenation. Her career began in 2005 within the specialized field of balneotherapy wellness, where she mastered the foundations of body and skin restoration before bringing her unique expertise to the competitive New York luxury beauty market.💼 Distinguished Career & Experience  Since graduating, Madalina has partnered exclusively with elite, high-end luxury medical practices and skin clinics across Manhattan.💆 Philosophy & Approach to Skincare  Madalina’s signature method perfectly bridges the gap between clinical results and holistic wellness. She blends her extensive technical and clinical knowledge with a nurturing, deeply relaxing touch. Every facial is meticulously customized to be effective and result-oriented, leaving the skin noticeably rejuvenated, radiant, and structurally uplifted.✨ Passion & Inspiration  Madalina’s love for facial therapies sparked during her early years in Europe. Today, she is inspired by the vital role she plays in her clients' long-term skincare journeys. She believes that true skin health is a partnership. By educating her clients on advanced skincare routines and collaborating with them on tailored treatments, Madalina strives to maximize their skin’s natural potential—ensuring every client walks away with a radiant complexion and a confident smile.",
+            "image": "images/team/madalina-iamandi-1792338964073-0.jpg"
+        }
+    ]
 }
