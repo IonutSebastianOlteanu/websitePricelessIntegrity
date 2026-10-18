@@ -1,22 +1,25 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "websitepricelessintegrity",
-  "main": "worker.mjs",
-  "compatibility_date": "2026-10-06",
-  "observability": {
-    "enabled": true
-  },
-  "assets": {
-    "directory": ".",
-    "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "booking-service-db",
-      "database_id": "d14fa455-d021-429c-b108-34db70f5234f",
-      "migrations_dir": "migrations"
-    }
-  ]
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "websitepricelessintegrity",
+	"main": "worker.mjs",
+	"compatibility_date": "2026-10-06",
+	"observability": {
+		"enabled": true
+	},
+	"assets": {
+		"directory": ".",
+		"binding": "ASSETS",
+		"run_worker_first": [
+			"/api/*"
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "booking-service-db",
+			"database_id": "d14fa455-d021-429c-b108-34db70f5234f",
+			"migrations_dir": "migrations",
+			"remote": true
+		}
+	]
 }
