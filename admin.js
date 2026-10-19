@@ -1076,11 +1076,29 @@ function updateImagePreview(value, previewId) {
     `;
 }
 
+// Phone photos are several MB; cap uploads at 800px on the longest side before
+// they are previewed and committed. Browsers apply the EXIF rotation when drawing.
+const TEAM_PHOTO_MAX_SIZE = 800;
+
+function downscaleImageDataUrl(dataUrl, callback) {
+    const image = new Image();
+    image.onload = () => {
+        const scale = Math.min(1, TEAM_PHOTO_MAX_SIZE / Math.max(image.naturalWidth, image.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(image.naturalWidth * scale);
+        canvas.height = Math.round(image.naturalHeight * scale);
+        canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+        callback(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    image.onerror = () => callback(dataUrl);
+    image.src = dataUrl;
+}
+
 function handleTeamMemberImageUpload(input, targetIndex) {
     const file = input && input.files && input.files[0];
     if (!file) return;
 
-    readFileAsDataUrl(file, (dataUrl) => {
+    readFileAsDataUrl(file, (originalDataUrl) => downscaleImageDataUrl(originalDataUrl, (dataUrl) => {
         if (targetIndex === 'new') {
             const imageField = document.getElementById('newTeamMemberImage');
             if (imageField) imageField.value = dataUrl;
@@ -1088,7 +1106,7 @@ function handleTeamMemberImageUpload(input, targetIndex) {
             return;
         }
         updateTeamMemberImage(targetIndex, dataUrl);
-    });
+    }));
 }
 
 function handleCreateTeamMember() {

@@ -130,10 +130,12 @@ function renderTeamMembers() {
                 <div class="team-photo-wrap">
                     ${imageHtml}
                 </div>
-                <h4>${name}</h4>
-                <div class="team-role">${member.role || 'Team Member'}</div>
-                <p>${member.bio || ''}</p>
-                ${sectionsHtml ? `<div class="team-details">${sectionsHtml}</div>` : ''}
+                <div class="team-info">
+                    <h4>${name}</h4>
+                    <div class="team-role">${member.role || 'Team Member'}</div>
+                    <p class="team-bio">${member.bio || ''}</p>
+                    ${sectionsHtml ? `<div class="team-details">${sectionsHtml}</div>` : ''}
+                </div>
             </div>
         `;
     }).join('');

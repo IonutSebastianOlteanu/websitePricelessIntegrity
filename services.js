@@ -39,13 +39,11 @@ function toggleServiceDetails(event, cardElement) {
     const details = cardElement.querySelector('.service-details');
     const indicator = cardElement.querySelector('.expand-indicator');
     
-    if (details.style.display === 'none' || !details.style.display) {
-        details.style.display = 'block';
-        indicator.innerText = '−';
-    } else {
-        details.style.display = 'none';
-        indicator.innerText = '+';
-    }
+    const isOpening = details.style.display === 'none' || !details.style.display;
+    details.style.display = isOpening ? 'block' : 'none';
+    indicator.innerText = isOpening ? '−' : '+';
+    cardElement.classList.toggle('is-open', isOpening);
+    cardElement.setAttribute('aria-expanded', String(isOpening));
 }
 
 function handleCardKeydown(event, cardElement) {
@@ -121,10 +119,15 @@ function renderServices(searchTerm = "") {
     const grid = document.getElementById('servicesGrid');
     if (!grid) return;
 
-    // Normalize data: Move single "price" values to "originalPrice"
+    // Normalize data: tidy price/duration text ("$ 750" -> "$750") and move single "price" values to "originalPrice"
+    const tidy = value => typeof value === 'string' ? value.trim().replace(/^\$\s+/, '$') : value;
     SERVICES_DATA.forEach(cat => {
         if (cat.details) {
             cat.details.forEach(d => {
+                ['duration', 'price', 'originalPrice'].forEach(key => { d[key] = tidy(d[key]); });
+                (d.variants || []).forEach(v => {
+                    ['duration', 'price', 'originalPrice'].forEach(key => { v[key] = tidy(v[key]); });
+                });
                 if (d.price && !d.originalPrice) {
                     d.originalPrice = d.price;
                     d.price = '';
@@ -188,7 +191,7 @@ function renderServices(searchTerm = "") {
                 : '';
 
         return `
-        <div class="service-card" onclick="toggleServiceDetails(event, this)" onkeydown="handleCardKeydown(event, this)" role="button" tabindex="0" aria-expanded="${isSearching}" style="${highlightStyle} cursor: pointer;">
+        <div class="service-card${isSearching ? ' is-open' : ''}" onclick="toggleServiceDetails(event, this)" onkeydown="handleCardKeydown(event, this)" role="button" tabindex="0" aria-expanded="${isSearching}" style="${highlightStyle} cursor: pointer;">
             <h3 style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
                 ${highlightText(service.title, searchTerm)}
                 <span class="expand-indicator" style="color: var(--primary-gold); font-size: 1.2rem;">${indicatorText}</span>

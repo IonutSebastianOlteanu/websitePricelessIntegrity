@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MADAM BEAUTY | by PRICELESS Integrity</title>
+    <meta name="description" content="Madam Beauty by Priceless Integrity: facials and advanced skincare in New York, tailored to your individual needs.">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/monogram.png">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MADAM BEAUTY | by PRICELESS Integrity">
+    <meta property="og:description" content="Facials and advanced skincare in New York, tailored to your individual needs.">
+    <meta property="og:image" content="https://priceless-integrity.com/images/intro-logo.jpg">
+    <meta property="og:url" content="https://priceless-integrity.com/">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -88,9 +97,24 @@
             text-transform: uppercase;
             color: var(--text-muted);
         }
+        /* Below 900px the wordmark gives way to the crest monogram from the logo */
+        .brand-mark {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(223, 183, 108, 0.4);
+        }
         @media (max-width: 900px) {
-            .brand {
+            .brand-name,
+            .brand-tagline {
                 display: none;
+            }
+            .brand-mark {
+                display: block;
+            }
+            .top-nav .booking-toggle {
+                max-width: calc(100% - 120px);
             }
         }
         header {
@@ -398,6 +422,10 @@
             transform: translateY(-5px);
             box-shadow: 0 16px 36px rgba(120, 88, 40, 0.16);
         }
+        /* An opened category is a reading surface; keep it still under the pointer */
+        .service-card.is-open:hover {
+            transform: none;
+        }
         .service-card h3 {
             color: var(--light-text);
         }
@@ -491,26 +519,8 @@
             gap: 12px;
             margin-bottom: 30px;
         }
-        .about-expand-btn {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: transparent;
-            border: 1px solid rgba(223, 183, 108, 0.5);
-            color: var(--primary-gold);
-            font-size: 1.4rem;
-            line-height: 1;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .about-expand-btn:hover {
-            background: rgba(223, 183, 108, 0.08);
-            transform: rotate(90deg);
-        }
+        /* About Us shows a teaser (story intro, team cards with a short bio);
+           "Read more" reveals the rest of the story and each member's full profile. */
         .about-section-inner {
             display: grid;
             grid-template-columns: 1fr;
@@ -520,30 +530,38 @@
             border-radius: 4px;
             box-shadow: var(--card-shadow);
             border-top: 3px solid var(--gold-bright);
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            padding: 0 30px;
-            transition: max-height 0.5s ease, opacity 0.25s ease, padding 0.3s ease, margin-top 0.25s ease;
-            pointer-events: none;
-        }
-        .about-section-inner.expanded {
-            max-height: 2200px;
-            opacity: 1;
-            padding: 30px;
-            pointer-events: auto;
+            padding: 36px 30px 30px;
+            scroll-margin-top: 20px;
         }
         .about-expanded-content {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: max-height 0.4s ease, opacity 0.25s ease, margin-top 0.25s ease;
-            margin-top: 0;
+            display: none;
         }
         .about-section-inner.expanded .about-expanded-content {
-            max-height: 220px;
-            opacity: 1;
+            display: block;
             margin-top: 16px;
+        }
+        .about-section-inner:not(.expanded) .team-bio {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            overflow: hidden;
+        }
+        .about-section-inner:not(.expanded) .team-details {
+            display: none;
+        }
+        .about-more-btn {
+            justify-self: center;
+            padding: 10px 30px;
+            background: transparent;
+            border: 1px solid var(--primary-gold);
+            color: #805b22;
+            font-family: var(--heading-font);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+        .about-more-btn:hover {
+            background: rgba(223, 183, 108, 0.12);
         }
         .section-kicker {
             color: var(--primary-gold);
@@ -583,6 +601,30 @@
         .about-copy p {
             margin-bottom: 14px;
         }
+        /* The founding line is the one exception: a gold pull quote in the logo's lettering */
+        .about-copy .about-quote {
+            max-width: 640px;
+            margin: 6px auto 22px;
+            font-family: var(--heading-font);
+            font-size: 1.35rem;
+            font-weight: 600;
+            line-height: 1.45;
+            letter-spacing: 0.02em;
+            color: var(--primary-gold);
+        }
+        .about-copy .about-quote::after {
+            content: "";
+            display: block;
+            width: 140px;
+            height: 10px;
+            margin: 16px auto 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='10' viewBox='0 0 140 10'%3E%3Cpath d='M0 5h58M82 5h58' stroke='%23c9a052' stroke-width='1'/%3E%3Ccircle cx='62' cy='5' r='1.6' fill='%23c9a052'/%3E%3Ccircle cx='78' cy='5' r='1.6' fill='%23c9a052'/%3E%3Cpath d='M70 0l4 5-4 5-4-5z' fill='%23c9a052'/%3E%3C/svg%3E") no-repeat center;
+        }
+        @media (max-width: 600px) {
+            .about-copy .about-quote {
+                font-size: 1.15rem;
+            }
+        }
         .about-section-inner {
             background: linear-gradient(180deg, #fffdf8, #fbf6ea);
             border: 1px solid var(--gold-line);
@@ -607,24 +649,24 @@
         }
         .team-section {
             grid-column: 1 / -1;
-            margin-top: 20px;
-            padding-top: 20px;
+            padding-top: 26px;
             border-top: 1px solid rgba(223, 183, 108, 0.15);
         }
         .team-header {
-            text-align: left;
+            text-align: center;
             margin-bottom: 18px;
         }
         .team-header h3 {
             margin: 0 0 6px;
         }
         .team-header p {
-            margin: 0;
+            margin: 0 auto;
             max-width: 620px;
         }
+        /* One profile per row: stacked on phones, photo beside the text from 768px */
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: 1fr;
             gap: 22px;
         }
         .team-card {
@@ -647,13 +689,12 @@
             background: linear-gradient(90deg, transparent, var(--primary-gold), transparent);
         }
         .team-card:hover {
-            transform: translateY(-4px);
             border-color: rgba(169, 125, 51, 0.45);
             box-shadow: 0 20px 30px rgba(120, 88, 40, 0.15);
         }
         .team-photo-wrap {
-            width: 78px;
-            height: 78px;
+            width: 140px;
+            height: 140px;
             margin: 0 auto 18px;
             border-radius: 50%;
             overflow: hidden;
@@ -692,6 +733,24 @@
             margin: 0;
             white-space: pre-line;
         }
+        .team-bio {
+            text-align: left;
+        }
+        @media (min-width: 768px) {
+            .team-card {
+                display: grid;
+                grid-template-columns: 180px 1fr;
+                column-gap: 32px;
+                align-items: start;
+                padding: 32px;
+                text-align: left;
+            }
+            .team-photo-wrap {
+                width: 180px;
+                height: 180px;
+                margin: 0;
+            }
+        }
         .team-details {
             margin-top: 18px;
             padding-top: 16px;
@@ -710,6 +769,8 @@
         }
         .about-copy {
             max-width: 760px;
+            margin: 0 auto;
+            text-align: center;
         }
         /* Footer */
         .site-footer {
@@ -763,11 +824,7 @@
         }
         @media (max-width: 768px) {
             .about-section-inner {
-                grid-template-columns: 1fr;
-                padding: 20px 18px;
-            }
-            .about-section-inner.expanded {
-                max-height: 5000px;
+                padding: 26px 18px 22px;
             }
         }
         /* Contact Section Styles */
@@ -1058,6 +1115,7 @@
     <header>
         <nav class="top-nav" aria-label="Main navigation">
             <a class="brand" href="#" aria-label="Madam Beauty home">
+                <img class="brand-mark" src="images/monogram.png" alt="" width="44" height="44">
                 <span class="brand-name">MADAM BEAUTY</span>
                 <span class="brand-tagline">by Priceless Integrity</span>
             </a>
@@ -1134,12 +1192,11 @@
     <section id="about" class="about-section">
         <div class="about-header-row">
             <h2 style="margin: 0; text-align: center;">About Us</h2>
-            <button class="about-expand-btn" type="button" aria-expanded="false" aria-controls="aboutExpandedContent" title="Expand About Us">+</button>
         </div>
         <div id="aboutSectionInner" class="about-section-inner">
             <div class="about-copy">
                 <p class="section-kicker" id="aboutStoryLabel">Our Story</p>
-                <h2 id="aboutStoryTitle">Luxury beauty, thoughtfully tailored to you.</h2>
+                <h2 id="aboutStoryTitle" class="about-quote">Luxury beauty, thoughtfully tailored to you.</h2>
                 <p id="aboutStoryIntro">PRICELESS Integrity brings together advanced aesthetic care, elevated service, and a calm, polished experience designed to help you feel confident in your skin.</p>
                 <div id="aboutExpandedContent" class="about-expanded-content">
                     <p id="aboutStoryExpanded1">From skin rituals to signature treatments, every detail is curated to balance expertise, comfort, and lasting results.</p>
@@ -1153,6 +1210,7 @@
                 </div>
                 <div class="team-grid" id="teamGrid"></div>
             </div>
+            <button class="about-more-btn" id="aboutMoreBtn" type="button" aria-expanded="false" aria-controls="aboutSectionInner">Read more</button>
         </div>
     </section>
 
@@ -1257,15 +1315,15 @@
             }
         });
 
-        const aboutBtn = document.querySelector('.about-expand-btn');
+        const aboutBtn = document.getElementById('aboutMoreBtn');
         const aboutSection = document.getElementById('aboutSectionInner');
         if (aboutBtn && aboutSection) {
             aboutBtn.addEventListener('click', function () {
                 const isExpanded = aboutSection.classList.toggle('expanded');
-                aboutBtn.textContent = isExpanded ? '−' : '+';
+                aboutBtn.textContent = isExpanded ? 'Read less' : 'Read more';
                 aboutBtn.setAttribute('aria-expanded', String(isExpanded));
 
-                if (isExpanded) {
+                if (!isExpanded) {
                     aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
