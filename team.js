@@ -7,6 +7,13 @@ const DEFAULT_ABOUT_CONTENT = {
     teamDescription: 'Skilled professionals devoted to delivering a refined and memorable experience.'
 };
 
+const TEAM_MEMBER_SECTIONS = [
+    { field: 'training', title: 'Professional Training' },
+    { field: 'experience', title: 'Career & Experience' },
+    { field: 'philosophy', title: 'Philosophy & Approach' },
+    { field: 'passion', title: 'Passion & Inspiration' }
+];
+
 let TEAM_DATA = {
     about: { ...DEFAULT_ABOUT_CONTENT },
     members: []
@@ -109,6 +116,14 @@ function renderTeamMembers() {
         const imageHtml = member.image
             ? `<img src="${member.image}" alt="${name}" class="team-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"> <div class="team-avatar team-avatar-fallback" style="display:none;">${getMemberInitials(name)}</div>`
             : `<div class="team-avatar">${getMemberInitials(name)}</div>`;
+        const sectionsHtml = TEAM_MEMBER_SECTIONS
+            .filter(section => String(member[section.field] || '').trim())
+            .map(section => `
+                <div class="team-detail">
+                    <h5>${section.title}</h5>
+                    <p>${member[section.field]}</p>
+                </div>
+            `).join('');
 
         return `
             <div class="team-card">
@@ -118,6 +133,7 @@ function renderTeamMembers() {
                 <h4>${name}</h4>
                 <div class="team-role">${member.role || 'Team Member'}</div>
                 <p>${member.bio || ''}</p>
+                ${sectionsHtml ? `<div class="team-details">${sectionsHtml}</div>` : ''}
             </div>
         `;
     }).join('');

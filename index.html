@@ -561,6 +561,7 @@
         .team-header p,
         .team-card h4,
         .team-role,
+        .team-card h5,
         .team-card p {
             font-family: inherit;
             color: var(--light-text);
@@ -571,7 +572,8 @@
             text-transform: none;
         }
         .about-section-inner .section-kicker,
-        .team-card h4 {
+        .team-card h4,
+        .team-card h5 {
             font-weight: 700;
         }
         .about-copy h2 {
@@ -688,6 +690,20 @@
         }
         .team-card p {
             margin: 0;
+            white-space: pre-line;
+        }
+        .team-details {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid var(--gold-line);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            text-align: left;
+        }
+        .team-card h5 {
+            margin: 0 0 4px;
+            color: var(--primary-gold);
         }
         .about-section .about-header-row h2 {
             color: var(--primary-gold);

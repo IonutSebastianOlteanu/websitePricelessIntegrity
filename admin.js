@@ -424,8 +424,15 @@ function updateItemDescription(categoryIndex, itemIndex, newDescription) {
     renderAdminPanel();
 }
 
-function addServiceItem(categoryIndex, name, description, duration, price, originalPrice) {
-    SERVICES_DATA[categoryIndex].details.push({ name, description, duration, price, originalPrice, variants: [] });
+function updateItemSection(categoryIndex, itemIndex, field, value) {
+    if (!SERVICE_DETAIL_SECTIONS.some(section => section.field === field)) return;
+    SERVICES_DATA[categoryIndex].details[itemIndex][field] = value.trim();
+    renderServices();
+    renderAdminPanel();
+}
+
+function addServiceItem(categoryIndex, name, description, duration, price, originalPrice, sections = {}) {
+    SERVICES_DATA[categoryIndex].details.push({ name, description, ...sections, duration, price, originalPrice, variants: [] });
     renderServices();
     renderAdminPanel();
 }
@@ -502,7 +509,13 @@ function handleCreateItem(catIdx) {
         return;
     }
     if (name) {
-        addServiceItem(catIdx, name, desc, duration, price, originalPrice);
+        const sections = {};
+        SERVICE_DETAIL_SECTIONS.forEach(section => {
+            const sectionEl = document.getElementById(`newItem-${section.field}-${catIdx}`);
+            const value = (sectionEl?.value || '').trim();
+            if (value) sections[section.field] = value;
+        });
+        addServiceItem(catIdx, name, desc, duration, price, originalPrice, sections);
         nameEl.value = '';
         descEl.value = '';
         durationEl.value = '';
@@ -706,6 +719,14 @@ function updateTeamMemberBio(index, value) {
     renderAdminPanel();
 }
 
+function updateTeamMemberSection(index, field, value) {
+    const members = getTeamMembers();
+    if (!members[index] || !TEAM_MEMBER_SECTIONS.some(section => section.field === field)) return;
+    members[index][field] = value;
+    renderTeamMembers();
+    renderAdminPanel();
+}
+
 function updateTeamMemberImage(index, value) {
     const members = getTeamMembers();
     if (!members[index]) return;
@@ -727,9 +748,9 @@ function updateAboutField(field, value) {
     renderAdminPanel();
 }
 
-function addTeamMember(name, role, bio, image) {
+function addTeamMember(name, role, bio, image, sections = {}) {
     const members = getTeamMembers();
-    members.push({ name, role, bio, image: image || '' });
+    members.push({ name, role, bio, ...sections, image: image || '' });
     renderTeamMembers();
     renderAdminPanel();
 }
@@ -1086,7 +1107,14 @@ function handleCreateTeamMember() {
         return;
     }
 
-    addTeamMember(name, role || 'Team Member', bio || '', image);
+    const sections = {};
+    TEAM_MEMBER_SECTIONS.forEach(section => {
+        const sectionEl = document.getElementById(`newTeamMember-${section.field}`);
+        sections[section.field] = (sectionEl?.value || '').trim();
+        if (sectionEl) sectionEl.value = '';
+    });
+
+    addTeamMember(name, role || 'Team Member', bio || '', image, sections);
     if (nameEl) nameEl.value = '';
     if (roleEl) roleEl.value = '';
     if (bioEl) bioEl.value = '';
@@ -1235,7 +1263,9 @@ function renderAdminPanel() {
                     <label style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Upload photo</label>
                     <input type="file" id="newTeamMemberImageFile" accept="image/*" onchange="handleTeamMemberImageUpload(this, 'new')" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
                 </div>
-                <input type="text" id="newTeamMemberBio" class="form-control" placeholder="Short bio" style="grid-column: 1 / -1;">
+                <textarea id="newTeamMemberBio" rows="3" class="form-control" placeholder="Short bio" style="grid-column: 1 / -1;"></textarea>
+                ${TEAM_MEMBER_SECTIONS.map(section => `
+                <textarea id="newTeamMember-${section.field}" rows="3" class="form-control" placeholder="${section.title} (optional)" style="grid-column: 1 / -1;"></textarea>`).join('')}
                 <button onclick="handleCreateTeamMember()" style="width: fit-content; padding: 8px 20px;">Add Team Member</button>
             </div>
         </div>
@@ -1277,8 +1307,13 @@ function renderAdminPanel() {
                     </div>
                     <div style="grid-column: 1 / -1;">
                         <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">Bio</span>
-                        <input type="text" value="${member.bio || ''}" onchange="updateTeamMemberBio(${index}, this.value)" class="form-control" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">
+                        <textarea rows="4" onchange="updateTeamMemberBio(${index}, this.value)" class="form-control" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">${member.bio || ''}</textarea>
                     </div>
+                    ${TEAM_MEMBER_SECTIONS.map(section => `
+                    <div style="grid-column: 1 / -1;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px;">${section.title}</span>
+                        <textarea rows="4" onchange="updateTeamMemberSection(${index}, '${section.field}', this.value)" class="form-control" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; color: var(--light-text);">${member[section.field] || ''}</textarea>
+                    </div>`).join('')}
                 </div>
             </div>
         `;
@@ -1333,6 +1368,11 @@ function renderAdminPanel() {
                         <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Service Description</span>
                         <input type="text" value="${item.description || ''}" onchange="updateItemDescription(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="Service description (optional)" style="padding: 8px; font-size: 0.85rem; color: var(--text-muted); background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 4px;">
                     </div>
+                    ${SERVICE_DETAIL_SECTIONS.map(section => `
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">${section.title} (optional)</span>
+                        <textarea rows="2" onchange="updateItemSection(${catIdx}, ${itemIdx}, '${section.field}', this.value)" class="form-control" style="padding: 8px; font-size: 0.85rem; color: var(--light-text); background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 4px; resize: vertical; font-family: inherit;">${item[section.field] || ''}</textarea>
+                    </div>`).join('')}
                     <div style="padding: 12px; background: #f7f0e1; border-radius: 6px; border-left: 3px solid var(--primary-gold); margin-top: 5px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 6px;">
                             <span style="font-size: 0.8rem; font-weight: bold; color: var(--primary-gold); letter-spacing: 0.5px; text-transform: uppercase;">
@@ -1418,6 +1458,11 @@ function renderAdminPanel() {
                             <span style="font-size: 0.7rem; color: var(--text-muted);">Item Description (optional)</span>
                             <textarea id="newItemDesc-${catIdx}" class="form-control" placeholder="Write a short enticing description of what this service entails..." style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; height: 60px; resize: vertical; font-family: inherit; font-size: 0.85rem; color: var(--light-text);"></textarea>
                         </div>
+                        ${SERVICE_DETAIL_SECTIONS.map(section => `
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted);">${section.title} (optional)</span>
+                            <textarea id="newItem-${section.field}-${catIdx}" class="form-control" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; height: 60px; resize: vertical; font-family: inherit; font-size: 0.85rem; color: var(--light-text);"></textarea>
+                        </div>`).join('')}
                         <button onclick="handleCreateItem(${catIdx})" style="padding: 10px 20px; font-size: 0.85rem; font-weight: bold; background: var(--gold-metal); color: #3b2a1a; border: 1px solid #c9a052; border-radius: 4px; cursor: pointer; align-self: flex-start; transition: transform 0.2s, opacity 0.2s;" onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">+ Add Item to ${cat.title}</button>
                     </div>
                 </div>

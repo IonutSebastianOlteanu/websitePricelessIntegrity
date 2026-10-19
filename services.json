@@ -49,11 +49,12 @@
             },
             {
                 "name": "PRX",
-                "description": "Non-invasive,  biorevitalizing skin therapy, stimulate deep collagen and elastin production without causing surface-level flaking or downtime.\nBenefits: firms and tightens, smooths skin texture, and evens skin tone.",
+                "description": "Non-invasive,  biorevitalizing skin therapy, stimulate deep collagen and elastin production without causing surface-level flaking or downtime.",
                 "duration": "30 minutes",
                 "price": "",
                 "originalPrice": "$ 700",
-                "variants": []
+                "variants": [],
+                "benefits": "firms and tightens, smooths skin texture, and evens skin tone."
             },
             {
                 "name": "BioRePeel",

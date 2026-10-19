@@ -1,5 +1,24 @@
 let SERVICES_DATA = [];
 
+// Optional per-service sections; a section is shown only when its field has text.
+const SERVICE_DETAIL_SECTIONS = [
+    { field: 'includes', title: 'Includes' },
+    { field: 'benefits', title: 'Benefits' },
+    { field: 'results', title: 'Results' },
+    { field: 'idealFor', title: 'Ideal For' }
+];
+
+function renderServiceSections(detail, searchTerm) {
+    return SERVICE_DETAIL_SECTIONS
+        .filter(section => String(detail[section.field] || '').trim())
+        .map(section => `
+            <div style="margin-bottom: 10px; text-align: left;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: var(--primary-gold); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">${section.title}</div>
+                <p style="margin: 0; font-size: 0.9rem; color: var(--light-text); line-height: 1.65; white-space: pre-line;">${highlightText(String(detail[section.field]).trim(), searchTerm)}</p>
+            </div>`)
+        .join('');
+}
+
 async function loadServicesData() {
     try {
         const response = await fetch('services.json', { cache: 'no-store' });
@@ -127,6 +146,7 @@ function renderServices(searchTerm = "") {
         service.details.some(d => 
             (d.name && d.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
             (d.description && String(d.description).toLowerCase().includes(searchTerm.toLowerCase())) ||
+            SERVICE_DETAIL_SECTIONS.some(section => d[section.field] && String(d[section.field]).toLowerCase().includes(searchTerm.toLowerCase())) ||
             (d.duration && String(d.duration).toLowerCase().includes(searchTerm.toLowerCase())) ||
             (d.price && String(d.price).toLowerCase().includes(searchTerm.toLowerCase())) ||
             (d.originalPrice && String(d.originalPrice).toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -202,6 +222,7 @@ function renderServices(searchTerm = "") {
                                     ` : ''}
                                 </div>`;
                             })() : ''}
+                            ${renderServiceSections(detail, searchTerm)}
                             ${(detail.duration || displayPrice) ? `
                             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; padding: 6px 0;">
                                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
