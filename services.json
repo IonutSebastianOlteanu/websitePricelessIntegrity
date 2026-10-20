@@ -5,7 +5,7 @@
         "details": [
             {
                 "name": "Bio Visage Detox & Remodeling Mansard Facial Treatment",
-                "description": "Bio Visage is the cornerstone of a conceptual approach designed to deliver results beyond expectations. This exclusively professional, technology-driven concentrate normalizes skin functions through a precise synergy of specialized currents and active botanical extracts. The complexion is instantly brightened by advanced oxygenation, visibly reducing redness and dark circles. By providing a gentle lifting effect, Bio Visage restores contractility to every muscle fiber—leaving the face completely restructured, firmer, and radiantly luminous.",
+                "description": "Advanced, non-invasive facial that pairs potent botanical actives with 14 proprietary bio- electrical  microcurrent technology to purify, sculpt, and lift facial contours. Bio Visage is an head part of a concept created for results beyond what is dreamed of. Provides gentle lifting and restores the power of contractibility to each muscle fiber.",
                 "duration": "60 minutes",
                 "price": "",
                 "variants": [
@@ -22,7 +22,7 @@
             },
             {
                 "name": "Ionix Red Carpet Ready Facial Treatment",
-                "description": "Deep cellular rejuvenation and contouring, an advanced, non-invasive skin treatment that combines up to eight high-tech modalities .An expression of exceptional to lift, tone and brighten the skin with zero downtime.",
+                "description": "High-tech advanced treatment that layers up to eight modalities. A tailored approach that caters to your unique needs for deep cellular rejuvenation. An expression of exceptional to lift, tone and brighten the skin with zero downtime. ",
                 "duration": "75 minutes",
                 "price": "",
                 "variants": [],
@@ -33,7 +33,7 @@
             },
             {
                 "name": "Regenerative Facial Treatment",
-                "description": "Regenerative facial treatment utilizes lymphatic drenage massage, LED light in conjunction with topical infusion of collagen fibers, soluble collagen peptides and molecules along with regenerative products such as exosomes to provide an optimal environment for healing, and regeneration.",
+                "description": "Combines lymphatic drainage, LED light, and growth factors for accelerated facial recovery and healing following medical procedures. ",
                 "duration": "60 minutes",
                 "price": "",
                 "variants": [],
@@ -41,6 +41,31 @@
                 "idealFor": "Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions.",
                 "results": "Accelerated recovery and healing.",
                 "benefits": "Healthier and more resilient skin."
+            },
+            {
+                "name": "Collagen remodeling facial",
+                "description": "A clinical-grade, architectural lift,precise micro-puncture with frequency advanced microcurrents,to physically tone, lengthen, and sculpt facial contours.The finish, a medical-grade 98% Native Collagen Mask overlay and\nspecialized growth-factor cocktail floods the newly opened skin channels with intense hydration to improve skin quality.",
+                "benefits": "●Enhanced elasticity \n●Refind texture and tone \n●Restored skin barrier",
+                "idealFor": "Structural sagging, loss of elasticity, a drooping jawline, and medium expression lines.",
+                "duration": "90 minutes",
+                "price": "",
+                "originalPrice": "$850",
+                "variants": []
+            },
+            {
+                "name": "Timeless Face",
+                "description": "This personalized, multi-step facial delivers targeted skin transformation throug a sequence of custom,triple cleansing, exfoliation, sterile extractions, and high-tech solutions tailored to your unique skin condition.",
+                "duration": "60",
+                "price": "",
+                "originalPrice": "$450",
+                "variants": [
+                    {
+                        "duration": "90 minutes",
+                        "originalPrice": "$550",
+                        "price": ""
+                    }
+                ],
+                "benefits": "● Refined texture and smoother skin surface\n● Improved circulation and lymphatic drenage \n● Enhanced hydration\n● Natural sculpting trough facial massage."
             }
         ]
     },
