@@ -10,28 +10,37 @@
                 "price": "",
                 "variants": [
                     {
-                        "duration": "90 minutes ",
-                        "originalPrice": "$ 750",
+                        "duration": "90 minutes",
+                        "originalPrice": "$750",
                         "price": ""
                     }
                 ],
-                "originalPrice": "$550"
+                "originalPrice": "$550",
+                "benefits": "Cellular regeneration\n●Detoxification & Oxygenation \n●Facial sculpting & Lifting \n●Radiance & Redness reduction",
+                "results": "Face is completely restructured, firmer and brighter.",
+                "idealFor": "●Puffiness and fluid retention.\n●Sensitive, reactive and compromised skin.\n●Imbalance, fatigued complexion."
             },
             {
                 "name": "Ionix Red Carpet Ready Facial Treatment",
-                "description": "Deep cellular rejuvenation and contouring, an advanced, non-invasive skin treatment that combines up to eight high-tech modalities such as diamond microdermabrasion, negative pressure/ lymphatic drenage, oxygen infusion & Ionized mist, ultrasound therapy, microcurrent & radiofrequency, LED light therapy.  An expression of exceptional to lift, tone and brighten the skin with zero downtime.",
+                "description": "Deep cellular rejuvenation and contouring, an advanced, non-invasive skin treatment that combines up to eight high-tech modalities .An expression of exceptional to lift, tone and brighten the skin with zero downtime.",
                 "duration": "75 minutes",
                 "price": "",
                 "variants": [],
-                "originalPrice": "$800"
+                "originalPrice": "$800",
+                "benefits": "●Immediate Radiant & Lifting \n●Zero Downtime\n●Reduced puffiness and sculpting \n●Radiant Glass Skin",
+                "results": "A sculpted, luminous complexion with red-carpet radiance, a sense of total renewal",
+                "idealFor": "Special occasions, intensive rejuvenation and those seeking the ultimate sculpted face experience."
             },
             {
                 "name": "Regenerative Facial Treatment",
-                "description": "Regenerative facial treatment utilizes lymphatic drenage massage, LED light in conjunction with topical infusion of collagen fibers, soluble collagen peptides and molecules along with regenerative products such as exosomes to provide an optimal environment for healing, tissue remodeling and regeneration.  Who can benefit from: Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions.",
+                "description": "Regenerative facial treatment utilizes lymphatic drenage massage, LED light in conjunction with topical infusion of collagen fibers, soluble collagen peptides and molecules along with regenerative products such as exosomes to provide an optimal environment for healing, and regeneration.",
                 "duration": "60 minutes",
                 "price": "",
                 "variants": [],
-                "originalPrice": "$575"
+                "originalPrice": "$575",
+                "idealFor": "Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions.",
+                "results": "Accelerated recovery and healing.",
+                "benefits": "Healthier and more resilient skin."
             }
         ]
     },
@@ -44,7 +53,7 @@
                 "description": "Medium-depth chemical treatment designed to improve skin tone, texture, and clarity while stimulating collagen production.Safe and effective for all skin types and tones, including darker complexions.\nGenerally well-tolerated , visible peeling typically begins around day two or three and resolves within a week.",
                 "duration": "30 minutes",
                 "price": "",
-                "originalPrice": "$ 800",
+                "originalPrice": "$800",
                 "variants": []
             },
             {
@@ -52,7 +61,7 @@
                 "description": "Non-invasive,  biorevitalizing skin therapy, stimulate deep collagen and elastin production without causing surface-level flaking or downtime.",
                 "duration": "30 minutes",
                 "price": "",
-                "originalPrice": "$ 700",
+                "originalPrice": "$700",
                 "variants": [],
                 "benefits": "firms and tightens, smooths skin texture, and evens skin tone."
             },
@@ -61,7 +70,7 @@
                 "description": "Helps clear active breakouts, reduce pore size, and smooth post-acne marks.\nGradually fades sun damage and evens out overall skin tone.\nAn innovative, two-phase chemical peel featuring trichloroacetic acid (TCA) designed to rejuvenate the skin with minimal downtime.",
                 "duration": "30 minutes",
                 "price": "",
-                "originalPrice": "$ 350",
+                "originalPrice": "$350",
                 "variants": []
             }
         ]
