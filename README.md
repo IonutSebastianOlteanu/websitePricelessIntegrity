@@ -40,7 +40,32 @@ This checks that `services.json` and `team.json` are valid JSON and that the req
 
 - The site is static HTML/CSS/JS served by a Cloudflare Worker (`worker.mjs`), which also handles the booking API.
 - The site data is stored in `services.json`, `team.json`, and `contact.json`.
-- The owner portal is available in the page and can publish updates through the configured GitHub sync flow.
+- The owner portal is a separate page (`owner.html`) and publishes updates through the configured GitHub sync flow. See [Owner portal](#owner-portal).
+
+## Owner portal
+
+The owner portal is not linked from the public website. Open it directly and bookmark the address:
+
+```text
+https://priceless-integrity.com/owner.html
+```
+
+`/owner` also works on Cloudflare, but the nginx setup only serves `/owner.html`. Locally, use `http://localhost:8787/owner.html`.
+
+- Unlock it with the password (GitHub token) provided by the administrator. Use **🔒 Lock Panel** to log out.
+- The page is hidden, not secret: anyone with the address sees only the password screen. It is marked `noindex` so search engines should not list it.
+- Changes are not live until you press **🚀 Publish Changes**, which commits them to GitHub. Unpublished changes are lost if you close or reload the page (the browser warns you first).
+
+### Service sections (Includes, Benefits, Results, Ideal For)
+
+In the **💆 Services** tab, each service has four optional sections, edited as a list of lines:
+
+- **+ Add line** adds a line at the end. Pressing **Enter** inside a line adds a new line below it.
+- **✕** deletes a line (you are asked to confirm if the line has text).
+- Bullets (`●`) are added automatically on the website, so don't type them.
+- A section with no lines is hidden on the website. Empty lines are removed when publishing.
+
+In `services.json`, each section is stored as text with one entry per line (for example `"benefits": "Line one\nLine two"`).
 
 ## Appointment booking setup
 
