@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Owner Portal | Madam Beauty</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Lato:wght@300;400;700&display=swap">
+    <style>
+        /* Same ivory and gold palette as the main site */
+        :root {
+            --primary-gold: #96702c;
+            --gold-bright: #dfb76c;
+            --gold-metal: linear-gradient(135deg, #f1dca0 0%, #d4ac5c 45%, #a97d33 100%);
+            --gold-line: rgba(169, 125, 51, 0.25);
+            --light-text: #3b2a1a;
+            --text-muted: #6e5a43;
+            --dark-bg: #faf6eb;
+            --card-bg: #fffdf8;
+            --field-bg: #ffffff;
+            --field-border: #e3d6bb;
+            --card-shadow: 0 10px 30px rgba(120, 88, 40, 0.10);
+            --heading-font: "Cinzel", Georgia, "Times New Roman", serif;
+        }
+        body {
+            font-family: "Lato", Arial, sans-serif;
+            margin: 0;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            font-family: var(--heading-font);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+        ::selection {
+            background: rgba(223, 183, 108, 0.35);
+            color: #3b2a1a;
+        }
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid var(--primary-gold);
+            outline-offset: 3px;
+        }
+        input,
+        select,
+        textarea,
+        button {
+            font-family: inherit;
+        }
+        button {
+            background: var(--gold-metal);
+            color: #3b2a1a;
+            padding: 12px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #c9a052;
+            transition: background-color 0.3s, color 0.3s, filter 0.3s;
+        }
+        button:hover {
+            filter: brightness(1.05);
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--field-bg);
+            border: 1px solid var(--field-border);
+            border-radius: 4px;
+            color: var(--light-text);
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            border-color: var(--primary-gold);
+            outline: none;
+        }
+        .owner-header {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .owner-brand {
+            font-family: var(--heading-font);
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: var(--primary-gold);
+        }
+        .owner-back-link {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+        .owner-back-link:hover {
+            color: var(--primary-gold);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto 40px;
+            padding: 0 20px;
+        }
+        #adminPanelSection {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 4px;
+            border: 1px solid var(--gold-line);
+            border-top: 3px solid var(--gold-bright);
+            box-shadow: var(--card-shadow);
+        }
+        #adminPanelSection h3 {
+            color: var(--primary-gold);
+        }
+        /* Owner portal layout: sticky toolbar, tabs, and "add new" forms below each list */
+        #adminPanelContent {
+            display: flex;
+            flex-direction: column;
+        }
+        #adminPanelContent [hidden] {
+            display: none !important;
+        }
+        #adminPanelContent .admin-add-block {
+            order: 1;
+        }
+        .admin-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 0 -30px 16px;
+            padding: 12px 30px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--gold-line);
+            box-shadow: 0 6px 14px rgba(120, 88, 40, 0.06);
+        }
+        .admin-status {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .admin-unsaved {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+        .admin-unsaved.is-dirty {
+            color: #b3261e;
+        }
+        .admin-sync-status {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .admin-toolbar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .admin-secondary-btn {
+            background: var(--card-bg);
+            border-color: var(--gold-line);
+            color: var(--primary-gold);
+        }
+        #publishBtn.is-attention {
+            box-shadow: 0 0 0 3px rgba(223, 183, 108, 0.45);
+        }
+        .admin-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--gold-line);
+        }
+        .admin-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: -1px;
+            padding: 10px 16px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 4px 4px 0 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .admin-tab:hover {
+            color: var(--primary-gold);
+            background: rgba(223, 183, 108, 0.08);
+            filter: none;
+        }
+        .admin-tab.is-active {
+            background: var(--card-bg);
+            border-color: var(--gold-line);
+            border-bottom-color: var(--card-bg);
+            border-top: 3px solid var(--gold-bright);
+            color: var(--primary-gold);
+        }
+        .admin-badge {
+            min-width: 20px;
+            padding: 1px 7px;
+            border-radius: 10px;
+            background: #b3261e;
+            color: #fff;
+            font-size: 0.72rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .admin-empty {
+            margin: 0;
+            padding: 16px;
+            border: 1px dashed var(--gold-line);
+            border-radius: 4px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        #adminPanelSection button:disabled {
+            cursor: not-allowed;
+            filter: none;
+        }
+        @media (max-width: 600px) {
+            #adminPanelSection {
+                padding: 20px 16px;
+            }
+            .admin-toolbar {
+                margin: 0 -16px 16px;
+                padding: 10px 16px;
+                gap: 8px;
+            }
+            .admin-toolbar-actions {
+                width: 100%;
+                flex-wrap: nowrap;
+            }
+            .admin-toolbar-actions button {
+                flex: 1;
+                padding: 9px 10px;
+                font-size: 0.78rem;
+            }
+            .admin-tab {
+                flex: 1 1 45%;
+                justify-content: center;
+                padding: 10px 8px;
+                font-size: 0.82rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="owner-header">
+        <span class="owner-brand">MADAM BEAUTY</span>
+        <a class="owner-back-link" href="/">← Back to website</a>
+    </header>
+
+    <main id="adminPanelSection" class="container">
+        <h2 style="color: var(--primary-gold); text-align: center; margin-top: 0;">Owner Control Panel</h2>
+        <div id="adminPanelContent"></div>
+    </main>
+
+    <script src="services.js"></script>
+    <script src="team.js"></script>
+    <script src="contact.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        accessOwnerPortal();
+    </script>
+</body>
+</html>

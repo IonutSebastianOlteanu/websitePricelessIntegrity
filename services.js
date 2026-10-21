@@ -8,13 +8,28 @@ const SERVICE_DETAIL_SECTIONS = [
     { field: 'idealFor', title: 'Ideal For' }
 ];
 
+// Removes a leading bullet ("●", "•", "-", "*") that was typed by hand.
+function stripSectionBullet(line) {
+    return String(line || '').replace(/^\s*[●•*\-]\s*/, '').trim();
+}
+
+// A section is stored as text with one entry per line.
+function getSectionLines(value) {
+    return String(value || '').split('\n').map(stripSectionBullet).filter(Boolean);
+}
+
 function renderServiceSections(detail, searchTerm) {
     return SERVICE_DETAIL_SECTIONS
-        .filter(section => String(detail[section.field] || '').trim())
-        .map(section => `
+        .map(section => ({ section, lines: getSectionLines(detail[section.field]) }))
+        .filter(({ lines }) => lines.length)
+        .map(({ section, lines }) => `
             <div style="margin-bottom: 10px; text-align: left;">
                 <div style="font-size: 0.72rem; font-weight: 700; color: var(--primary-gold); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">${section.title}</div>
-                <p style="margin: 0; font-size: 0.9rem; color: var(--light-text); line-height: 1.65; white-space: pre-line;">${highlightText(String(detail[section.field]).trim(), searchTerm)}</p>
+                ${lines.length === 1
+                    ? `<p style="margin: 0; font-size: 0.9rem; color: var(--light-text); line-height: 1.65;">${highlightText(lines[0], searchTerm)}</p>`
+                    : `<ul style="margin: 0; padding: 0; list-style: none; font-size: 0.9rem; color: var(--light-text); line-height: 1.65;">
+                        ${lines.map(line => `<li style="display: flex; gap: 8px;"><span style="color: var(--primary-gold);">●</span><span>${highlightText(line, searchTerm)}</span></li>`).join('')}
+                    </ul>`}
             </div>`)
         .join('');
 }
@@ -80,6 +95,14 @@ function toggleDescription(event, button) {
         button.innerText = 'Read less';
         button.setAttribute('data-expanded', 'true');
     }
+}
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
 
 function highlightText(text, term) {

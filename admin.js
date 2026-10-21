@@ -149,15 +149,6 @@ function showOwnerLogin(message = '') {
 }
 
 async function accessOwnerPortal(providedToken = '') {
-    const panel = document.getElementById('adminPanelSection');
-    const loginForm = document.getElementById('ownerLoginForm');
-    if (!providedToken && panel && panel.style.display !== 'none' && loginForm) {
-        const passwordInput = document.getElementById('ownerGitHubToken');
-        if (passwordInput) passwordInput.value = '';
-        panel.style.display = 'none';
-        return;
-    }
-
     let token = localStorage.getItem('gh_token') || providedToken.trim();
     if (!token) {
         showOwnerLogin();
@@ -197,11 +188,7 @@ function logoutAdmin(quiet = false) {
     localStorage.removeItem('gh_token_prefix');
     BOOKING_REQUESTS = null;
     BOOKING_REQUESTS_ERROR = '';
-    const panel = document.getElementById('adminPanelSection');
-    if (panel) panel.style.display = 'none';
-    if (!quiet) {
-        alert("Logged out successfully.");
-    }
+    showOwnerLogin(quiet ? '' : 'Logged out successfully.');
 }
 
 function renderBookingRequests() {
@@ -424,11 +411,63 @@ function updateItemDescription(categoryIndex, itemIndex, newDescription) {
     renderAdminPanel();
 }
 
-function updateItemSection(categoryIndex, itemIndex, field, value) {
+// Section lines as the owner edits them; empty lines are kept so a new line can be filled in.
+// An empty text can't tell "no lines" from "one blank line", so remember the item whose first line was just added.
+let blankFirstSectionLine = null;
+
+function getEditableSectionLines(categoryIndex, itemIndex, field) {
+    const value = String(SERVICES_DATA[categoryIndex].details[itemIndex][field] || '');
+    if (value === '') {
+        const item = SERVICES_DATA[categoryIndex].details[itemIndex];
+        return blankFirstSectionLine && blankFirstSectionLine.item === item && blankFirstSectionLine.field === field ? [''] : [];
+    }
+    return value.split('\n').map(stripSectionBullet);
+}
+
+function setSectionLines(categoryIndex, itemIndex, field, lines, focusLine) {
     if (!SERVICE_DETAIL_SECTIONS.some(section => section.field === field)) return;
-    SERVICES_DATA[categoryIndex].details[itemIndex][field] = value.trim();
+    const item = SERVICES_DATA[categoryIndex].details[itemIndex];
+    blankFirstSectionLine = lines.length === 1 && lines[0] === '' ? { item, field } : null;
+    item[field] = lines.join('\n');
     renderServices();
     renderAdminPanel();
+    if (focusLine !== undefined) {
+        document.getElementById(`sectionLine-${categoryIndex}-${itemIndex}-${field}-${focusLine}`)?.focus();
+    }
+}
+
+// Runs while typing, so it saves the text without redrawing the admin panel (keeps focus in the field).
+function updateSectionLine(categoryIndex, itemIndex, field, lineIndex, value) {
+    if (!SERVICE_DETAIL_SECTIONS.some(section => section.field === field)) return;
+    const lines = getEditableSectionLines(categoryIndex, itemIndex, field);
+    lines[lineIndex] = stripSectionBullet(value);
+    SERVICES_DATA[categoryIndex].details[itemIndex][field] = lines.join('\n');
+    renderServices();
+    updateUnsavedIndicator();
+}
+
+function addSectionLine(categoryIndex, itemIndex, field, afterIndex) {
+    const lines = getEditableSectionLines(categoryIndex, itemIndex, field);
+    const insertAt = afterIndex === undefined ? lines.length : afterIndex + 1;
+    lines.splice(insertAt, 0, '');
+    setSectionLines(categoryIndex, itemIndex, field, lines, insertAt);
+}
+
+function deleteSectionLine(categoryIndex, itemIndex, field, lineIndex) {
+    const lines = getEditableSectionLines(categoryIndex, itemIndex, field);
+    if (lines[lineIndex] && !confirm(`Delete the line "${lines[lineIndex]}"?`)) return;
+    lines.splice(lineIndex, 1);
+    setSectionLines(categoryIndex, itemIndex, field, lines);
+}
+
+function handleSectionLineKeydown(event, categoryIndex, itemIndex, field, lineIndex) {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    addSectionLine(categoryIndex, itemIndex, field, lineIndex);
+}
+
+function escapeAttr(value) {
+    return String(value || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 }
 
 function addServiceItem(categoryIndex, name, description, duration, price, originalPrice, sections = {}) {
@@ -666,6 +705,15 @@ async function syncToGitHub() {
         if (!branchName) {
             throw new Error('GitHub branch could not be resolved for this repository.');
         }
+
+        // Drop blank lines left in the Includes / Benefits / Results / Ideal For lists
+        SERVICES_DATA.forEach(cat => (cat.details || []).forEach(item => {
+            SERVICE_DETAIL_SECTIONS.forEach(section => {
+                if (item[section.field] !== undefined) {
+                    item[section.field] = getSectionLines(item[section.field]).join('\n');
+                }
+            });
+        }));
 
         const imageFiles = await prepareTeamImagesForSync();
         const fileChanges = [
@@ -1386,11 +1434,23 @@ function renderAdminPanel() {
                         <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Service Description</span>
                         <input type="text" value="${item.description || ''}" onchange="updateItemDescription(${catIdx}, ${itemIdx}, this.value)" class="form-control" placeholder="Service description (optional)" style="padding: 8px; font-size: 0.85rem; color: var(--text-muted); background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 4px;">
                     </div>
-                    ${SERVICE_DETAIL_SECTIONS.map(section => `
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">${section.title} (optional)</span>
-                        <textarea rows="2" onchange="updateItemSection(${catIdx}, ${itemIdx}, '${section.field}', this.value)" class="form-control" style="padding: 8px; font-size: 0.85rem; color: var(--light-text); background: var(--field-bg); border: 1px solid var(--gold-line); border-radius: 4px; resize: vertical; font-family: inherit;">${item[section.field] || ''}</textarea>
-                    </div>`).join('')}
+                    ${SERVICE_DETAIL_SECTIONS.map(section => {
+                        const lines = getEditableSectionLines(catIdx, itemIdx, section.field);
+                        return `
+                    <div style="display: flex; flex-direction: column; gap: 6px; padding: 10px; border: 1px solid var(--gold-line); border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">${section.title} (optional)</span>
+                            <button type="button" onclick="addSectionLine(${catIdx}, ${itemIdx}, '${section.field}')" style="padding: 4px 10px; font-size: 0.75rem; background: #2e7d32; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: 600;">+ Add line</button>
+                        </div>
+                        ${lines.length ? lines.map((line, lineIdx) => `
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <span style="color: var(--primary-gold);">●</span>
+                            <input type="text" id="sectionLine-${catIdx}-${itemIdx}-${section.field}-${lineIdx}" value="${escapeAttr(line)}" oninput="updateSectionLine(${catIdx}, ${itemIdx}, '${section.field}', ${lineIdx}, this.value)" onkeydown="handleSectionLineKeydown(event, ${catIdx}, ${itemIdx}, '${section.field}', ${lineIdx})" class="form-control" aria-label="${section.title} line ${lineIdx + 1}" placeholder="Type a line..." style="flex: 1; min-width: 0; padding: 6px 8px; font-size: 0.85rem; color: var(--light-text); background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px;">
+                            <button type="button" onclick="deleteSectionLine(${catIdx}, ${itemIdx}, '${section.field}', ${lineIdx})" title="Delete line" aria-label="Delete ${section.title} line ${lineIdx + 1}" style="background: #b3261e; border: none; color: white; padding: 6px 10px; font-size: 0.75rem; border-radius: 4px; cursor: pointer;">✕</button>
+                        </div>`).join('') : `
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">No lines yet. This section is hidden on the website until you add one.</span>`}
+                    </div>`;
+                    }).join('')}
                     <div style="padding: 12px; background: #f7f0e1; border-radius: 6px; border-left: 3px solid var(--primary-gold); margin-top: 5px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 6px;">
                             <span style="font-size: 0.8rem; font-weight: bold; color: var(--primary-gold); letter-spacing: 0.5px; text-transform: uppercase;">
@@ -1479,7 +1539,7 @@ function renderAdminPanel() {
                         ${SERVICE_DETAIL_SECTIONS.map(section => `
                         <div style="display: flex; flex-direction: column; gap: 4px;">
                             <span style="font-size: 0.7rem; color: var(--text-muted);">${section.title} (optional)</span>
-                            <textarea id="newItem-${section.field}-${catIdx}" class="form-control" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; height: 60px; resize: vertical; font-family: inherit; font-size: 0.85rem; color: var(--light-text);"></textarea>
+                            <textarea id="newItem-${section.field}-${catIdx}" class="form-control" placeholder="One item per line" style="padding: 8px; background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 4px; height: 60px; resize: vertical; font-family: inherit; font-size: 0.85rem; color: var(--light-text);"></textarea>
                         </div>`).join('')}
                         <button onclick="handleCreateItem(${catIdx})" style="padding: 10px 20px; font-size: 0.85rem; font-weight: bold; background: var(--gold-metal); color: #3b2a1a; border: 1px solid #c9a052; border-radius: 4px; cursor: pointer; align-self: flex-start; transition: transform 0.2s, opacity 0.2s;" onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">+ Add Item to ${cat.title}</button>
                     </div>
