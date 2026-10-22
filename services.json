@@ -16,9 +16,9 @@
                     }
                 ],
                 "originalPrice": "$550",
-                "benefits": "Cellular regeneration\n●Detoxification & Oxygenation \n●Facial sculpting & Lifting \n●Radiance & Redness reduction",
+                "benefits": "Cellular regeneration\nDetoxification & Oxygenation\nFacial sculpting & Lifting\nRadiance & Redness reduction",
                 "results": "Face is completely restructured, firmer and brighter.",
-                "idealFor": "●Puffiness and fluid retention.\n●Sensitive, reactive and compromised skin.\n●Imbalance, fatigued complexion."
+                "idealFor": "Puffiness and fluid retention.\nSensitive, reactive and compromised skin.\nImbalance, fatigued complexion."
             },
             {
                 "name": "Ionix Red Carpet Ready Facial Treatment",
@@ -27,7 +27,7 @@
                 "price": "",
                 "variants": [],
                 "originalPrice": "$800",
-                "benefits": "●Immediate Radiant & Lifting \n●Zero Downtime\n●Reduced puffiness and sculpting \n●Radiant Glass Skin",
+                "benefits": "Immediate Radiant & Lifting\nZero Downtime\nReduced puffiness and sculpting\nRadiant Glass Skin",
                 "results": "A sculpted, luminous complexion with red-carpet radiance, a sense of total renewal",
                 "idealFor": "Special occasions, intensive rejuvenation and those seeking the ultimate sculpted face experience."
             },
@@ -37,15 +37,15 @@
                 "duration": "60 minutes",
                 "price": "",
                 "variants": [],
-                "originalPrice": "$575",
+                "originalPrice": "$500",
                 "idealFor": "Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions.",
                 "results": "Accelerated recovery and healing.",
                 "benefits": "Healthier and more resilient skin."
             },
             {
-                "name": "Collagen remodeling facial",
+                "name": "Collagen Remodeling Facial",
                 "description": "A clinical-grade, architectural lift,precise micro-puncture with frequency advanced microcurrents,to physically tone, lengthen, and sculpt facial contours.The finish, a medical-grade 98% Native Collagen Mask overlay and\nspecialized growth-factor cocktail floods the newly opened skin channels with intense hydration to improve skin quality.",
-                "benefits": "●Enhanced elasticity \n●Refind texture and tone \n●Restored skin barrier",
+                "benefits": "Enhanced elasticity\nRefind texture and tone\nRestored skin barrier",
                 "idealFor": "Structural sagging, loss of elasticity, a drooping jawline, and medium expression lines.",
                 "duration": "90 minutes",
                 "price": "",
@@ -57,15 +57,15 @@
                 "description": "This personalized, multi-step facial delivers targeted skin transformation throug a sequence of custom,triple cleansing, exfoliation, sterile extractions, and high-tech solutions tailored to your unique skin condition.",
                 "duration": "60 minutes",
                 "price": "",
-                "originalPrice": "$450",
+                "originalPrice": "Starting from $450",
                 "variants": [
                     {
                         "duration": "90 minutes",
-                        "originalPrice": "$550",
+                        "originalPrice": "Starting from $550",
                         "price": ""
                     }
                 ],
-                "benefits": "● Refined texture and smoother skin surface\n● Improved circulation and lymphatic drenage \n● Enhanced hydration\n● Natural sculpting trough facial massage."
+                "benefits": "Refined texture and smoother skin surface\nImproved circulation and lymphatic drenage\nEnhanced hydration\nNatural sculpting trough facial massage."
             }
         ]
     },
@@ -78,7 +78,7 @@
                 "description": "Medium-depth chemical treatment designed to improve skin tone, texture, and clarity while stimulating collagen production.Safe and effective for all skin types and tones, including darker complexions.\nGenerally well-tolerated , visible peeling typically begins around day two or three and resolves within a week.",
                 "duration": "30 minutes",
                 "price": "",
-                "originalPrice": "$800",
+                "originalPrice": "$700",
                 "variants": []
             },
             {
