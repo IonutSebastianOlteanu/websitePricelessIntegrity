@@ -66,6 +66,15 @@
                     }
                 ],
                 "benefits": "Refined texture and smoother skin surface\nImproved circulation and lymphatic drenage\nEnhanced hydration\nNatural sculpting trough facial massage."
+            },
+            {
+                "name": "PRX treatment",
+                "description": "Non-invasive,  biorevitalizing skin therapy, stimulate deep collagen and elastin production without causing surface-level flaking or downtime.",
+                "benefits": "Firms and tightens, smooths skin texture, and evens skin tone.",
+                "duration": "30 minutes",
+                "price": "",
+                "originalPrice": "$700",
+                "variants": []
             }
         ]
     },
@@ -80,15 +89,6 @@
                 "price": "",
                 "originalPrice": "$700",
                 "variants": []
-            },
-            {
-                "name": "PRX",
-                "description": "Non-invasive,  biorevitalizing skin therapy, stimulate deep collagen and elastin production without causing surface-level flaking or downtime.",
-                "duration": "30 minutes",
-                "price": "",
-                "originalPrice": "$700",
-                "variants": [],
-                "benefits": "firms and tightens, smooths skin texture, and evens skin tone."
             },
             {
                 "name": "BioRePeel",
