@@ -5,7 +5,7 @@
         "details": [
             {
                 "name": "Bio Visage Detox & Remodeling Mansard Facial Treatment",
-                "description": "Advanced, non-invasive facial that pairs potent botanical actives with 14 proprietary bio- electrical  microcurrents technology to purify, sculpt, and lift facial contours. Bio Visage is an head part of a concept created for results beyond what is dreamed of. Provides gentle lifting and restores the power of contractibility to each muscle fiber.",
+                "description": "An advanced, non-invasive facial that pairs potent botanical actives with proprietary microcurrents technology to purify, sculpt, and lift facial contours. Bio Visage is an head part of a concept created for results beyond what is dreamed of. Provides gentle lifting and restores the power of contractibility to each muscle fiber.",
                 "duration": "60 minutes",
                 "price": "",
                 "variants": [
@@ -22,7 +22,7 @@
             },
             {
                 "name": "Ionix Red Carpet Ready Facial Treatment",
-                "description": "High-tech advanced treatment that layers up to eight modalities. A tailored approach that caters to your unique needs for deep cellular rejuvenation. An expression of exceptional to lift, tone and brighten the skin with zero downtime. ",
+                "description": "A high-tech advanced treatment that layers up to eight modalities. A tailored approach that's customized to your unique needs for deep cellular rejuvenation. An expression of exceptional to lift, tone and brighten the skin without downtime. ",
                 "duration": "75 minutes",
                 "price": "",
                 "variants": [],
@@ -33,13 +33,13 @@
             },
             {
                 "name": "Regenerative Facial Treatment",
-                "description": "Combines lymphatic drainage, LED light, and growth factors for accelerated facial recovery and healing following medical procedures. ",
+                "description": "A restorative treatment combining lymphatic drainage, LED light therapy, and growth factors to support skin recovery after select medical procedures. ",
                 "duration": "60 minutes",
                 "price": "",
                 "variants": [],
                 "originalPrice": "$500",
                 "idealFor": "Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions.",
-                "results": "Accelerated recovery and healing.",
+                "results": "Recovery and healing.",
                 "benefits": "Healthier and more resilient skin."
             },
             {
@@ -54,7 +54,7 @@
             },
             {
                 "name": "Timeless Face",
-                "description": "This personalized, multi-step facial delivers targeted skin transformation throug a sequence of custom,triple cleansing, exfoliation, sterile extractions, and high-tech solutions tailored to your unique skin condition.",
+                "description": "This personalized, multi-step facial features triple cleansing, exfoliation, sterile extractions, and targeted technologies for a refined, revitalized complexion.",
                 "duration": "60 minutes",
                 "price": "",
                 "originalPrice": "Starting from $450",
@@ -69,7 +69,7 @@
             },
             {
                 "name": "PRX treatment",
-                "description": "Non-invasive,  biorevitalizing skin therapy, stimulate deep collagen and elastin production without causing surface-level flaking or downtime.",
+                "description": "A biorevitalizing skin therapy, stimulate deep collagen and elastin production, smooth skin texture and restore an even, radiant skin tone.",
                 "benefits": "Firms and tightens, smooths skin texture, and evens skin tone.",
                 "duration": "30 minutes",
                 "price": "",
@@ -84,7 +84,7 @@
         "details": [
             {
                 "name": "VI Peel",
-                "description": "Medium-depth chemical treatment designed to improve skin tone, texture, and clarity while stimulating collagen production.Safe and effective for all skin types and tones, including darker complexions.\nGenerally well-tolerated , visible peeling typically begins around day two or three and resolves within a week.",
+                "description": "A medium-depth chemical treatment designed to improve skin tone and  texture, while stimulating collagen. Suitable for all skin tones, including darker complexions, with peeling typically lasting up to one week",
                 "duration": "30 minutes",
                 "price": "",
                 "originalPrice": "$700",
@@ -92,7 +92,7 @@
             },
             {
                 "name": "BioRePeel",
-                "description": "Helps clear active breakouts, reduce pore size, and smooth post-acne marks.\nGradually fades sun damage and evens out overall skin tone.\nAn innovative, two-phase chemical peel featuring trichloroacetic acid (TCA) designed to rejuvenate the skin with minimal downtime.",
+                "description": "This innovative, two-phase trichloroacetic acid (TCA) chemical peel rejuvenates the skin and improves active breakouts, post-acne marks, sun damage, uneven skin tone with minimal downtime. ",
                 "duration": "30 minutes",
                 "price": "",
                 "originalPrice": "$350",
