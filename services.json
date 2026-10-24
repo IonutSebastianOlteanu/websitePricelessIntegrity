@@ -16,9 +16,9 @@
                     }
                 ],
                 "originalPrice": "$550",
-                "benefits": "Cellular regeneration\nDetoxification & Oxygenation\nFacial sculpting & Lifting\nRadiance & Redness reduction",
-                "results": "Face is completely restructured, firmer and brighter.",
-                "idealFor": "Puffiness and fluid retention.\nSensitive, reactive and compromised skin.\nImbalance, fatigued complexion."
+                "benefits": "Detoxification and oxygenation\nNatural face sculpting and lifting\nRedness reduction",
+                "results": "Skin is firmer and brighter",
+                "idealFor": "Sensitive, reactive skin\nFatigued complexion, dull skin"
             },
             {
                 "name": "Ionix Red Carpet Ready Facial Treatment",
@@ -27,9 +27,9 @@
                 "price": "",
                 "variants": [],
                 "originalPrice": "$800",
-                "benefits": "Immediate Radiant & Lifting\nZero Downtime\nReduced puffiness and sculpting\nRadiant Glass Skin",
+                "benefits": "Immediate radiance and lifting\nZero downtime\nGlass Skin",
                 "results": "A sculpted, luminous complexion.",
-                "idealFor": "Special occasions, intensive rejuvenation and those seeking the ultimate sculpted face experience."
+                "idealFor": "Special occasions, intensive rejuvenation and those seeking the ultimate sculpted face experience"
             },
             {
                 "name": "Regenerative Facial Treatment",
@@ -38,15 +38,15 @@
                 "price": "",
                 "variants": [],
                 "originalPrice": "$500",
-                "idealFor": "Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions.",
-                "results": "Recovery and healing.",
-                "benefits": "Healthier and more resilient skin."
+                "idealFor": "Post surgery, laser treatments, chemical peels, burns, severe retinoid reactions",
+                "results": "Recovery and healing",
+                "benefits": "Healthier and more resilient skin"
             },
             {
                 "name": "Collagen Facial Treatment ",
-                "description": "An advanced facial treatment, features precise micro-puncture with frequency advanced microcurrents, to tone and sculpt facial contours. The finish, a medical-grade 98% Native Collagen Mask overlay and specialized growth-factor cocktail floods the newly opened skin channels with intense hydration to improve skin quality.",
+                "description": "An advanced facial treatment features precise micro-puncture with frequency advanced microcurrents, to tone and sculpt facial contours. The finish, a medical-grade 98% Native Collagen Mask overlay and specialized growth-factor cocktail floods the newly opened skin channels with intense hydration to improve skin quality.",
                 "benefits": "Enhanced elasticity\nRefind texture and tone\nRestored skin barrier",
-                "idealFor": "Structural sagging, loss of elasticity, a drooping jawline, and medium expression lines.",
+                "idealFor": "Early sign of aging, acne scar, enlarged pores",
                 "duration": "90 minutes",
                 "price": "",
                 "originalPrice": "$850",
@@ -65,12 +65,12 @@
                         "price": ""
                     }
                 ],
-                "benefits": "Refined texture and smoother skin surface\nImproved circulation and lymphatic drenage\nEnhanced hydration\nNatural sculpting trough facial massage."
+                "benefits": "Refined texture and smoother skin surface\nImproved circulation and lymphatic drenage\nEnhanced hydration\nNatural sculpting trough facial massage"
             },
             {
                 "name": "PRX treatment",
                 "description": "A biorevitalizing skin therapy, stimulate deep collagen and elastin production, smooth skin texture and restore an even, radiant skin tone.",
-                "benefits": "Firms and tightens, smooths skin texture, and evens skin tone.",
+                "benefits": "Firms and tightens, smooths skin texture, and evens skin tone",
                 "duration": "30 minutes",
                 "price": "",
                 "originalPrice": "$700",
@@ -88,7 +88,8 @@
                 "duration": "30 minutes",
                 "price": "",
                 "originalPrice": "$700",
-                "variants": []
+                "variants": [],
+                "benefits": "Fades hyperpigmentation\nRefines texture and pores\nClears acne and reduces scars"
             },
             {
                 "name": "BioRePeel",
