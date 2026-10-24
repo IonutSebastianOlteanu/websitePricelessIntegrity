@@ -43,7 +43,7 @@
                 "benefits": "Healthier and more resilient skin."
             },
             {
-                "name": "Collagen Remodeling Facial",
+                "name": "Collagen Facial Treatment ",
                 "description": "A clinical-grade, architectural lift,precise micro-puncture with frequency advanced microcurrents,to physically tone, lengthen, and sculpt facial contours.The finish, a medical-grade 98% Native Collagen Mask overlay and\nspecialized growth-factor cocktail floods the newly opened skin channels with intense hydration to improve skin quality.",
                 "benefits": "Enhanced elasticity\nRefind texture and tone\nRestored skin barrier",
                 "idealFor": "Structural sagging, loss of elasticity, a drooping jawline, and medium expression lines.",
@@ -96,6 +96,60 @@
                 "duration": "30 minutes",
                 "price": "",
                 "originalPrice": "$350",
+                "variants": []
+            }
+        ]
+    },
+    {
+        "title": "Facial Enhancements",
+        "description": "",
+        "details": [
+            {
+                "name": "Dermaplaning",
+                "description": "This technique is a specialized exfoliating treatment that uses a sterile surgical blade to gently remove dead skin cells and fine facial hair,revealing  a smoother complexion.",
+                "duration": "",
+                "price": "",
+                "originalPrice": "$130",
+                "variants": []
+            },
+            {
+                "name": "Microchanneling/AquaGold",
+                "description": "This advanced treatment utilizes ultra-fine, 24-karat gold-plated needles to seamlessly infuse a customized cocktail into the skin's superficial layer,delivering an array of targeted,skin-refining benefits.",
+                "duration": "",
+                "price": "",
+                "originalPrice": "$400",
+                "variants": []
+            },
+            {
+                "name": "Lymphatic Drainage",
+                "description": "A gentle specialized massage technique designed to stimulate the lymphatic system, reducing fluid retention and accelerating toxin removal.",
+                "duration": "",
+                "price": "",
+                "originalPrice": "$150",
+                "variants": []
+            },
+            {
+                "name": "Light Emmiting Diode (LED) Therapy",
+                "description": "This clinically proven spectrum of wavelengths stimulates cellular repair,calms inflammation, and eradicates acne-causing bacteria.",
+                "duration": "",
+                "price": "",
+                "originalPrice": "$125",
+                "variants": []
+            },
+            {
+                "name": "DermaElectroPoration",
+                "description": "This needle-free, intracellular transdermal delivery method drives both, low and high-molecular weight serums deep into the skin to replenish collagen, elastin, and hyaluronic acid.",
+                "duration": "",
+                "price": "",
+                "originalPrice": "$150",
+                "variants": []
+            },
+            {
+                "name": "Microcurrent and Biosonix Ultrasound",
+                "description": "Advanced technology designed to visibly tone and lift the skin at a cellular level. Microcurrent uses low-voltage electrical currents to stimulate and contour facial muscles,  while Biosonix Ultrasound delivers targeted sound waves to boost cellular metabolism and product penetration for a firmer, more youthful appearance.",
+                "duration": "",
+                "price": "",
+                "originalPrice": "$250",
                 "variants": []
             }
         ]
