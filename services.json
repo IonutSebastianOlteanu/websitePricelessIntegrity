@@ -5,7 +5,7 @@
         "details": [
             {
                 "name": "Bio Visage Detox & Remodeling Mansard Facial Treatment",
-                "description": "An advanced, non-invasive facial that pairs potent botanical actives with proprietary microcurrents technology to purify, sculpt, and lift facial contours. Bio Visage is an head part of a concept created for results beyond what is dreamed of. Provides gentle lifting and restores the power of contractibility to each muscle fiber.",
+                "description": "An advanced, non-invasive facial that pairs potent botanical actives with proprietary microcurrents technology to purify, sculpt, and lift facial contours.Provides gentle lifting and restores the power of contractibility to each muscle fiber.",
                 "duration": "60 minutes",
                 "price": "",
                 "variants": [
@@ -16,7 +16,7 @@
                     }
                 ],
                 "originalPrice": "$550",
-                "benefits": "Cellular regeneration\nDetoxification & Oxygenation\nFacial sculpting & Lifting\nRadiance & Redness reduction",
+                "benefits": "Cellular regeneration.\nDetoxification & Oxygenation.\nFacial sculpting & Lifting.\nRadiance & Redness reduction.",
                 "results": "Face is completely restructured, firmer and brighter.",
                 "idealFor": "Puffiness and fluid retention.\nSensitive, reactive and compromised skin.\nImbalance, fatigued complexion."
             },
@@ -44,9 +44,9 @@
             },
             {
                 "name": "Collagen Facial Treatment ",
-                "description": "A clinical-grade, architectural lift,precise micro-puncture with frequency advanced microcurrents,to physically tone, lengthen, and sculpt facial contours.The finish, a medical-grade 98% Native Collagen Mask overlay and\nspecialized growth-factor cocktail floods the newly opened skin channels with intense hydration to improve skin quality.",
-                "benefits": "Enhanced elasticity\nRefind texture and tone\nRestored skin barrier",
-                "idealFor": "Structural sagging, loss of elasticity, a drooping jawline, and medium expression lines.",
+                "description": "An advanced facial treatment, features precise micro-puncture with frequency advanced microcurrents, to physically tone, and sculpt facial contours.The finish, a medical-grade 98% Native Collagen Mask overlay andspecialized growth-factor cocktail floods the newly opened skin channels with intense hydration to improve skin quality.",
+                "benefits": "Enhanced elasticity.\nRefind texture and tone.\nRestored skin barrier.",
+                "idealFor": "Early signs of aging, medium expression lines.",
                 "duration": "90 minutes",
                 "price": "",
                 "originalPrice": "$850",
@@ -65,7 +65,7 @@
                         "price": ""
                     }
                 ],
-                "benefits": "Refined texture and smoother skin surface\nImproved circulation and lymphatic drenage\nEnhanced hydration\nNatural sculpting trough facial massage."
+                "benefits": "Refined texture and smoother skin surface.\nImproved circulation and lymphatic drainage.\nEnhanced hydration.\nNatural sculpting trough facial massage."
             },
             {
                 "name": "PRX treatment",
@@ -84,7 +84,7 @@
         "details": [
             {
                 "name": "VI Peel",
-                "description": "A medium-depth chemical treatment designed to improve skin tone and  texture, while stimulating collagen. Suitable for all skin tones, including darker complexions, with peeling typically lasting up to one week",
+                "description": "A medium-depth chemical treatment designed to improve skin tone and  texture, while stimulating collagen. Suitable for all skin tones, including darker complexions, with peeling typically lasting up to one week.",
                 "duration": "30 minutes",
                 "price": "",
                 "originalPrice": "$700",
@@ -106,7 +106,7 @@
         "details": [
             {
                 "name": "Dermaplaning",
-                "description": "This technique is a specialized exfoliating treatment that uses a sterile surgical blade to gently remove dead skin cells and fine facial hair,revealing  a smoother complexion.",
+                "description": "This technique is a specialized exfoliating treatment that uses a sterile surgical blade to gently remove dead skin cells and fine facial hair, revealing  a smoother complexion.",
                 "duration": "",
                 "price": "",
                 "originalPrice": "$130",
@@ -114,7 +114,7 @@
             },
             {
                 "name": "Microchanneling/AquaGold",
-                "description": "This advanced treatment utilizes ultra-fine, 24-karat gold-plated needles to seamlessly infuse a customized cocktail into the skin's superficial layer,delivering an array of targeted,skin-refining benefits.",
+                "description": "This advanced treatment utilizes ultra-fine, 24-karat gold-plated needles to seamlessly infuse a customized cocktail into the skin's superficial layer, delivering an array of targeted, skin-refining benefits.",
                 "duration": "",
                 "price": "",
                 "originalPrice": "$400",
@@ -130,7 +130,7 @@
             },
             {
                 "name": "Light Emmiting Diode (LED) Therapy",
-                "description": "This clinically proven spectrum of wavelengths stimulates cellular repair,calms inflammation, and eradicates acne-causing bacteria.",
+                "description": "This clinically proven spectrum of wavelengths stimulates cellular repair, calms inflammation, and eradicates acne-causing bacteria.",
                 "duration": "",
                 "price": "",
                 "originalPrice": "$125",
