@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Usage:
+#   ./start_dev.sh          open the public website (index.html)
+#   ./start_dev.sh owner    open the owner portal (owner.html)
+case "${1:-site}" in
+    site)  PAGE=index.html ;;
+    owner) PAGE=owner.html ;;
+    *)
+        echo "Usage: $0 [site|owner]"
+        exit 1
+        ;;
+esac
+
 # Define the project directory
 PROJECT_DIR=./ #current directory, adjust as needed
 PORT=8000
@@ -41,9 +53,13 @@ trap "echo 'Stopping server...'; kill $SERVER_PID 2>/dev/null; exit" SIGINT SIGT
 sleep 1
 
 # Open the browser (works on Linux/WSL with xdg-open or macOS with open)
-xdg-open http://localhost:$PORT/index.html 2>/dev/null || open http://localhost:$PORT/index.html 2>/dev/null
+xdg-open http://localhost:$PORT/$PAGE 2>/dev/null || open http://localhost:$PORT/$PAGE 2>/dev/null
 
-echo "Server is running at http://localhost:$PORT (PID: $SERVER_PID)"
+echo "Server is running at http://localhost:$PORT/$PAGE (PID: $SERVER_PID)"
+if [ "$PAGE" = "owner.html" ]; then
+    echo "Note: this static server has no booking API, so the Bookings tab will not load."
+    echo "      For bookings, use 'npx wrangler dev' and open http://localhost:8787/owner.html"
+fi
 echo "Press Ctrl+C to stop the server."
 
 # Wait for the background process so the terminal stays open to show logs

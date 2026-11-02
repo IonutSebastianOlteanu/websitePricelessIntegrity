@@ -26,7 +26,7 @@ For a quick static preview of the pages only (the booking form will not work, be
 python -m http.server 8000
 ```
 
-and open `http://localhost:8000`. On Linux/macOS, `./start_dev.sh` does the same with caching disabled.
+and open `http://localhost:8000`. On Linux/macOS, `./start_dev.sh` does the same with caching disabled; `./start_dev.sh owner` opens the owner portal (`owner.html`) instead (its Bookings tab needs `npx wrangler dev`).
 
 ### 2) Validate project files
 

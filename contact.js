@@ -117,6 +117,7 @@ function initializeBookingForm() {
 
 async function renderOwnerDetails(ownerData) {
     const currentOwnerData = ownerData || await loadOwnerData();
+    renderNavContact(currentOwnerData);
     const card = document.getElementById('ownerCard');
     if (!card) return;
     card.innerHTML = `
@@ -135,6 +136,21 @@ async function renderOwnerDetails(ownerData) {
             <p><strong>Program:</strong> ${currentOwnerData.program}</p>
         </div>
     `;
+}
+
+// Point the quick "Call" / "Email" buttons in the header menu at the owner's details
+function renderNavContact(ownerData) {
+    const phoneLink = document.getElementById('navPhone');
+    const emailLink = document.getElementById('navEmail');
+    const phone = String(ownerData.phone || '').replace(/[^\d+]/g, '');
+    if (phoneLink) {
+        phoneLink.hidden = !phone;
+        if (phone) phoneLink.href = `tel:${phone}`;
+    }
+    if (emailLink) {
+        emailLink.hidden = !ownerData.email;
+        if (ownerData.email) emailLink.href = `mailto:${ownerData.email}`;
+    }
 }
 
 function renderFooter() {
