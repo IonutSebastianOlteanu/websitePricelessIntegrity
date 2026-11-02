@@ -445,66 +445,188 @@
         button:hover {
             filter: brightness(1.05);
         }
-        /* Intro Overlay Slider Styles */
+        /* Intro welcome screen: logo, tagline and button composed on the site's cream,
+           with the gold ribbons pinned to the screen corners (same crops as the hero). */
         .intro-overlay {
+            --ribbon-scale: 1.35;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #faf6eb;
+            inset: 0;
             z-index: 9999;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            gap: 8px;
+            padding: 24px;
+            box-sizing: border-box;
+            overflow: hidden;
+            /* Flat cream behind the logo (it matches the artwork), soft warm vignette at the edges */
+            background: radial-gradient(ellipse at 50% 45%, #faf6eb 68%, #f1e6cd 100%);
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
         .intro-overlay.hidden {
             opacity: 0;
             visibility: hidden;
         }
-        .intro-content {
-            text-align: center;
+        .intro-overlay::before,
+        .intro-overlay::after {
+            content: "";
             position: absolute;
-            left: 50%;
-            bottom: 3vh;
-            z-index: 10;
-            transform: translateX(-50%);
+            background-image: url("images/intro-logo.jpg");
+            background-size: calc(970px * var(--ribbon-scale)) calc(967px * var(--ribbon-scale));
+            background-repeat: no-repeat;
+            pointer-events: none;
+            animation: introFade 1.4s ease-out both;
         }
-        .intro-img {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: min(100vw, 100vh * 970 / 967);
-            width: min(100vw, 100dvh * 970 / 967);
-            height: auto;
-            object-fit: contain;
-            transform: translate(-50%, -50%);
-            /* Fade the picture's edges into the matching cream background so it reads as full screen */
+        .intro-overlay::before {
+            top: 0;
+            left: 0;
+            width: calc(300px * var(--ribbon-scale));
+            height: calc(165px * var(--ribbon-scale));
+            background-position: left top;
             -webkit-mask-image:
-                linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
-                linear-gradient(to bottom, transparent, #000 6%, #000 94%, transparent);
+                linear-gradient(to right, #000 55%, transparent),
+                linear-gradient(to bottom, #000 55%, transparent);
             -webkit-mask-composite: source-in;
             mask-image:
-                linear-gradient(to right, transparent, #000 8%, #000 92%, transparent),
-                linear-gradient(to bottom, transparent, #000 6%, #000 94%, transparent);
+                linear-gradient(to right, #000 55%, transparent),
+                linear-gradient(to bottom, #000 55%, transparent);
             mask-composite: intersect;
         }
-        .intro-content button {
-            background: rgba(250, 246, 235, 0.85);
+        .intro-overlay::after {
+            right: 0;
+            bottom: 0;
+            width: calc(195px * var(--ribbon-scale));
+            height: calc(200px * var(--ribbon-scale));
+            background-position: right bottom;
+            -webkit-mask-image:
+                linear-gradient(to left, #000 55%, transparent),
+                linear-gradient(to top, #000 55%, transparent);
+            -webkit-mask-composite: source-in;
+            mask-image:
+                linear-gradient(to left, #000 55%, transparent),
+                linear-gradient(to top, #000 55%, transparent);
+            mask-composite: intersect;
+        }
+        .intro-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: clamp(14px, 2.6vh, 26px);
+            text-align: center;
+            transition: transform 0.8s ease;
+        }
+        .intro-overlay.hidden .intro-content {
+            transform: scale(1.04);
+        }
+        /* Wordmark only (images/intro-wordmark.jpg, cut from intro-logo.jpg without the crowned
+           emblem). Its cream equals the page cream; the sides fade softly for narrow screens. */
+        .intro-logo {
+            position: relative;
+            width: min(86vw, 600px, 110vh);
+            width: min(86vw, 600px, 110dvh); /* keeps it short enough on landscape phones */
+            aspect-ratio: 910 / 395;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+            animation: introRise 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .intro-img {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        /* One soft light sweep across the gold once the logo has settled */
+        .intro-logo::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.55) 50%, transparent 65%);
+            mix-blend-mode: overlay;
+            transform: translateX(-100%);
+            animation: introShine 1.6s ease-in-out 1.1s both;
+            pointer-events: none;
+        }
+        .intro-tagline {
+            margin: 0;
             font-family: var(--heading-font);
-            white-space: nowrap;
-            color: #805b22;
-            font-weight: bold;
+            font-size: clamp(0.78rem, 1.5vw, 1rem);
+            font-weight: 500;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            border: 1px solid var(--primary-gold);
+            line-height: 1.7;
+            color: #805b22;
+            animation: introFade 0.9s ease-out 0.5s both;
+        }
+        .intro-content button {
+            padding: 14px 44px;
+            font-family: var(--heading-font);
+            font-size: 0.95rem;
+            letter-spacing: 0.2em;
+            white-space: nowrap;
+            color: #3b2a1a;
+            border: 1px solid #c9a052;
+            border-radius: 2px;
+            box-shadow: 0 8px 22px rgba(150, 112, 44, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+            /* "backwards" so the hover lift is not overridden once the entrance has finished */
+            animation: introFade 0.9s ease-out 0.8s backwards;
+            transition: box-shadow 0.3s ease, transform 0.3s ease, filter 0.3s ease;
         }
         .intro-content button:hover {
-            background-color: rgba(223, 183, 108, 0.12);
-            color: #805b22;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(150, 112, 44, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+        }
+        @keyframes introRise {
+            from { opacity: 0; transform: translateY(14px) scale(0.97); }
+            to { opacity: 1; transform: none; }
+        }
+        @keyframes introFade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: none; }
+        }
+        @keyframes introShine {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
+        }
+        .intro-tagline span {
+            white-space: nowrap;
+        }
+        @media (max-height: 560px) {
+            .intro-overlay {
+                --ribbon-scale: 0.6;
+            }
+        }
+        @media (max-width: 600px) {
+            .intro-overlay {
+                --ribbon-scale: 0.6;
+            }
+            /* Stack the two phrases instead of letting the separator dangle */
+            .intro-tagline span {
+                display: block;
+            }
+            .intro-tagline .intro-sep {
+                display: none;
+            }
+            .intro-content button {
+                padding: 13px 34px;
+                font-size: 0.85rem;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .intro-overlay::before,
+            .intro-overlay::after,
+            .intro-logo,
+            .intro-tagline,
+            .intro-content button {
+                animation: none;
+            }
+            .intro-logo::after {
+                display: none;
+            }
+            .intro-content,
+            .intro-overlay.hidden .intro-content {
+                transform: none;
+            }
         }
         .about-section {
             max-width: 1000px;
@@ -949,10 +1071,13 @@
 <body>
 
     <!-- Intro Welcome Screen -->
-    <div id="introScreen" class="intro-overlay">
-        <img src="images/intro-logo.jpg" alt="Madam Beauty by PRICELESS Integrity" class="intro-img">
+    <div id="introScreen" class="intro-overlay" role="dialog" aria-modal="true" aria-label="Welcome to Madam Beauty">
         <div class="intro-content">
-            <button onclick="closeIntro()">Enter Experience</button>
+            <div class="intro-logo">
+                <img src="images/intro-wordmark.jpg" alt="Madam Beauty by Priceless Integrity" class="intro-img" width="910" height="395" fetchpriority="high">
+            </div>
+            <p class="intro-tagline"><span>Beauty With Intention</span><span class="intro-sep" aria-hidden="true"> · </span><span>Care With Integrity</span></p>
+            <button type="button" onclick="closeIntro()">Enter Experience</button>
         </div>
     </div>
 
