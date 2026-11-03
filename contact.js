@@ -115,27 +115,78 @@ function initializeBookingForm() {
     });
 }
 
+function escapeContactHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+// One contact line (icon, label, value); the value is a link when href is given.
+function renderContactRow(icon, label, value, href) {
+    if (!String(value || '').trim()) return '';
+    const text = escapeContactHtml(value);
+    return `
+        <li class="contact-row">
+            <span class="contact-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span>
+            <span class="contact-row-text">
+                <span class="contact-label">${label}</span>
+                ${href ? `<a href="${escapeContactHtml(href)}">${text}</a>` : `<span>${text}</span>`}
+            </span>
+        </li>`;
+}
+
 async function renderOwnerDetails(ownerData) {
     const currentOwnerData = ownerData || await loadOwnerData();
     renderNavContact(currentOwnerData);
+    renderSiteContactText(currentOwnerData);
     const card = document.getElementById('ownerCard');
     if (!card) return;
+    const phoneHref = `tel:${String(currentOwnerData.phone || '').replace(/[^\d+]/g, '')}`;
     card.innerHTML = `
-        <h3>Salon & Owner Details</h3>
-        <p style="color: var(--text-muted); margin-bottom: 25px;">${currentOwnerData.description}</p>
-        <div class="contact-info-item">
-            <p><strong>Phone:</strong> <a href="tel:${currentOwnerData.phone}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(169, 125, 51, 0.4); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(169, 125, 51, 0.4)'">${currentOwnerData.phone}</a></p>
-        </div>
-        <div class="contact-info-item">
-            <p><strong>Email:</strong> <a href="mailto:${currentOwnerData.email}" style="color: inherit; font-family: inherit; text-decoration: none; border-bottom: 1px dashed rgba(169, 125, 51, 0.4); padding-bottom: 2px; transition: color 0.2s, border-bottom-color 0.2s;" onmouseenter="this.style.color='var(--primary-gold)'; this.style.borderBottomColor='var(--primary-gold)'" onmouseleave="this.style.color='inherit'; this.style.borderBottomColor='rgba(169, 125, 51, 0.4)'">${currentOwnerData.email}</a></p>
-        </div>
-        <div class="contact-info-item">
-            <p><strong>Address:</strong> ${currentOwnerData.address}</p>
-        </div>
-        <div class="contact-info-item" style="margin-top: 15px;">
-            <p><strong>Program:</strong> ${currentOwnerData.program}</p>
+        <p class="section-kicker">Visit the Salon</p>
+        <h3>Salon &amp; Owner Details</h3>
+        ${currentOwnerData.description ? `<p class="contact-intro">${escapeContactHtml(currentOwnerData.description)}</p>` : ''}
+        <ul class="contact-list">
+            ${renderContactRow('fa-phone', 'Phone', currentOwnerData.phone, phoneHref)}
+            ${renderContactRow('fa-envelope', 'Email', currentOwnerData.email, `mailto:${currentOwnerData.email}`)}
+            ${renderContactRow('fa-location-dot', 'Address', currentOwnerData.address)}
+            ${renderContactRow('fa-clock', 'Hours', currentOwnerData.program)}
+        </ul>
+        <div class="contact-actions">
+            <button type="button" class="btn btn-gold" data-open-booking>Request an Appointment</button>
+            ${currentOwnerData.phone ? `<a class="btn btn-outline" href="${escapeContactHtml(phoneHref)}"><i class="fa-solid fa-phone" aria-hidden="true"></i>Call Us</a>` : ''}
         </div>
     `;
+}
+
+// Fill the short contact text shown in the hero and the footer
+function renderSiteContactText(ownerData) {
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = value || '';
+        const holder = el.closest('[data-contact-item]');
+        if (holder) holder.hidden = !value;
+    };
+    setText('heroAddress', ownerData.address);
+    setText('heroHours', ownerData.program);
+    setText('footerAddress', ownerData.address);
+    setText('footerHours', ownerData.program);
+    const phone = String(ownerData.phone || '').replace(/[^\d+]/g, '');
+    const footerPhone = document.getElementById('footerPhone');
+    if (footerPhone) {
+        footerPhone.textContent = ownerData.phone || '';
+        footerPhone.href = `tel:${phone}`;
+        footerPhone.closest('[data-contact-item]').hidden = !phone;
+    }
+    const footerEmail = document.getElementById('footerEmail');
+    if (footerEmail) {
+        footerEmail.textContent = ownerData.email || '';
+        footerEmail.href = `mailto:${ownerData.email || ''}`;
+        footerEmail.closest('[data-contact-item]').hidden = !ownerData.email;
+    }
 }
 
 // Point the quick "Call" / "Email" buttons in the header menu at the owner's details
@@ -156,6 +207,6 @@ function renderNavContact(ownerData) {
 function renderFooter() {
     const container = document.getElementById('footerCopyright');
     if (container) {
-        container.innerHTML = `Copyright &copy; ${new Date().getFullYear()} Madam Beauty. All rights reserved.`;
+        container.innerHTML = `&copy; ${new Date().getFullYear()} Madam Beauty by Priceless Integrity. All rights reserved.`;
     }
 }
